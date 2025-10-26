@@ -53,6 +53,9 @@ app.get('/api/health', (req, res) => {
     status: 'healthy'
   });
 });
+app.get('/', (req, res) => {
+  res.send('✅ PME Backend is live. Use /api/health to check health status.');
+});
 
 
 // Start server
