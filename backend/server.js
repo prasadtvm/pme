@@ -15,12 +15,14 @@ const allowedOrigins = process.env.CLIENT_ORIGIN
 
 console.log('CORS Configuration:');
 console.log('CLIENT_ORIGIN:', allowedOrigins);
-console.log('Request from origin:', req.headers.origin);
+//console.log('Request from origin:', req.headers.origin);
 
 // Middleware - Fix CORS
 app.use(cors({
-  origin:  allowedOrigins, // Your frontend URL
-  credentials: true
+  origin:  allowedOrigins, // Your frontend URL 
+   credentials: false,
+   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -29,7 +31,7 @@ app.use('/uploads', express.static(path.join(__dirname, UPLOAD_DIR)));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/projects', require('./routes/projects'));
 
-// ✅ Add this new route for OpenRouter
+{/* ✅ Add this new route for OpenRouter
 app.post('/api/chat', async (req, res) => {
   try {
     //console.log('Request body to OpenRouter:', req.body);
@@ -51,7 +53,7 @@ app.post('/api/chat', async (req, res) => {
     console.error('❌ OpenRouter API error:', error);
     res.status(500).json({ error: 'Failed to contact OpenRouter API' });
   }
-});
+});*/}
 
 // Test route
 app.get('/api/health', (req, res) => {
@@ -61,9 +63,7 @@ app.get('/api/health', (req, res) => {
     status: 'healthy'
   });
 });
-app.get('/', (req, res) => {
-  res.send('✅ PME Backend is live. Use /api/health to check health status.');
-});
+
 
 
 // Start server

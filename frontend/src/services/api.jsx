@@ -2,8 +2,10 @@ import axios from 'axios';
 
 //const API_BASE_URL = 'http://localhost:5000/api';
 console.log(import.meta.env);
-const API_BACK_URL=import.meta.env.VITE_API_BACK_URL;
-//console.log(API_BASE_URL)
+
+const API_BACK_URL = `${import.meta.env.VITE_API_BACK_URL}/api`;
+console.log('aervice api.jsx',API_BACK_URL);
+
 const api = axios.create({
   baseURL: API_BACK_URL,
   headers: {    
@@ -46,25 +48,18 @@ export const checkAPIHealth = async () => {
   }
 };
 
-
-
 // Auth APIs
 export const authAPI = {
-  login: (credentials) => api.post('/auth/login', credentials),
+  login: (credentials) => api.post('auth/login', credentials),
 };
 
 
 // Parameterized routes
 
-//router.put('/:id', projectController.updateProject);
-
-
 
 // Project APIs
 export const projectAPI = {
   // Specific routes first
-  //router.get('/', projectController.getAllProjects);
-  //getAll: () => api.get('/projects'), 
   getAll: () => api.get('/projects'),
 
   // ✅ Corrected to support file uploads
@@ -80,9 +75,7 @@ export const projectAPI = {
   addRemark:(remarkData)=>api.post('/projects/remark',remarkData),
   getRemarks: (project) => api.get(`/projects/remarks/${project}`),
   resolveRemark: (id) =>  api.put(`/projects/remarks/${id}/resolve`), 
-  getProgress: (id) => api.get(`/projects/${id}/progress`),
-   
-   
+  getProgress: (id) => api.get(`/projects/${id}/progress`),     
   
 };
 const token = localStorage.getItem("token");

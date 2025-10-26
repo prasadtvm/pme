@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/tailwind.css';
 
+
 // Get the base URL and ensure it's properly formatted
   const API_BASE_URL = import.meta.env.VITE_API_BACK_URL || 'http://localhost:5000';
   const cleanBaseUrl = API_BASE_URL.replace(/\/$/, ''); // Remove trailing slash if present
@@ -21,8 +22,8 @@ const Login = () => {
     setError('');
 
     try {
-      //console.log('Sending login request:', credentials);
-     // console.log('Sending login request to:', ${cleanBaseUrl}/auth/login);
+      console.log('Sending login request:', credentials);
+      //console.log('Sending login request to:', `${cleanBaseUrl}/api/auth/login`);
      
       const response = await axios.post(`${cleanBaseUrl}/api/auth/login`, credentials);
       const { token, user } = response.data;
@@ -70,7 +71,7 @@ const Login = () => {
       const response = await axios.get('${cleanBaseUrl}/api/health');
 
       const testUrls = [
-    `${import.meta.env.VITE_API_BACK_URL}/health`,
+    `${import.meta.env.VITE_API_BACK_URL}/api/health`,
     'http://localhost:5000/api/health',
     'http://127.0.0.1:5000/api/health'
   ];
