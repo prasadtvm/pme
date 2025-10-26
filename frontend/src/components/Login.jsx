@@ -3,6 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/tailwind.css';
 
+// Get the base URL and ensure it's properly formatted
+  const API_BASE_URL = import.meta.env.VITE_API_BACK_URL || 'http://localhost:5000';
+  const cleanBaseUrl = API_BASE_URL.replace(/\/$/, ''); // Remove trailing slash if present
+
+  console.log('API Base URL:', cleanBaseUrl);
+
 const Login = () => {
   const [credentials, setCredentials] = useState({ email: 'admin@pme.com', password: 'password' });
   const [loading, setLoading] = useState(false);
@@ -15,9 +21,10 @@ const Login = () => {
     setError('');
 
     try {
-      console.log('Sending login request:', credentials);
-      
-      const response = await axios.post('${import.meta.env.VITE_API_BACK_URL}/api/auth/login', credentials);
+      //console.log('Sending login request:', credentials);
+     // console.log('Sending login request to:', ${cleanBaseUrl}/auth/login);
+     
+        const response = await axios.post(`${cleanBaseUrl}/auth/login`, credentials);
       const { token, user } = response.data;
 
     //  console.log('Login successful:', user);
@@ -60,7 +67,30 @@ const Login = () => {
   const testBackendConnection = async () => {
     try {
       setError('Testing backend connection...');
-      const response = await axios.get('${import.meta.env.VITE_API_BACK_URL}/api/health');
+      const response = await axios.get('${cleanBaseUrl}/health');
+
+      const testUrls = [
+    `${import.meta.env.VITE_API_BACK_URL}/health`,
+    'http://localhost:5000/api/health',
+    'http://127.0.0.1:5000/api/health'
+  ];
+  for (const url of testUrls) {
+    try {
+      console.log(`Testing: ${url}`);
+      const response = await axios.get(url, { timeout: 5000 });
+      setError(`✅ Backend is running at: ${url}`);
+      console.log('Backend response:', response.data);
+      break;
+    } catch (error) {
+      console.log(`Failed for ${url}:`, error.message);
+      if (url === testUrls[testUrls.length - 1]) {
+        setError('❌ Backend is not reachable at any tested URL. Please ensure:\n1. Backend server is running\n2. Correct port (usually 5000)\n3. No firewall blocking\n4. CORS is configured');
+      }
+    }
+  }
+
+  console.log('VITE_API_BACK_URL:', import.meta.env.VITE_API_BACK_URL);
+  console.log('All env vars:', import.meta.env);
       setError(`✅ Backend is running: ${response.data.message}`);
     } catch (error) {
       setError('❌ Backend is not reachable. Make sure it\'s running on http://localhost:5000');
