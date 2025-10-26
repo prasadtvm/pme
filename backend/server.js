@@ -20,7 +20,7 @@ console.log('CLIENT_ORIGIN:', allowedOrigins);
 // Middleware - Fix CORS
 app.use(cors({
   origin:  allowedOrigins, // Your frontend URL 
-   credentials: false,
+   credentials: true,
    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
