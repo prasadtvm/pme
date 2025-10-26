@@ -3,7 +3,8 @@ import axios from 'axios';
 //const API_BASE_URL = 'http://localhost:5000/api';
 console.log(import.meta.env);
 
-const API_BACK_URL = import.meta.env.VITE_API_BACK_URL;
+const API_BACK_URL = `${import.meta.env.VITE_API_BACK_URL}/api`;
+
 console.log('aervice api.jsx',API_BACK_URL);
 
 const api = axios.create({
