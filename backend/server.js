@@ -13,6 +13,9 @@ const allowedOrigins = process.env.CLIENT_ORIGIN
   ? process.env.CLIENT_ORIGIN.split(',') 
   : ['https://pme-stark-tvm1.vercel.app', 'http://localhost:3000'];
 
+console.log('CORS Configuration:');
+console.log('CLIENT_ORIGIN:', allowedOrigins);
+console.log('Request from origin:', req.headers.origin);
 
 // Middleware - Fix CORS
 app.use(cors({
