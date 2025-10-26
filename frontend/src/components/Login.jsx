@@ -17,7 +17,7 @@ const Login = () => {
     try {
       console.log('Sending login request:', credentials);
       
-      const response = await axios.post('http://localhost:5000/api/auth/login', credentials);
+      const response = await axios.post('${import.meta.env.VITE_API_BACK_URL}/api/auth/login', credentials);
       const { token, user } = response.data;
 
     //  console.log('Login successful:', user);
@@ -60,7 +60,7 @@ const Login = () => {
   const testBackendConnection = async () => {
     try {
       setError('Testing backend connection...');
-      const response = await axios.get('http://localhost:5000/api/health');
+      const response = await axios.get('${import.meta.env.VITE_API_BACK_URL}/api/health');
       setError(`✅ Backend is running: ${response.data.message}`);
     } catch (error) {
       setError('❌ Backend is not reachable. Make sure it\'s running on http://localhost:5000');
