@@ -24,7 +24,7 @@ const Login = () => {
       //console.log('Sending login request:', credentials);
      // console.log('Sending login request to:', ${cleanBaseUrl}/auth/login);
      
-        const response = await axios.post(`${cleanBaseUrl}/api/auth/login`, credentials);
+      const response = await axios.post(`${cleanBaseUrl}/api/auth/login`, credentials);
       const { token, user } = response.data;
 
     //  console.log('Login successful:', user);
