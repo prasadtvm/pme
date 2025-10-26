@@ -1,6 +1,4 @@
-  //Remove root directory setting (set to empty)
-  //Create `vercel.json` in the root with:
-    {
+      {
       "version": 2,
       "builds": [
         {
@@ -13,4 +11,4 @@
       ]
     }
 
-  //And then set the build command in the dashboard to empty (so it uses the `vercel.json`).
+  
