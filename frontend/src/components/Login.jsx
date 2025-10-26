@@ -24,7 +24,7 @@ const Login = () => {
       //console.log('Sending login request:', credentials);
      // console.log('Sending login request to:', ${cleanBaseUrl}/auth/login);
      
-        const response = await axios.post(`${cleanBaseUrl}/auth/login`, credentials);
+        const response = await axios.post(`${cleanBaseUrl}/api/auth/login`, credentials);
       const { token, user } = response.data;
 
     //  console.log('Login successful:', user);
@@ -67,7 +67,7 @@ const Login = () => {
   const testBackendConnection = async () => {
     try {
       setError('Testing backend connection...');
-      const response = await axios.get('${cleanBaseUrl}/health');
+      const response = await axios.get('${cleanBaseUrl}/api/health');
 
       const testUrls = [
     `${import.meta.env.VITE_API_BACK_URL}/health`,
