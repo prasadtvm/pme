@@ -6,12 +6,17 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'https://https://pme-stark-tvm1.vercel.app/' || 'http://localhost:3000';
+//const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'https://pme-stark-tvm1.vercel.app/' || 'http://localhost:3000';
 const UPLOAD_DIR = process.env.UPLOAD_DIR || 'uploads';
+
+const allowedOrigins = process.env.CLIENT_ORIGIN 
+  ? process.env.CLIENT_ORIGIN.split(',') 
+  : ['https://pme-stark-tvm1.vercel.app', 'http://localhost:3000'];
+
 
 // Middleware - Fix CORS
 app.use(cors({
-  origin:  CLIENT_ORIGIN, // Your frontend URL
+  origin:  allowedOrigins, // Your frontend URL
   credentials: true
 }));
 app.use(bodyParser.json());
@@ -30,7 +35,7 @@ app.post('/api/chat', async (req, res) => {
       headers: {
         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://https://pme-stark-tvm1.vercel.app/',   // or your production domain 'http://localhost:3000'
+        'HTTP-Referer': 'https://pme-stark-tvm1.vercel.app/',   // or your production domain 'http://localhost:3000'
     'X-Title': 'My Chat App'
       },
       body: JSON.stringify(req.body)
