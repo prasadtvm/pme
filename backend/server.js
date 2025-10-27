@@ -5,7 +5,8 @@ const path = require('path');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+// Prefer WEB_PORT if defined, else fall back to PORT, else 5000
+const PORT = process.env.WEB_PORT || process.env.PORT || 5000;
 //const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'https://pme-stark-tvm1.vercel.app/' || 'http://localhost:3000';
 const UPLOAD_DIR = process.env.UPLOAD_DIR || 'uploads';
 
