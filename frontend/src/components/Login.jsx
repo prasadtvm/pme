@@ -5,10 +5,11 @@ import '../styles/tailwind.css';
 
 
 // Get the base URL and ensure it's properly formatted
-  const API_BASE_URL = import.meta.env.VITE_API_BACK_URL || 'http://localhost:5000';
-  const cleanBaseUrl = API_BASE_URL.replace(/\/$/, ''); // Remove trailing slash if present
+  //const API_BASE_URL = import.meta.env.VITE_API_BACK_URL || 'http://localhost:5000';
+  const API_BASE_URL = `${import.meta.env.VITE_API_BACK_URL?.replace(/\/$/, '')}/api` || 'http://localhost:5000';
+ // const cleanBaseUrl = API_BASE_URL.replace(/\/$/, ''); // Remove trailing slash if present
 
-  console.log('API Base URL:', cleanBaseUrl);
+  console.log('API Base URL:', API_BASE_URL);
 
 const Login = () => {
   const [credentials, setCredentials] = useState({ email: 'admin@pme.com', password: 'password' });
@@ -25,7 +26,7 @@ const Login = () => {
       console.log('Sending login request:', credentials);
       //console.log('Sending login request to:', `${cleanBaseUrl}/api/auth/login`);
      
-      const response = await axios.post(`${cleanBaseUrl}/api/auth/login`, credentials);
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, credentials);
       const { token, user } = response.data;
 
     //  console.log('Login successful:', user);
@@ -68,10 +69,10 @@ const Login = () => {
   const testBackendConnection = async () => {
     try {
       setError('Testing backend connection...');
-      const response = await axios.get(`${cleanBaseUrl}/api/health`);
+      const response = await axios.get(`${API_BASE_URL}/health`);
 
       const testUrls = [
-    `${import.meta.env.VITE_API_BACK_URL}/api/health`,
+    `${import.meta.env.VITE_API_BACK_URL}/health`,
     'http://localhost:5000/api/health',
     'http://127.0.0.1:5000/api/health'
   ];
