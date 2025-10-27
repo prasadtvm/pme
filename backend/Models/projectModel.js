@@ -23,7 +23,7 @@ const Project = {
     console.log('🧩 Running query:', query, 'params:', params);
 
     const result = await pool.query(query, params);
-console.log('📊 getAll() returned rows:', result.rows.length);
+    console.log('📊 getAll() returned rows:', result.rows.length);
     return result.rows;   
     
   },

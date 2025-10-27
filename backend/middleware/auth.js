@@ -3,7 +3,7 @@ const auth = (req, res, next) => {
   try {
     const token = req.header('Authorization');     
 
-     const authHeader = req.header('Authorization');
+    const authHeader = req.header('Authorization');
 
 
      if (!authHeader) {
