@@ -33,8 +33,6 @@ function App() {
   };
 
  
-
-
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '100px 20px' }}>

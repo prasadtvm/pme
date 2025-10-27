@@ -56,7 +56,7 @@ const Login = () => {
         console.log('Error response data:', error.response.data);
       } else if (error.request) {
         // Request was made but no response received
-        setError('No response from server. Check if backend is running on http://localhost:5000');
+        setError('No response from server. Check if backend is running on',API_BASE_URL);
       } else {
         // Something else happened
         setError('Login failed: ' + error.message);
