@@ -9,7 +9,7 @@ import '../styles/tailwind.css';
   const API_BASE_URL = `${import.meta.env.VITE_API_BACK_URL?.replace(/\/$/, '')}` || 'http://localhost:5000/api';
  // const cleanBaseUrl = API_BASE_URL.replace(/\/$/, ''); // Remove trailing slash if present
 
-  console.log('API Base URL:', API_BASE_URL);
+  console.log('login line 12-API Base URL:', API_BASE_URL);
 
 const Login = () => {
   const [credentials, setCredentials] = useState({ email: 'admin@pme.com', password: 'password' });
