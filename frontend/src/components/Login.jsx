@@ -34,6 +34,8 @@ const Login = () => {
       localStorage.setItem('authToken', token);
       localStorage.setItem('user', JSON.stringify(user));
 
+      
+
     //console.log('Token stored in localStorage:', localStorage.getItem('authToken'));
     //console.log('About to redirect...');
 

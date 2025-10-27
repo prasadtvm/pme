@@ -28,6 +28,38 @@ const authController = {
       // Verify password (for demo, using simple comparison)
       // In production, use bcrypt.compare()
      // const isPasswordValid = password === 'password'; // Demo password
+
+     //const _psw=await bcrypt('password');
+     //console.log(_psw);
+
+     const bcrypt = require("bcryptjs");
+
+// The plain text password to hash and test
+const plainPassword = "password";
+
+{/* Generate a hash (10 salt rounds — standard)
+const saltRounds = 10;
+
+(async () => {
+  try {
+    console.log("Plain password:", plainPassword);
+
+    // Generate hash
+    const hash = await bcrypt.hash(plainPassword, saltRounds);
+    console.log("Generated hash:", hash);
+
+    // Verify hash works
+    const isMatch = await bcrypt.compare(plainPassword, hash);
+    console.log("Password matches hash:", isMatch ? "✅ YES" : "❌ NO");
+
+    // Example: compare against your DB hash
+    const dbHash = "$2a$10$X1R5z6g/Zkslj6aEJAb8OeDlsRhT0vGyCGXbR7DLHJK1lUavmLDiG";
+    const isDbMatch = await bcrypt.compare(plainPassword, dbHash);
+    console.log("Compare with DB hash:", isDbMatch ? "✅ YES" : "❌ NO");
+  } catch (err) {
+    console.error("Error:", err);
+  }
+})();*/}
       const isPasswordValid = await bcrypt.compare(password, user.password);
 
       if (!isPasswordValid) {
