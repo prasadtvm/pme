@@ -68,7 +68,7 @@ const Login = () => {
   const testBackendConnection = async () => {
     try {
       setError('Testing backend connection...');
-      const response = await axios.get('${cleanBaseUrl}/api/health');
+      const response = await axios.get(`${cleanBaseUrl}/api/health`);
 
       const testUrls = [
     `${import.meta.env.VITE_API_BACK_URL}/api/health`,
