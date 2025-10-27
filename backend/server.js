@@ -18,32 +18,34 @@ console.log('CLIENT_ORIGIN:', allowedOrigins);
 //console.log('Request from origin:', req.headers.origin);
 
 // Middleware - Fix CORS
-//app.use(cors({
- // origin:  allowedOrigins, // Your frontend URL 
-//   credentials: true,
- //  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
- //  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-//}));
+app.use(cors({
+ origin:  allowedOrigins, // Your frontend URL 
+   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  }
-  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(204);
-  }
-  next();
-});
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, UPLOAD_DIR)));
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/projects', require('./routes/projects'));
+
+// Test route
+app.get('/api/health', (req, res) => {
+  res.json({
+    message: 'PME Backend is running!', 
+    timestamp: new Date(),
+    status: 'healthy'
+  });
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📊 PostgreSQL Database: ${process.env.DB_NAME || 'pme_system'}`);
+});
 
 {/* ✅ Add this new route for OpenRouter
 app.post('/api/chat', async (req, res) => {
@@ -69,19 +71,3 @@ app.post('/api/chat', async (req, res) => {
   }
 });*/}
 
-// Test route
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    message: 'PME Backend is running!', 
-    timestamp: new Date(),
-    status: 'healthy'
-  });
-});
-
-
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📊 PostgreSQL Database: ${process.env.DB_NAME || 'pme_system'}`);
-});

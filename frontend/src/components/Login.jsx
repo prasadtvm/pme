@@ -6,7 +6,7 @@ import '../styles/tailwind.css';
 
 // Get the base URL and ensure it's properly formatted
   //const API_BASE_URL = import.meta.env.VITE_API_BACK_URL || 'http://localhost:5000';
-  const API_BASE_URL = `${import.meta.env.VITE_API_BACK_URL?.replace(/\/$/, '')}/api` || 'http://localhost:5000';
+  const API_BASE_URL = `${import.meta.env.VITE_API_BACK_URL?.replace(/\/$/, '')}/api` || 'http://localhost:5000/api';
  // const cleanBaseUrl = API_BASE_URL.replace(/\/$/, ''); // Remove trailing slash if present
 
   console.log('API Base URL:', API_BASE_URL);
@@ -72,7 +72,7 @@ const Login = () => {
       const response = await axios.get(`${API_BASE_URL}/health`);
 
       const testUrls = [
-    `${import.meta.env.VITE_API_BACK_URL}/health`,
+    `${API_BASE_URL}/health`,
     'http://localhost:5000/api/health',
     'http://127.0.0.1:5000/api/health'
   ];
@@ -91,11 +91,11 @@ const Login = () => {
     }
   }
 
-  console.log('VITE_API_BACK_URL:', import.meta.env.VITE_API_BACK_URL);
+  console.log('VITE_API_BACK_URL:', API_BASE_URL);
   console.log('All env vars:', import.meta.env);
       setError(`✅ Backend is running: ${response.data.message}`);
     } catch (error) {
-      setError('❌ Backend is not reachable. Make sure it\'s running on http://localhost:5000');
+      setError('❌ Backend is not reachable. Make sure it\'s running on ',API_BASE_URL);
     }
   };
 

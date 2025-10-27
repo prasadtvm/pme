@@ -3,7 +3,7 @@ import axios from 'axios';
 //const API_BASE_URL = 'http://localhost:5000/api';
 console.log(import.meta.env);
 
-const API_BACK_URL = `${import.meta.env.VITE_API_BACK_URL?.replace(/\/$/, '')}/api` || 'http://localhost:5000';
+const API_BACK_URL = `${import.meta.env.VITE_API_BACK_URL?.replace(/\/$/, '')}/api` || 'http://localhost:5000/api';
 
 console.log('aervice api.jsx',API_BACK_URL);
 

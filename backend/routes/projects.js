@@ -9,7 +9,6 @@ const _upload = require('../middleware/upload');
 // All routes require authentication
 router.use(auth);
 
-
 // Specific routes first
 router.get('/', projectController.getAllProjects);
 router.post('/', _upload.single('image_file'), projectController.createProject);
@@ -39,14 +38,10 @@ router.post('/:id/menu', _upload.single('menu'), projectController.uploadMenu);
 router.put('/remarks/:id/resolve',  projectController.resolveRemark);
 router.get('/:id/progress', projectController.getProgress);
 
-
 //router.post('/projects' projectController.createProject);
-
-
 
 // 🆕 new route for saving remark
 //router.post('/remark', projectController.addRemark);
-
 
 //router.put('/:id/roadshow', projectController.updateRoadshowInfo);
 
@@ -57,7 +52,6 @@ router.get('/:id/progress', projectController.getProgress);
 //router.delete('/:id', projectController.deleteProject);
 //router.get('/:id/details', projectController.getProjectDetails);
 //router.put('/:id/details', projectController.updateProjectDetails);
-
 
 //router.put('/:id/roadshow', projectController.updateRoadshowInfo);
 //router.put('/:id/venues', projectController.updateVenues);
@@ -70,6 +64,5 @@ router.get('/:id/progress', projectController.getProgress);
 
 // Fetch remarks by project ID
 //router.get('/remarks/:projectId', projectController.getRemarksByProject);
-
 
 module.exports = router;
