@@ -46,11 +46,11 @@ const Login = () => {
     // navigate('/projects', { replace: true });
     // With this:
       //window.location.href = '/projects';
-      if (user.role === 1) {
+      if (String(user.role) === '1') {
         navigate('/projects', { replace: true });
         setTimeout(() => (window.location.href = '/projects'), 100);
        // window.location.href = '/projects';  // admin
-      } else if (user.role === 2) {
+      } else if (String(user.role) === '2') {
         navigate('/viewprojects', { replace: true });
         setTimeout(() => (window.location.href = '/viewprojects'), 100);
        // window.location.href = '/viewprojects'; // viewer
