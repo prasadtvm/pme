@@ -114,7 +114,7 @@ const [menuFile, setMenuFile] = useState({
         const [projectRes, detailsRes,remarks] = await Promise.all([
           projectAPI.getById(id),
           projectAPI.getDetails(id) ,     
-           projectAPI.getRemarks(id)    
+          projectAPI.getRemarks(id)    
         ]);
 
         setProject(projectRes.data);
@@ -702,11 +702,12 @@ return (
               className="form-input"
             />
           </div>
+          {/*{`${UPLOAD_BACK_URL}/uploads/project/$*/}
           {details.image_file && (
   <div className="col-span-full mt-2">
     <p className="text-sm text-gray-700">Uploaded Project Image:</p>
     <img
-      src={`${UPLOAD_BACK_URL}/uploads/project/${details.image_file}`}
+      src={details.image_file}
       alt="Project"
       className="mt-2 w-40 rounded border"
     />
@@ -1033,20 +1034,21 @@ return (
 
 {invitationFile && typeof invitationFile === "string" && (() => {
  // console.log('invitationfile in projectdetails', invitationFile);
-  const _fileName = invitationFile.split('\\').pop().split('/').pop();
-  const cleanPath = invitationFile.replace(/.*uploads[\\/]/, 'uploads/rsvp/');
+  //const _fileName = invitationFile.split('\\').pop().split('/').pop();
+  //const cleanPath = invitationFile.replace(/.*uploads[\\/]/, 'uploads/rsvp/');href={`http://localhost:5000/${cleanPath}`}
 
-  return (  // ✅ this was missing
+  return (  // ✅ this was missing <img style="display:none;" src={invitationFile}></img>
     <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-md text-green-800">
       <span className="font-medium">Uploaded Invitation Design:</span>
       <a
-        href={`http://localhost:5000/${cleanPath}`}
+        href={invitationFile}  // 🔥 Direct Cloudinary URL
         target="_blank"
         rel="noreferrer"
         className="text-blue-600 underline ml-2"
       >
-        {_fileName}
+        {invitationFile}
       </a>
+      
     </div>
   );
 })()}

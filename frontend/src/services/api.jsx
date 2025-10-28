@@ -5,7 +5,7 @@ console.log(import.meta.env);
 
 const API_BACK_URL = `${import.meta.env.VITE_API_BACK_URL?.replace(/\/$/, '')}/api` || 'http://localhost:5000/';
 
-console.log('aervice api.jsx',API_BACK_URL);
+console.log('aervice [api.jsx]',API_BACK_URL);
 
 const api = axios.create({
   baseURL: API_BACK_URL,

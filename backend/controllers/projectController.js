@@ -45,25 +45,49 @@ const projectController = {
 
   // Create new project
   createProject: async (req, res) => {
-    try {    
+    try {  
+      console.log("🟢 Incoming create project request");
+      console.log("➡️  req.body:", req.body);
+      console.log("➡️  req.file:", req.file);  
       const { name,  event_date } = req.body;
       const userId = req.user.id;
       // file comes from multer
-    const imageFile = req.file ? req.file.filename : null;
+    
       if (!name || !event_date) {
         return res.status(400).json({ error: 'Name and event date are required' });
       }
+     let imageFile = '';
+        // ✅ Cloudinary returns a hosted URL in req.file.path
+      //    If local storage is still used, fallback to filename
+       if (req.file) {
+      // Different multer-cloudinary versions attach the URL in different places
+    // Cloudinary gives you a URL in req.file.path
+      imageFile = req.file ? req.file.path : null;
+      console.log("✅ Uploaded file URL:", imageFile);
+      } else {
+        console.log("⚠️ No file uploaded");
+      }
+      
+      
       const projectData = {
         name,
         image_file: imageFile || '',
         event_date,
         created_by: userId
       };
+      console.log("🆕 Creating project with data:", projectData);
       const newProject = await Project.create(projectData);
+      console.log("✅ Project created successfully:", newProject);
       res.status(201).json(newProject);
     } catch (error) {
-      console.error('Error creating project:', error);
-      res.status(500).json({ error: 'Internal server error' });
+      console.error("❌ Error creating project:",error);
+      if (error.stack) console.error(error.stack);
+      res.status(500).json({
+        message: error.message || "Unknown error",
+        stack: error.stack,
+        code: error.code,
+        detail: error.detail,
+         });
     }
   },
 

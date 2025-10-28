@@ -23,13 +23,17 @@ const Login = () => {
     setError('');
 
     try {
-      console.log('Sending login request:', credentials);
+     // console.log('Sending login request:', credentials);
       //console.log('Sending login request to:', `${cleanBaseUrl}/api/auth/login`);
      
       const response = await axios.post(`${API_BASE_URL}/auth/login`, credentials);
       const { token, user } = response.data;
 
     //  console.log('Login successful:', user);
+      if (!user.role) {
+      alert('Your account has no role assigned. Please contact admin.');
+      return;
+    }
 
       localStorage.setItem('authToken', token);
       localStorage.setItem('user', JSON.stringify(user));
@@ -43,11 +47,17 @@ const Login = () => {
     // With this:
       //window.location.href = '/projects';
       if (user.role === 1) {
-        window.location.href = '/projects';  // admin
+        navigate('/projects', { replace: true });
+        setTimeout(() => (window.location.href = '/projects'), 100);
+       // window.location.href = '/projects';  // admin
       } else if (user.role === 2) {
-        window.location.href = '/viewprojects'; // viewer
+        navigate('/viewprojects', { replace: true });
+        setTimeout(() => (window.location.href = '/viewprojects'), 100);
+       // window.location.href = '/viewprojects'; // viewer
       } else {
         alert('Unknown role. Please contact admin.');
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
       }
     } catch (error) {
       console.error('Full login error:', error);
@@ -149,21 +159,21 @@ const Login = () => {
         >
           {loading ? 'Logging in...' : 'Login'}
         </button>
-
-        <button 
+     {/*
+        <button  
           type="button"
           onClick={testBackendConnection}
           className="test-button"
         >
           Test Backend Connection
         </button>
-        
-        <div className="demo-credentials">
+       
+        <div className="demo-credentials" >
           <p className="demo-title">Demo Credentials:</p>
           <p className="demo-text">Email: admin@pme.com</p>
           <p className="demo-text">Password: password</p>
-        </div>
-      </form>
+        </div>*/}
+      </form>    
     </div>
   );
 };

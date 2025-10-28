@@ -20,7 +20,7 @@ const ProjectPage = () => {
       setLoading(true);
       const response = await projectAPI.getAll();   // ✅ no need to add token manually
       // ✅ Handle both array or object responses safely
-      console.log(JSON.stringify(response.data));
+      //console.log(JSON.stringify(response.data));
       const fetchedProjects = Array.isArray(response.data)
         ? response.data
         : Array.isArray(response.data.data)
@@ -50,7 +50,7 @@ const ProjectPage = () => {
       //  description: projectData.description,
       //  year: projectData.year,
       //};
-
+console.log('🔵 handleCreateProject triggered');
     const formData = new FormData();
     formData.append('name', projectData.name);
     formData.append('event_date', projectData.event_date);
@@ -58,7 +58,7 @@ const ProjectPage = () => {
     if (projectData.image_file instanceof File) {
       formData.append('image_file', projectData.image_file);    }
     
-
+     //console.log('ProjectPage -Create project form data:',JSON.stringify( projectData));
     const projectResponse = await projectAPI.create(formData);
 
     const createdProject = projectResponse.data;   
@@ -256,10 +256,11 @@ const ProjectPage = () => {
                     </div>
 
               </div>
+              {/*`${UPLOAD_BACK_URL}/uploads/project/*/}
             <div className="project-image-container">
                 {project.image_file ? (
                   <img
-                    src={`${UPLOAD_BACK_URL}/uploads/project/${project.image_file}`}
+                    src={project.image_file}
                     alt={project.name}
                     style={{
                       width: '100%',
