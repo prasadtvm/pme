@@ -15,7 +15,7 @@ const ProjectDetails = () => {
   const [saving, setSaving] = useState('');
   const [message, setMessage] = useState('');
   const [remarks, setRemarks] = useState([]);
-
+ const UPLOAD_BACK_URL = `${import.meta.env.VITE_UPLOAD_BACK_URL?.replace(/\/$/, '')}` || 'http://localhost:5000';
   // Core project details
   const [details, setDetails] = useState({
     roadshowName: '',    
@@ -706,7 +706,7 @@ return (
   <div className="col-span-full mt-2">
     <p className="text-sm text-gray-700">Uploaded Project Image:</p>
     <img
-      src={`http://localhost:5000/uploads/project/${details.image_file}`}
+      src={`${UPLOAD_BACK_URL}/uploads/project/${details.image_file}`}
       alt="Project"
       className="mt-2 w-40 rounded border"
     />
