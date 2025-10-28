@@ -9,6 +9,7 @@ const ProjectPage = () => {
   const [loading, setLoading] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const navigate = useNavigate();
+  const UPLOAD_BACK_URL = `${import.meta.env.VITE_UPLOAD_BACK_URL?.replace(/\/$/, '')}` || 'http://localhost:5000';
   
   useEffect(() => {
     fetchProjects();
@@ -258,7 +259,7 @@ const ProjectPage = () => {
             <div className="project-image-container">
                 {project.image_file ? (
                   <img
-                    src={`http://localhost:5000/uploads/project/${project.image_file}`}
+                    src={`${UPLOAD_BACK_URL}/uploads/project/${project.image_file}`}
                     alt={project.name}
                     style={{
                       width: '100%',
