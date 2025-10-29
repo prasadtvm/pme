@@ -998,7 +998,7 @@ updateClient: async (projectId, clients, user) => {
     if (user.role === '1') {
     project = await pool.query(
       'SELECT id FROM projects WHERE id = $1 AND created_by = $2',
-      [projectId, userId]
+      [projectId, user.id]
     );
 
     } else {
