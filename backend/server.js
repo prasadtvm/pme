@@ -19,9 +19,22 @@ console.log('CLIENT_ORIGIN:', allowedOrigins);
 //console.log('Request from origin:', req.headers.origin);
 
 // Middleware - Fix CORS
+//app.use(cors({
+ //origin:  allowedOrigins, // Your frontend URL 
+//   credentials: true,
+ // methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+ // allowedHeaders: ['Content-Type', 'Authorization']
+//}));
 app.use(cors({
- origin:  allowedOrigins, // Your frontend URL 
-   credentials: true,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn(`❌ Blocked by CORS: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
