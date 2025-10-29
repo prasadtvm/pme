@@ -1363,7 +1363,7 @@ return (
         {hotels.map((hotel, index) => (
           <div
             key={index}
-            className="grid grid-cols-[2fr_auto_auto] gap-3 items-center mb-3 p-3 bg-gray-50 rounded-lg"
+            className="grid grid-cols-[2fr_auto_auto] gap-2 items-center mb-3 p-3 bg-gray-50 rounded-lg"
           >
              {/* Sponsor supplier */}
             <input
