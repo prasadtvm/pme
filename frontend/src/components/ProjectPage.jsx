@@ -219,41 +219,18 @@ console.log('🔵 handleCreateProject triggered');
                 }`}>
                   {project.status || 'Draft'}
                 </span>*/}
-                {/* ✅ Progress Bar replacing status */}
-                    <div
-                      style={{
-                        width: '100%',
-                        background: '#e0e0e0',     // grey background
-                        borderRadius: '8px',
-                        overflow: 'hidden',
-                        height: '14px',
-                        marginTop: '8px',
-                        position: 'relative',
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: `${project.progress || 0}%`,
-                          height: '100%',
-                          background: '#28a745',    // green bar
-                          transition: 'width 0.5s ease',
-                        }}
-                      />
-                      <span
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: '50%',
-                          transform: 'translateX(-50%)',
-                          fontSize: '11px',
-                          color: 'white',
-                          fontWeight: 600,
-                          lineHeight: '14px',
-                        }}
-                      >
-                        {project.progress ? `${project.progress}%` : '0%'}
-                      </span>
-                    </div>
+                {/* ✅ Progress Bar replacing status  */}
+
+               <div className="w-full bg-gray-300 rounded-lg overflow-hidden h-3.5 mt-2 relative">
+              <div
+                className="h-full bg-green-600 transition-all duration-500"
+                style={{ width: `${project.progress || 0}%` }}
+              />
+              <span className="absolute top-0 left-1/2 -translate-x-1/2 text-[11px] text-white font-semibold leading-[14px]">
+                {project.progress ? `${project.progress}%` : '0%'}
+              </span>
+            </div>
+
 
               </div>
               {/*`${UPLOAD_BACK_URL}/uploads/project/*/}

@@ -569,92 +569,27 @@ return (
           {message}
         </div>
       )}
+       {/*Progress Bar*/}
+          <div className="text-right">
+        <label className="font-medium text-slate-700">Completion Progress</label>
 
-      <div className="text-right">
-          <label style={{ fontWeight: 500 }}>Completion Progress</label>
-            <div
-              style={{
-                width: '100%',
-                background: '#eee',
-                borderRadius: '8px',
-                overflow: 'hidden',
-                height: '20px',
-                marginTop: '6px'
-              }}
-            >
+        <div className="w-full bg-gray-200 rounded-lg h-5 overflow-hidden mt-1.5">
           <div
-            style={{
-              width: `${progress}%`,
-              height: '100%',
-              background: progress === 100 ? '#007bff' : '#28a745',
-              transition: 'width 0.5s ease',
-            }}
-            />
-         </div>
+            className={`h-full transition-all duration-500 ${
+              progress === 100 ? 'bg-blue-600' : 'bg-green-600'
+            }`}
+            style={{ width: `${progress}%` }}
+          />
+        </div>
 
-
-          
-          <div style={{ textAlign: 'right', fontSize: '14px', marginTop: '4px' }}>
-            {progress}% Completed
-          </div>
+        <div className="text-right text-sm text-gray-700 mt-1">
+          {progress}% Completed
         </div>
       </div>
 
-     
 
-      {/* Roadshow Information Section 
-      <div className="section-container">
-        <div className="section-header">
-          <h2 className="section-title">Information</h2>
-          <button 
-            onClick={saveRoadshowInfo}
-            disabled={saving === 'roadshow'}
-            className={`action-button ${saving === 'roadshow' ? 'disabled' : ''}`}
-          >
-            {saving === 'roadshow' ? 'Saving...' : 'Save Roadshow Info'}
-          </button>
-        </div>
-         
-        <div className="grid-form">
-          <div className="form-group">
-            <label className="form-label">Name</label>
-            <input
-              type="text"
-              value={details.roadshowName}
-              onChange={(e) => setDetails({...details, roadshowName: e.target.value})}
-              className="form-input"
-            />
-          </div>          
-
-          <div className="form-group">
-            <label className="form-label">City</label>
-            <input
-              type="text"
-              value={details.city}
-              onChange={(e) => setDetails({...details, city: e.target.value})}
-              className="form-input"
-            />
-          </div>
-
-           {/* Event Date 
-          <div className="form-group">
-            <label className="form-label">Event Date</label>
-            <input
-              type="date"
-              value={details.event_date || ""}
-              onChange={(e) =>
-                setDetails({
-                  ...details,
-                  event_date: e.target.value,
-                })
-              }
-              className="form-input"
-            />
-          </div>         
-
-        
-        </div>       
-      </div>*/}
+      </div>
+       
       {/* 🧭 Sidebar + Main Layout */}
       <div className="flex gap-0">
         {/* Sidebar */}
@@ -704,27 +639,24 @@ return (
           </div>
           {/*{`${UPLOAD_BACK_URL}/uploads/project/$ href={`http://localhost:5000/${details.image_file.replace(/.*uploads[\\/]/, 'uploads/project/')}`}*/}
           {details.image_file && (
-  <div className="col-span-full mt-2">
-   {details.image_file ? (
+          <div className="col-span-full mt-2">
+          {details.image_file ? (
 
-  <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-md text-green-800">
-          <span className="font-medium">Project Image File:</span>
-          <a
-            href={details.image_file}
-            target="_blank"
-            rel="noreferrer"
-            className="text-blue-600 underline ml-2"
-          >
-            {details.image_file}
-          </a>
-        </div>
-                
-                ) : null}
-
-
-    
-  </div>
-)}
+          <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-md text-green-800">
+                  <span className="font-medium">Project Image File:</span>
+                  <a
+                    href={details.image_file}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-blue-600 underline ml-2"
+                  >
+                    {details.image_file}
+                  </a>
+                </div>
+                        
+                        ) : null}           
+          </div>
+        )}
            {/* Project handiled by */}
           <div className="form-group">
             <label className="form-label">Project handled by</label>
@@ -948,7 +880,6 @@ return (
         </button>
       </div>
 {/*Database Section*/}  
-
 <div id="database" className="section-container">
   {/* Header */}
   <div className="flex justify-between items-center mb-5">
@@ -1059,12 +990,10 @@ return (
         className="text-blue-600 underline ml-2"
       >
         {invitationFile}
-      </a>
-      
+      </a>      
     </div>
   );
 })()}
-
 
  {rsvp.map((item, index) => (
   <div key={index} className="p-4 mb-6 bg-gray-50 border rounded-lg shadow-sm">
@@ -1076,20 +1005,20 @@ return (
           onClick={() => handleRemoveRSVP(index)}
           className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
         >
-          <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    className="small-delete-icon" 
-    fill="none" 
-    viewBox="0 0 24 24" 
-    stroke="currentColor"
-  >
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        className="small-delete-icon" 
+        fill="none" 
+        viewBox="0 0 24 24" 
+        stroke="currentColor"
+      >
     <path 
       strokeLinecap="round" 
       strokeLinejoin="round" 
       strokeWidth={2} 
       d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" 
     />
-  </svg>
+    </svg>
         </button>
       )}
     </div>
@@ -1280,7 +1209,6 @@ return (
   </div>
 ))}
 
-
   <button
     type="button"
     onClick={handleAddRSVP}
@@ -1291,7 +1219,6 @@ return (
 </div>
 
       {/* 1)AV & Setting up Section @2Hotel supe name  */}
-
       <div id="av" className="section-container">
   {/* Header */}
   <div className="flex justify-between items-center mb-5">
@@ -1304,7 +1231,6 @@ return (
       {saving === 'av' ? 'Saving...' : 'Save Hotel AV Setup'}
     </button>
   </div>
-
   {/* Form Grid */}
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
     <div>
@@ -1440,11 +1366,9 @@ return (
           + Add Av Supplier
         </button>
       </div>
-
     
-{/*embassy*/}
-
-      <div id="embassy" className="section-container">
+    {/*embassy*/}
+  <div id="embassy" className="section-container">
   {/* Header */}
   <div className="flex justify-between items-center mb-5">
     <h2 className="text-xl font-semibold text-slate-800">Embassy / Consulate</h2>
@@ -1525,10 +1449,9 @@ return (
       />
     </div>
   </div>
-</div>    
+     </div>    
 
-
-{/* Client Section */}
+     {/* Client Section */}
       <div id="client" className="section-container">
         <div className="section-header">
           <h2 className="section-title">Client</h2>
@@ -1684,105 +1607,7 @@ return (
         </button>
       </div>
 
-      {/* Menu File Upload Section 
-      <div className="section-container">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h2 style={{ color: '#2c3e50', margin: 0 }}>Menu</h2>
-          <button 
-            onClick={saveMenu}
-            disabled={saving === 'menu'}
-            style={{
-              padding: '8px 20px',
-              background: saving === 'menu' ? '#6c757d' : '#28a745',
-              color: 'white',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: saving === 'menu' ? 'not-allowed' : 'pointer'
-            }}
-          >
-            {saving === 'menu' ? 'Uploading...' : 'Upload Menu'}
-          </button>
-        </div>
-        
-        <div>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Upload Menu File</label>
-          <input
-            type="file"
-            accept=".jpg,.jpeg,.png"
-            onChange={(e) => setMenuFile(e.target.files[0])}
-            style={{
-              width: '100%',
-              padding: '8px',
-              border: '1px solid #ddd',
-              borderRadius: '5px'
-            }}
-          />
-          <small style={{ color: '#6c757d', display: 'block', marginTop: '5px' }}>
-            Upload file size 1MB, format files: jpg, jpeg, png
-          </small>
-          {menuFile && (
-            <div style={{ marginTop: '10px', padding: '10px', background: '#d1ecf1', borderRadius: '5px' }}>
-              Selected file: {menuFile.name}
-            </div>
-          )}
-        </div>
-      </div>*/}
-
-      {/* Menu File Upload Section 
-<div id="menu" className="section-container">
-   Header 
-  <div className="flex justify-between items-center mb-5">
-    <h2 className="text-xl font-semibold text-slate-800">Menu</h2>
-    <button
-      onClick={saveMenu}
-      disabled={saving === 'menu'}
-      className={`px-5 py-2 rounded-md text-white font-medium transition-colors duration-200 ${
-        saving === 'menu'
-          ? 'bg-gray-500 cursor-not-allowed'
-          : 'bg-green-600 hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2'
-      }`}
-    >
-      {saving === 'menu' ? 'Uploading...' : 'Upload Menu'}
-    </button>
-  </div>
- 
-  {menuFile && menuFile.fileName &&   (
-  <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-md text-green-800">
-    <span className="font-medium">Uploaded Menu File:</span>
-    <a
-      href={`http://localhost:5000/uploads/menu/${menuFile.filePath.replace(/.*uploads[\\/]/, 'uploads/')}`}
-      target="_blank"
-      rel="noreferrer"
-      className="text-blue-600 underline ml-2"
-    >
-      {menuFile.fileName}
-    </a>
-  </div>
-)}
-
- File Upload Input 
-  <div className="space-y-3">
-    <label className="block font-medium text-gray-700">Upload Menu File</label>
-    <input
-      type="file"
-      accept=".jpg,.jpeg,.png"
-      onChange={(e) => setMenuFile(e.target.files[0])}
-      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-    />
-
-    <small className="text-gray-500 block">
-      Upload file size up to <span className="font-semibold">1MB</span>, supported formats: <span className="font-semibold">.jpg, .jpeg, .png</span>
-    </small>
-
-     Selected File Preview 
    
-    {menuFile && (
-      <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md text-blue-800">
-        <span className="font-medium">Selected file:</span> {menuFile.name}
-      </div>
-    )}
-  </div>
-</div>*/}
 
 <div id="menu" className="section-container">
   {/* Header */}
@@ -1838,58 +1663,7 @@ return (
     )}
   </div>
 </div>
-
-
-      {/* Remarks Section for Admin 
-    <div id="remarks"className="section-container">
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '20px',
-        }}
-      >
-        <h2 className="text-xl font-semibold text-slate-800">Viewer Remarks</h2>
-      </div>
-
-      {remarks.length > 0 ? (
-        remarks.map((r) => (
-          <div
-            key={r.id}
-            style={{
-              background: '#f8f9fa',
-              padding: '12px',
-              marginBottom: '8px',
-              borderRadius: '5px',
-              border: '1px solid #ddd',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <div>
-              <strong>{r.username || 'Viewer'}:</strong> {r.remarktext}
-            </div>
-            <button
-              onClick={() => handleToggleRemark(r.id)}
-              style={{
-                background: r.isapproved ? '#28a745' : '#ffc107',
-                color: r.isapproved ? 'white' : 'black',
-                border: 'none',
-                padding: '6px 14px',
-                borderRadius: '4px',
-                cursor: 'pointer',
-              }}
-            >
-              {r.isapproved ? 'Resolved (Click to Pending)' : 'Pending (Click to Resolve)'}
-            </button>
-          </div>
-        ))
-      ) : (
-        <p>No remarks yet.</p>
-      )}
-    </div>*/}
+   
 {/* Remarks Section for Admin */}
 <div id="remarks" className="section-container">
   <div className="flex justify-between items-center mb-5">
@@ -1924,20 +1698,18 @@ return (
     <p className="text-gray-500">No remarks yet.</p>
   )}
 </div>
-
-
     
 
     {/* Print Section */}
-<div id="print" className="flex justify-center mt-8 mb-10">
-  <button
-    onClick={() => window.print()}
-    className="px-6 py-3 bg-blue-600 text-white font-medium rounded-md shadow-md hover:bg-blue-700 transition duration-200 flex items-center gap-2"
-  >
-    <span role="img" aria-label="print">🖨️</span>
-    Print Page
-  </button>
-</div>
+    <div id="print" className="flex justify-center mt-8 mb-10">
+      <button
+        onClick={() => window.print()}
+        className="px-6 py-3 bg-blue-600 text-white font-medium rounded-md shadow-md hover:bg-blue-700 transition duration-200 flex items-center gap-2"
+      >
+        <span role="img" aria-label="print">🖨️</span>
+        Print Page
+      </button>
+    </div>
       </div>
      </div>
 
