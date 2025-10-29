@@ -33,6 +33,14 @@ app.use('/uploads', express.static(path.join(__dirname, UPLOAD_DIR)));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/projects', require('./routes/projects'));
 
+// ✅ Serve frontend (only if hosting React from Express)
+//app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+// ✅ Catch-all: serve index.html for client-side routes
+//app.get('*', (req, res) => {
+ // res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+//});
+
 // Test route
 app.get('/api/health', (req, res) => {
   res.json({
