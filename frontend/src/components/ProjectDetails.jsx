@@ -702,15 +702,27 @@ return (
               className="form-input"
             />
           </div>
-          {/*{`${UPLOAD_BACK_URL}/uploads/project/$*/}
+          {/*{`${UPLOAD_BACK_URL}/uploads/project/$ href={`http://localhost:5000/${details.image_file.replace(/.*uploads[\\/]/, 'uploads/project/')}`}*/}
           {details.image_file && (
   <div className="col-span-full mt-2">
-    <p className="text-sm text-gray-700">Uploaded Project Image:</p>
-    <img
-      src={details.image_file}
-      alt="Project"
-      className="mt-2 w-40 rounded border"
-    />
+   {details.image_file ? (
+
+  <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-md text-green-800">
+          <span className="font-medium">Project Image File:</span>
+          <a
+            href={details.image_file}
+            target="_blank"
+            rel="noreferrer"
+            className="text-blue-600 underline ml-2"
+          >
+            {details.image_file}
+          </a>
+        </div>
+                
+                ) : null}
+
+
+    
   </div>
 )}
            {/* Project handiled by */}
