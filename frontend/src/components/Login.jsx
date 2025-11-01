@@ -15,6 +15,13 @@ const Login = () => {
   const [credentials, setCredentials] = useState({ email: 'admin@pme.com', password: 'password' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showRegister, setShowRegister] = useState(false);
+  const [registerData, setRegisterData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+   const [registerMsg, setRegisterMsg] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -75,6 +82,24 @@ const Login = () => {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  // ---------- REGISTER ----------
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setRegisterMsg("Registering...");
+    try {
+      const res = await axios.post(`${API_BASE_URL}/auth/register`, registerData);
+      if (res.data?.user) {
+        setRegisterMsg("✅ Registration successful! You can now log in.");
+        setTimeout(() => setShowRegister(false), 2000);
+      }
+    } catch (err) {
+      console.error(err);
+      setRegisterMsg(
+        err.response?.data?.error || "Registration failed. Try again."
+      );
     }
   };
 
@@ -159,6 +184,16 @@ const Login = () => {
         >
           {loading ? 'Logging in...' : 'Login'}
         </button>
+        <p className="text-center text-sm mt-3">
+          Don’t have an account?{" "}
+          <button
+            type="button"
+            onClick={() => setShowRegister(true)}
+            className="text-blue-600 hover:underline"
+          >
+            Register
+          </button>
+        </p>
      {/*
         <button  
           type="button"
@@ -174,6 +209,86 @@ const Login = () => {
           <p className="demo-text">Password: password</p>
         </div>*/}
       </form>    
+
+      {/* -------- REGISTER MODAL -------- */}
+      {showRegister && (
+        <div className="modal-overlay">
+          <div className="modal-content relative">
+            <div className="modal-header">
+              <h3 className="text-xl font-semibold">Create Account</h3>
+              <button
+                onClick={() => setShowRegister(false)}
+                className="close-button"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleRegister}>
+              <div className="form-group">
+                <label className="form-label">Name</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="Enter your name"
+                  value={registerData.name}
+                  onChange={(e) =>
+                    setRegisterData({
+                      ...registerData,
+                      name: e.target.value,
+                    })
+                  }
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Email</label>
+                <input
+                  type="email"
+                  className="form-input"
+                  placeholder="Enter your email"
+                  value={registerData.email}
+                  onChange={(e) =>
+                    setRegisterData({
+                      ...registerData,
+                      email: e.target.value,
+                    })
+                  }
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Password</label>
+                <input
+                  type="password"
+                  className="form-input"
+                  placeholder="Create a password"
+                  value={registerData.password}
+                  onChange={(e) =>
+                    setRegisterData({
+                      ...registerData,
+                      password: e.target.value,
+                    })
+                  }
+                  required
+                />
+              </div>
+
+              <button type="submit" className="primary-button w-full">
+                Register
+              </button>
+            </form>
+
+            {registerMsg && (
+              <p className="text-center text-sm mt-3 text-gray-700">
+                {registerMsg}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

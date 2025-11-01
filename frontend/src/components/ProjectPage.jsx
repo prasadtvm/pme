@@ -50,7 +50,7 @@ const ProjectPage = () => {
       //  description: projectData.description,
       //  year: projectData.year,
       //};
-console.log('🔵 handleCreateProject triggered');
+//console.log('🔵 handleCreateProject triggered');
     const formData = new FormData();
     formData.append('name', projectData.name);
     formData.append('event_date', projectData.event_date);

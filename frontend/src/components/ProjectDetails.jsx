@@ -18,8 +18,7 @@ const ProjectDetails = () => {
  const UPLOAD_BACK_URL = `${import.meta.env.VITE_UPLOAD_BACK_URL?.replace(/\/$/, '')}` || 'http://localhost:5000';
   // Core project details
   const [details, setDetails] = useState({
-    roadshowName: '',    
-    city: '',   
+    roadshowName: '',   
     event_date: '',
     associate: '',
     budget: '',
@@ -28,9 +27,9 @@ const ProjectDetails = () => {
     project_handiled_by:''
   });
 
-  const [venues, setVenues] = useState([{ name: '', currency: 'INR',rate:'', budget: '', selected: false }]);
+  const [venues, setVenues] = useState([{ name: '', currency: 'INR', rate:'', budget: '', selected: false , hotel:false, rental:false, av:false, food:false, bar:false}]);
  
-  const [associates, setAssociates] = useState([{ name: '',  selected: false }]);
+  const [associates, setAssociates] = useState([{ name: '',city:'',  selected: false }]);
   const [tradeDatabase, setTradeDatabase] = useState([{ trade_name: '', nos: '' }]);
   const [rsvp, setRsvp] = useState([{ 
     save_the_date: '',
@@ -129,8 +128,7 @@ const [menuFile, setMenuFile] = useState({
             formattedDate = new Date(d.event_date).toISOString().split("T")[0];
           }
           setDetails({
-            roadshowName: d.roadshow_name || '',          
-            city: d.city || '',            
+            roadshowName: d.roadshow_name || '',
             event_date: formattedDate,          
             budget: d.budget || '',
             image_file:projectRes.data.image_file || "",
@@ -197,14 +195,23 @@ const fetchRemarks = async () => {
   // Save handlers
   const saveRoadshowInfo = async () => {
     try {
-      setSaving('roadshow');      
-      await projectSectionsAPI.updateRoadshow(id, {
-        roadshow_name: details.roadshowName,        
-        city: details.city,
-        event_date: details.event_date,
-        budget: details.budget,
-        project_handiled_by:details.project_handiled_by       
-      });
+      setSaving('roadshow');   
+      const formData = new FormData();
+     // roadshow_name: details.roadshowName,
+       // event_date: details.event_date,
+       // budget: details.budget,
+       // project_handiled_by:details.project_handiled_by ,
+       // image_file: details.image_file || null, // add this line  
+
+    formData.append('roadshow_name', details.roadshowName);
+    formData.append('event_date', details.event_date);
+    formData.append('budget', details.budget);
+    formData.append('project_handiled_by', details.project_handiled_by);
+
+    if (details.image_file instanceof File) {
+      formData.append('image_file', details.image_file);
+    }
+      await projectSectionsAPI.updateRoadshow(id, formData);
       showMessage('Roadshow information saved successfully!');
     } catch (e) {
       console.error(e);
@@ -372,7 +379,7 @@ const fetchRemarks = async () => {
 
   // Associate handlers
   const handleAddAssociate = () => {
-    setAssociates([...associates, { name: '', selected: false }]);
+    setAssociates([...associates, { name: '',city:'', selected: false }]);
   };
   const handleAssociateChange = (index, field, value) => {
     setAssociates(associates.map((v, i) => (i === index ? { ...v, [field]: value } : v)));
@@ -383,7 +390,7 @@ const fetchRemarks = async () => {
 
   // Venue handlers
   const handleAddVenue = () => {
-    setVenues([...venues, { name: '', currency: 'INR',rate:'', budget: '', selected: false }]);
+    setVenues([...venues, { name: '', currency: 'INR',rate:'', budget: '', selected: false , hotel: false,rental: false, av: false, food: false, bar: false}]);
   };
   const handleVenueChange = (index, field, value) => {
     setVenues(venues.map((v, i) => (i === index ? { ...v, [field]: value } : v)));
@@ -391,6 +398,31 @@ const fetchRemarks = async () => {
   const handleRemoveVenue = (index) => {
     setVenues(venues.filter((_, i) => i !== index));
   };
+
+  const parseNumberInput = (value, currency) => {
+  if (!value) return "";
+
+  // Remove spaces
+  let v = value.replace(/\s/g, "");
+
+  // For European locales (EUR → comma = decimal, dot = thousand)
+  if (currency === "EUR") {
+    // Convert 1.234,56 → 1234.56
+    v = v.replace(/\./g, "").replace(",", ".");
+  }
+
+  // For GBP → same as INR (comma = thousand, dot = decimal)
+  else if (currency === "GBP") {
+    v = v.replace(/,/g, "");
+  }
+
+  // For INR → remove commas (since they’re thousand separators)
+  else if (currency === "INR") {
+    v = v.replace(/,/g, "");
+  }
+const num = parseFloat(v);
+  return isNaN(num) ? "" : num;
+};
 
   // Trade handlers
   const handleAddTrade = () => {
@@ -487,6 +519,36 @@ const handleRemoveRSVP = (index) => {
   }
 };
 
+
+
+  // ✅ Add this new useEffect below (do not put inside any other)
+  useEffect(() => {
+    const handleEnterKey = (e) => {
+      if (e.key === "Enter") {
+        const allowed = ["text", "number", "date"];
+        if (!allowed.includes(e.target.type)) return;
+
+        e.preventDefault();
+             // Get all input and select fields in the document
+      const inputs = Array.from(
+        document.querySelectorAll(
+          "input:not([type=hidden]):not([disabled]), select, textarea"
+        )
+      ).filter((el) => el.offsetParent !== null); // skip hidden
+       const index = inputs.indexOf(e.target);
+        const next = inputs[index + 1];
+        if (next) {
+        next.focus();
+        // Optional scroll to view
+        next.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleEnterKey);
+    return () => document.removeEventListener("keydown", handleEnterKey);
+  }, []);
+
   
   
   const handleBack = () => navigate('/projects');
@@ -561,7 +623,7 @@ return (
           >
             ← Back to Projects
           </button>
-          <h1 className="page-title">{project.name} - Project Details</h1>          
+          <h1 className="page-title">{project.name}</h1>          
         </div>
 
          {message && (
@@ -611,97 +673,148 @@ return (
           </nav>
         </div>
         {/* Main Content */}
-        <div className="flex-1 space-y-8">
+        <div className="flex-1 space-y-8">     
 
       {/* Roadshow Information Section */}
-      <div id="information" className="section-container">
-        <div className="section-header">
-          <h2 className="section-title">Information</h2>
-          <button
-            onClick={saveRoadshowInfo}
-            disabled={saving === "roadshow"}
-            className={`action-button ${saving === "roadshow" ? "opacity-50 cursor-not-allowed" : ""}`}
-          >
-            {saving === "roadshow" ? "Saving..." : "Save Roadshow Info"}
-          </button>
-        </div>
+{/* ✅ Roadshow Information Section */}
+<div id="information" className="section-container">
+  {/* Header */}
+  <div className="section-header">
+    <h2 className="section-title">Information</h2>
+    <button
+      onClick={saveRoadshowInfo}
+      disabled={saving === "roadshow"}
+      className={`action-button ${
+        saving === "roadshow" ? "opacity-50 cursor-not-allowed" : ""
+      }`}
+    >
+      {saving === "roadshow" ? "Saving..." : "Save Roadshow Info"}
+    </button>
+  </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {/* Name */}
-          <div className="form-group">
-            <label className="form-label">Name</label>
-            <input
-              type="text"
-              value={details.roadshowName}
-              onChange={(e) => setDetails({ ...details, roadshowName: e.target.value })}
-              className="form-input"
-            />
-          </div>
-          {/*{`${UPLOAD_BACK_URL}/uploads/project/$ href={`http://localhost:5000/${details.image_file.replace(/.*uploads[\\/]/, 'uploads/project/')}`}*/}
-          {details.image_file && (
-          <div className="col-span-full mt-2">
-          {details.image_file ? (
-
-          <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-md text-green-800">
-                  <span className="font-medium">Project Image File:</span>
-                  <a
-                    href={details.image_file}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-blue-600 underline ml-2"
-                  >
-                    {details.image_file}
-                  </a>
-                </div>
-                        
-                        ) : null}           
-          </div>
-        )}
-           {/* Project handiled by */}
-          <div className="form-group">
-            <label className="form-label">Project handled by</label>
-            <input
-              type="text"
-              value={details.project_handiled_by}
-              onChange={(e) => setDetails({ ...details, project_handiled_by: e.target.value })}
-              className="form-input"
-            />
-          </div>
-
-          {/* City */}
-          <div className="form-group">
-            <label className="form-label">City</label>
-            <input
-              type="text"
-              value={details.city}
-              onChange={(e) => setDetails({ ...details, city: e.target.value })}
-              className="form-input"
-            />
-          </div>
-
-          {/* Event Date */}
-          <div className="form-group">
-            <label className="form-label">Event Date</label>
-            <input
-              type="date"
-              value={details.event_date || ""}
-              onChange={(e) => setDetails({ ...details, event_date: e.target.value })}
-              className="form-input"
-            />
-          </div>
-
-          {/* Budget */}
-          <div className="form-group">
-            <label className="form-label">Budget (INR)</label>
-            <input
-              type="number"
-              value={details.budget}
-              onChange={(e) => setDetails({ ...details, budget: e.target.value })}
-              className="form-input"
-            />
-          </div>
-        </div>
+  {/* Body */}
+  <div className="grid grid-cols-1 gap-5 mt-4">
+    {/* ✅ Row 1: Name + Image */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+      {/* Name */}
+      <div className="form-group">
+        <label className="form-label">Name</label>
+        <input
+          type="text"
+          value={details.roadshowName}
+          onChange={(e) =>
+            setDetails({ ...details, roadshowName: e.target.value })
+          }
+          className="form-input"
+        />
       </div>
+
+      {/* Image + Upload */}
+      <div className="form-group flex flex-col items-start">
+        <label className="form-label">Project Image</label>
+        <div className="flex items-center gap-4">
+          {details.image_file ? (
+            <>
+              <img
+                src={
+                  typeof details.image_file === "object"
+                    ? URL.createObjectURL(details.image_file)
+                    : details.image_file
+                }
+                alt={details.roadshowName}
+                style={{
+                  width: "220px",
+                  height: "190px",
+                  objectFit: "cover",
+                  borderRadius: "6px",
+                  border: "1px solid #ddd",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                }}
+                onError={(e) => (e.target.style.display = "none")}
+              />
+
+              {typeof details.image_file === "string" && (
+                <a
+                  href={details.image_file}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-blue-600 underline text-sm"
+                >
+                  View Full Image
+                </a>
+              )}
+            </>
+          ) : (
+            <div className="text-gray-500 text-sm">No image</div>
+          )}
+        </div>
+
+        {/* Upload new file */}
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) =>
+            setDetails({ ...details, image_file: e.target.files[0] })
+          }
+          className="mt-2 text-xs"
+        />
+      </div>
+    </div>
+
+    {/* ✅ Row 2: Project handled by + Event Date + Budget */}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      {/* Project handled by */}
+      <div className="form-group">
+        <label className="form-label">Project handled by</label>
+        <input
+          type="text"
+          value={details.project_handiled_by}
+          onChange={(e) =>
+            setDetails({ ...details, project_handiled_by: e.target.value })
+          }
+          className="form-input"
+        />
+      </div>
+
+      {/* Event Date */}
+      <div className="form-group">
+        <label className="form-label">Event Date</label>
+        <input
+          type="date"
+          value={details.event_date || ""}
+          onChange={(e) =>
+            setDetails({ ...details, event_date: e.target.value })
+          }
+          className="form-input"
+        />
+      </div>
+
+      {/* Budget */}
+      <div className="form-group">
+        <label className="form-label">Budget (INR)</label>
+        <input
+           type="text"
+          value={
+            details.budget
+              ? Number(details.budget).toLocaleString('en-IN') // 👈 comma format for Indian locale
+              : ''
+          }
+          onChange={(e) => {
+            // Remove commas before saving to state
+            const rawValue = e.target.value.replace(/,/g, '');
+            if (!isNaN(rawValue)) {
+              setDetails({ ...details, budget: rawValue });
+            }
+          }}
+          className="form-input text-right"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 
       {/* Associates Section */}
       <div id="associate" className="section-container">
@@ -719,7 +832,7 @@ return (
         {associates.map((associate, index) => (
           <div
             key={index}
-            className="grid grid-cols-[2fr_auto_auto] gap-3 items-center mb-3 p-3 bg-gray-50 rounded-lg"
+            className="flex flex-wrap md:flex-nowrap items-center gap-4 mb-2 p-3 bg-gray-50 rounded-lg"
           >
             {/* Associate Name */}
             <input
@@ -727,11 +840,20 @@ return (
               placeholder="Associate"
               value={associate.name}
               onChange={(e) => handleAssociateChange(index, "name", e.target.value)}
-              className="px-2 py-2 border border-gray-300 rounded-md"
+              className="flex-1 min-w-[140px] px-2 py-2 border border-gray-300 rounded-md"
+            />
+
+            {/* Associate City */}
+            <input
+              type="text"
+              placeholder="City"
+              value={associate.city}
+              onChange={(e) => handleAssociateChange(index, "city", e.target.value)}
+              className="flex-1 min-w-[140px] px-2 py-2 border border-gray-300 rounded-md"
             />
 
             {/* Select Checkbox */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 ml-2 mr-3 whitespace-nowrap">
               <input
                 type="checkbox"
                 checked={associate.selected}
@@ -745,7 +867,7 @@ return (
               <button
                 type="button"
                 onClick={() => handleRemoveAssociate(index)}
-                className="small-delete-btn"
+                className="ml-auto p-1.5 text-red-600 hover:text-red-800 transition"
                 title="Remove"
               >
                 <svg
@@ -777,7 +899,7 @@ return (
         </button>
       </div>
      
-      {/* Venues Section */}
+      {/* Venues Section  add after hotel checkboxes of rental,av,food,bar*/}
       <div id="venue" className="section-container">
         <div className="section-header">
           <h2 className="section-title">Venue Considered</h2>
@@ -793,7 +915,7 @@ return (
         {venues.map((venue, index) => (
           <div
             key={index}
-            className="grid grid-cols-[1.5fr_0.8fr_0.8fr_0.8fr_auto_auto] gap-3 items-center mb-3 p-3 bg-gray-50 rounded-lg"
+            className="grid grid-cols-[1.2fr_0.7fr_0.8fr_0.8fr_auto_auto] gap-3 items-center mb-3 p-3 bg-gray-50 rounded-lg"
           >
             {/* Venue Name */}
             <input
@@ -803,6 +925,21 @@ return (
               onChange={(e) => handleVenueChange(index, "name", e.target.value)}
               className="px-2 py-2 border border-gray-300 rounded-md"
             />
+
+            {/* ✅ Checkboxes Group: Hotel, Rental, AV, Food, Bar */}
+    <div className="flex flex-wrap gap-2 items-center">
+      {["hotel", "rental", "av", "food", "bar"].map((key) => (
+        <label key={key} className="flex items-center gap-1 text-sm">
+          <input
+            type="checkbox"
+            checked={venue[key] || false}
+            onChange={(e) => handleVenueChange(index, key, e.target.checked)}
+            className="accent-blue-600"
+          />
+          {key.charAt(0).toUpperCase() + key.slice(1)}
+        </label>
+      ))}
+    </div>
 
             {/* Currency Dropdown */}
             <select
@@ -816,21 +953,51 @@ return (
             </select>
 
             {/* Rate */}
-            <input
-              type="number"
+            <input className="px-2 py-2 border border-gray-300 rounded-md text-right"
+              type="text"
               placeholder="Rate"
-              value={venue.rate || ""}
-              onChange={(e) => handleVenueChange(index, "rate", e.target.value)}
-              className="px-2 py-2 border border-gray-300 rounded-md"
+              value={
+                venue.rate
+                ? Number(venue.rate).toLocaleString(
+        venue.currency === "INR"
+          ? "en-IN"
+          : venue.currency === "EUR"
+          ? "de-DE"
+          : "en-GB",
+        { minimumFractionDigits: 2, maximumFractionDigits: 2 } // ✅ keeps 2 decimals visible
+      )
+    : ""
+              }
+               onChange={(e) =>
+              handleVenueChange(
+                index,
+                "rate",
+                parseNumberInput(e.target.value, venue.currency)
+              )
+            }              
             />
 
             {/* Budget */}
-            <input
-              type="number"
+            <input className="px-2 py-2 border border-gray-300 rounded-md text-right"
+              type="text"
               placeholder="Budget"
-              value={venue.budget}
-              onChange={(e) => handleVenueChange(index, "budget", e.target.value)}
-              className="px-2 py-2 border border-gray-300 rounded-md"
+              value={venue.budget
+                ? Number(venue.budget).toLocaleString(
+          venue.currency === "INR"
+          ? "en-IN"
+          : venue.currency === "EUR"
+          ? "de-DE"
+          : "en-GB",
+        { minimumFractionDigits: 2, maximumFractionDigits: 2 } // ✅ keeps 2 decimals visible
+      )
+    : ""
+              }
+              onChange={(e) =>
+              handleVenueChange(
+              index,
+              "budget", parseNumberInput(e.target.value, venue.currency)
+              )
+            }              
             />
 
             {/* Select Checkbox */}
@@ -848,7 +1015,7 @@ return (
               <button
                 type="button"
                 onClick={() => handleRemoveVenue(index)}
-                className="small-delete-btn"
+                className="ml-auto p-1.5 text-red-600 hover:text-red-800 transition"
                 title="Remove"
               >
                 <svg
@@ -924,7 +1091,7 @@ return (
             type="button"
             onClick={() => handleRemoveTrade(index)}
             title="Remove"
-            className="p-2 text-red-600 hover:text-red-800 transition"
+            className="ml-auto p-1.5 text-red-600 hover:text-red-800 transition"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -955,7 +1122,7 @@ return (
     + Add Trade
   </button>
 </div>
-{/*RSVP SECTION*/}    
+{/*RSVP SECTION right total of ta..etc Total Readonly totla of ta to etc.. RSVP1 ->add image for main invitation-> save the date remove confirm date singe save ->remove main inviation RSVP2 multiple of main invitation remove confim date*/}    
      <div id="rsvp" className="section-container">
   <div className="section-header">
     <h2 className="section-title">RSVP</h2>
@@ -1306,7 +1473,7 @@ return (
              {/* Sponsor supplier */}
             <input
               type="text"
-              placeholder="supplier"
+              placeholder="Supplier"
               value={hotel.sponsor}
               onChange={(e) => handleHotelChange(index, "sponsor", e.target.value)}
               className="px-2 py-2 border border-gray-300 rounded-md"
@@ -1314,7 +1481,7 @@ return (
             {/* Hotel Name */}
             <input
               type="text"
-              placeholder="name"
+              placeholder="Contact Name"
               value={hotel.name}
               onChange={(e) => handleHotelChange(index, "name", e.target.value)}
               className="px-2 py-2 border border-gray-300 rounded-md"
@@ -1382,12 +1549,12 @@ return (
   </div>
 
   {/* Input Fields */}
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
     {/* Chief Guest */}
     <div>
       <label className="block mb-1 font-medium text-gray-700">Chief Guest</label>
       <input
-        type="text"
+        type="text" placeholder="Chief Guest"
         value={embassy.cheif_guest || ''}
         onChange={(e) => setEmbassy({ ...embassy, cheif_guest: e.target.value })}
         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -1396,9 +1563,9 @@ return (
 
     {/* Chief Guest Designation */}
     <div>
-      <label className="block mb-1 font-medium text-gray-700">Chief Guest Designation</label>
+      <label className="block mb-1 font-medium text-gray-700">Designation</label>
       <input
-        type="text"
+        type="text" placeholder="Designation"
         value={embassy.cheif_guest_designation || ''}
         onChange={(e) => setEmbassy({ ...embassy, cheif_guest_designation: e.target.value })}
         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -1407,20 +1574,21 @@ return (
 
     {/* Chief Guest Phone */}
     <div>
-      <label className="block mb-1 font-medium text-gray-700">Chief Guest Phone</label>
+      <label className="block mb-1 font-medium text-gray-700">Contact</label>
       <input
-        type="text"
+        type="text" placeholder="Contact"
         value={embassy.cheif_guest_phone || ''}
         onChange={(e) => setEmbassy({ ...embassy, cheif_guest_phone: e.target.value })}
         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       />
     </div>
-
+    </div>
+ <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
     {/* Accommodation Contact */}
     <div>
-      <label className="block mb-1 font-medium text-gray-700">Accommodation Contact</label>
+      <label className="block mb-1 font-medium text-gray-700">Accommodation Contact Name</label>
       <input
-        type="text"
+        type="text"  placeholder="Contact Name"
         value={embassy.accommodation_contact || ''}
         onChange={(e) => setEmbassy({ ...embassy, accommodation_contact: e.target.value })}
         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -1429,9 +1597,9 @@ return (
 
     {/* Accommodation Address */}
     <div>
-      <label className="block mb-1 font-medium text-gray-700">Accommodation Address</label>
+      <label className="block mb-1 font-medium text-gray-700">Designation</label>
       <input
-        type="text"
+        type="text"  placeholder="Designation"
         value={embassy.accommodation_address || ''}
         onChange={(e) => setEmbassy({ ...embassy, accommodation_address: e.target.value })}
         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -1440,9 +1608,9 @@ return (
 
     {/* Accommodation Phone */}
     <div>
-      <label className="block mb-1 font-medium text-gray-700">Accommodation Phone</label>
+      <label className="block mb-1 font-medium text-gray-700">Contact</label>
       <input
-        type="text"
+        type="text" placeholder="Contact"
         value={embassy.accommodation_phone || ''}
         onChange={(e) => setEmbassy({ ...embassy, accommodation_phone: e.target.value })}
         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -1472,7 +1640,7 @@ return (
              {/* client name */}
             <input
               type="text"
-              placeholder="name"
+              placeholder="Name"
               value={client.name}
               onChange={(e) => handleClientChange(index, "name", e.target.value)}
               className="px-2 py-2 border border-gray-300 rounded-md"
@@ -1480,7 +1648,7 @@ return (
             {/* client Hotel  */}
             <input
               type="text"
-              placeholder="hotel"
+              placeholder="Designation"
               value={client.hotel}
               onChange={(e) => handleClientChange(index, "hotel", e.target.value)}
               className="px-2 py-2 border border-gray-300 rounded-md"
@@ -1489,7 +1657,7 @@ return (
              {/* client address  */}
             <input
               type="text"
-              placeholder="address"
+              placeholder="Contact"
               value={client.address}
               onChange={(e) => handleClientChange(index, "address", e.target.value)}
               className="px-2 py-2 border border-gray-300 rounded-md"

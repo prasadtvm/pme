@@ -118,9 +118,10 @@ const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
       // Create user
+      const role=2
       const newUser = await pool.query(
-        'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email, created_at',
-        [name, email, hashedPassword]
+        'INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id, name, email, created_at',
+        [name, email, hashedPassword,role]
       );
 
       // Generate token

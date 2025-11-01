@@ -126,7 +126,7 @@ const Project = {
 
   updateDetails: async (projectId, details, userId) => {
    // const { roadshow_name, city, month, year, associate, budget,associate_graduate_no, embassy_donbear_no } = details;
-   const { roadshow_name, city, event_date,  budget,project_handiled_by } = details;
+   const { roadshow_name,  event_date,  budget,project_handiled_by } = details;
     
     // Check if project exists and user has access
     const project = await pool.query(
@@ -148,17 +148,17 @@ const Project = {
       // Update existing
       const result = await pool.query(
         `UPDATE project_details 
-         SET roadshow_name = $1, city = $2, event_date = $3, budget = $4, project_handiled_by=$5, updated_at = CURRENT_TIMESTAMP 
-         WHERE project_id = $6 RETURNING *`,
-        [roadshow_name, city, event_date,  budget,project_handiled_by,  projectId]
+         SET roadshow_name = $1,  event_date = $2, budget = $3, project_handiled_by=$4, updated_at = CURRENT_TIMESTAMP 
+         WHERE project_id = $5 RETURNING *`,
+        [roadshow_name,  event_date,  budget,project_handiled_by,  projectId]
       );      
       return result.rows[0];
     } else {
       // Insert new
       const result = await pool.query(
-        `INSERT INTO project_details (project_id, roadshow_name, city, event_date,  budget,project_handiled_by) 
-         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-        [projectId, roadshow_name, city, event_date,  budget, project_handiled_by]
+        `INSERT INTO project_details (project_id, roadshow_name,  event_date,  budget,project_handiled_by) 
+         VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+        [projectId, roadshow_name,  event_date,  budget, project_handiled_by]
       );
       return result.rows[0];
     }
@@ -218,8 +218,8 @@ const Project = {
     // Insert new associates
     for (const associate of associates) {
       await pool.query(
-        'INSERT INTO associates (project_id, name,  selected) VALUES ($1, $2, $3)',
-        [projectId, associate.name,  associate.selected || false]
+        'INSERT INTO associates (project_id, name,  selected,city) VALUES ($1, $2, $3,$4)',
+        [projectId, associate.name, associate.selected || false,associate.city]
       );      
     }
 
@@ -261,6 +261,27 @@ const Project = {
   user,
 });
 
+const cleanNumeric = (value) => {
+  if (value === null || value === undefined || value === "") return 0;
+  if (typeof value === "number") return value;
+
+  // Remove spaces and thousand separators
+  let clean = value.toString().trim().replace(/\s/g, "");
+
+  // Remove spaces and thousand separators safely
+  // Case 1: European style 1.234,56 → convert to 1234.56
+  if (/,\d{1,2}$/.test(clean))  {
+    clean = clean.replace(/\./g, "").replace(",", ".");
+  }
+  // Case 2: Normal style 1,234.56 → convert to 1234.56
+  else if (/,/.test(clean)) {
+    clean = clean.replace(/,/g, "");
+  }
+
+  const num = parseFloat(clean);
+  return isNaN(num) ? 0 : num;
+};
+
      let project;
   if(user.role === 1 ||user.role==='1'){
         
@@ -283,11 +304,12 @@ const Project = {
     // Delete existing venues
     await pool.query('DELETE FROM venues WHERE project_id = $1', [projectId]);
 
+
     // Insert new venues
     for (const venue of venues) {
       await pool.query(
-        'INSERT INTO venues (project_id, name, currency,rate, budget, selected) VALUES ($1, $2, $3, $4, $5, $6)',
-        [projectId, venue.name, venue.currency, venue.rate, venue.budget, venue.selected || false]
+        'INSERT INTO venues (project_id, name, currency, rate, budget, selected, hotel, rental, av, food, bar) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)',
+        [projectId, venue.name, venue.currency, cleanNumeric(venue.rate),cleanNumeric(venue.budget), venue.selected || false, venue.hotel|| false,venue.rental|| false, venue.av|| false, venue.food|| false, venue.bar|| false]
       );      
     }
 
@@ -680,16 +702,16 @@ updateClient: async (projectId, clients, user) => {
   // Update Roadshow Information only
   updateRoadshowInfo: async (projectId, roadshowData, userId) => {
     
-    //const { roadshow_name, status, city, month, year, associate, budget, associate_graduate_no, embassy_donbear_no } = roadshowData;
+    
     // const { roadshow_name,  city, month, year, associate, budget, associate_graduate_no, embassy_donbear_no } = roadshowData;
 
-     const { roadshow_name,  city, event_date,  budget, project_handiled_by } = roadshowData;
+     const { roadshow_name,  event_date,  budget, project_handiled_by, image_file  } = roadshowData;
     // Check if project exists and user has access
     const project = await pool.query(
       'SELECT id FROM projects WHERE id = $1 AND created_by = $2',
       [projectId, userId]
     );
-//console.log('pronmodel',projectId,JSON.stringify( roadshowData), userId);
+console.log('pronmodel',projectId,JSON.stringify( roadshowData), userId);
     if (project.rows.length === 0) {
       throw new Error('Project not found or access denied');
     }
@@ -705,11 +727,11 @@ updateClient: async (projectId, clients, user) => {
     //  console.log("🟡 Updating project_details...");
       const result = await pool.query(
         `UPDATE project_details 
-         SET roadshow_name = $1,  city = $2,event_date = $3,
-              budget = $4,project_handiled_by=$5,
+         SET roadshow_name = $1, event_date = $2,
+              budget = $3,project_handiled_by=$4,
              updated_at = CURRENT_TIMESTAMP 
-         WHERE project_id = $6 RETURNING *`,
-        [roadshow_name,  city, event_date,  budget,project_handiled_by, projectId]
+         WHERE project_id = $5 RETURNING *`,
+        [roadshow_name,  event_date,  budget,project_handiled_by, projectId]
       );  
      // console.log("✅ Updated project_details:", result.rows[0]);
      // console.log("🟣 Updating projects table...");
@@ -717,18 +739,30 @@ updateClient: async (projectId, clients, user) => {
           `UPDATE projects 
           SET name = $1,
               event_date = $2,
+               image_file = COALESCE($3, image_file),
               updated_at = CURRENT_TIMESTAMP
-          WHERE id = $3`,
-          [roadshow_name, event_date, projectId]
+          WHERE id = $4`,
+          [roadshow_name || '', event_date || null, image_file || null, projectId]
         );
       //   console.log("✅ Updated projects:", result.rows[0]);
       return result.rows[0];
     } else {
       // Insert new
       const result = await pool.query(
-        `INSERT INTO project_details (project_id, roadshow_name,  city, event_date, budget,project_handiled_by) 
-         VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-        [projectId, roadshow_name,  city, event_date,  budget, project_handiled_by]
+        `INSERT INTO project_details (project_id, roadshow_name,   event_date, budget,project_handiled_by) 
+         VALUES ($1, $2, $3, $4) RETURNING *`,
+        [projectId, roadshow_name,   event_date,  budget, project_handiled_by]
+      );
+
+      // ✅ Also update project table for consistency
+      await pool.query(
+        `UPDATE projects 
+         SET name = $1,
+             event_date = $2,
+             image_file = COALESCE($3, image_file),
+             updated_at = CURRENT_TIMESTAMP
+         WHERE id = $4`,
+        [roadshow_name || '', event_date || null, image_file || null, projectId]
       );
       
       return result.rows[0];

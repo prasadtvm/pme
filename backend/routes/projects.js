@@ -23,7 +23,7 @@ router.get('/:id/details', projectController.getProjectDetails);
 router.put('/:id/details', projectController.updateProjectDetails);
 
 // Section update routes
-router.put('/:id/roadshow', projectController.updateRoadshowInfo);
+router.put('/:id/roadshow',upload.uploadProjectImage, projectController.updateRoadshowInfo);
 router.put('/:id/associates', projectController.updateAssociates);
 router.put('/:id/venues', projectController.updateVenues);
 router.put('/:id/trade-database', projectController.updateTradeDatabase);

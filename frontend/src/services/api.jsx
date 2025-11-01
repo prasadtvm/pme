@@ -83,7 +83,10 @@ const token = localStorage.getItem("token");
   // Individual section APIs
 export const projectSectionsAPI = {
   // Roadshow Information //router.put('/:id/roadshow', projectController.updateRoadshowInfo);
-  updateRoadshow: (id, data) => api.put(`/projects/${id}/roadshow`, data),
+  updateRoadshow: (id, formData) => 
+    api.put(`/projects/${id}/roadshow`, formData,{
+          headers: { 'Content-Type': 'multipart/form-data' },
+  }),
 
   // Associates //router.put('/:id/associates', projectController.updateAssociates);
   updateAssociates: (id, associates) => api.put(`/projects/${id}/associates`, { associates }),

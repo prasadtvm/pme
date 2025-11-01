@@ -211,7 +211,28 @@ const projectController = {
       
       const { id } = req.params;
       const userId = req.user.id;
-      const roadshowData = req.body;          
+
+      // ✅ Extract values safely
+    const roadshow_name = req.body.roadshow_name || null;
+    const event_date = req.body.event_date || null;
+    const budget = req.body.budget || null;
+    const project_handiled_by = req.body.project_handiled_by || null;
+
+     // ✅ If Cloudinary uploaded image, get its URL
+    const image_file = req.file ? req.file.path : null;
+
+    // Combine all into one clean object
+    const roadshowData = {
+      roadshow_name,
+      event_date,
+      budget,
+      project_handiled_by,
+      image_file,
+    };
+
+    console.log("🟢 Received roadshow update:", roadshowData);
+      
+      //const roadshowData = req.body;          
 
       const updatedInfo = await Project.updateRoadshowInfo(id, roadshowData, userId);
       
