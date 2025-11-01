@@ -27,7 +27,7 @@ const ProjectDetails = () => {
     project_handiled_by:''
   });
 
-  const [venues, setVenues] = useState([{ name: '', currency: 'INR', rate:'', budget: '', selected: false , hotel:false, rental:false, av:false, food:false, bar:false}]);
+  const [venues, setVenues] = useState([{ name: '', currency: 'INR', rate:'', budget: '', selected: false , venue_rental:false, av:false, food:false, bar:false}]);
  
   const [associates, setAssociates] = useState([{ name: '',city:'',  selected: false }]);
   const [tradeDatabase, setTradeDatabase] = useState([{ trade_name: '', nos: '' }]);
@@ -390,7 +390,7 @@ const fetchRemarks = async () => {
 
   // Venue handlers
   const handleAddVenue = () => {
-    setVenues([...venues, { name: '', currency: 'INR',rate:'', budget: '', selected: false , hotel: false,rental: false, av: false, food: false, bar: false}]);
+    setVenues([...venues, { name: '', currency: 'INR',rate:'', budget: '', selected: false , venue_rental: false, av: false, food: false, bar: false}]);
   };
   const handleVenueChange = (index, field, value) => {
     setVenues(venues.map((v, i) => (i === index ? { ...v, [field]: value } : v)));
@@ -914,8 +914,8 @@ return (
 
         {venues.map((venue, index) => (
           <div
-            key={index}
-            className="grid grid-cols-[1.2fr_0.7fr_0.8fr_0.8fr_auto_auto] gap-3 items-center mb-3 p-3 bg-gray-50 rounded-lg"
+            key={index} 
+            className="grid grid-cols-[1.2fr_1.4fr_0.6fr_0.7fr_0.7fr_auto_auto] gap-3 items-center mb-3 p-3 bg-gray-50 rounded-lg"
           >
             {/* Venue Name */}
             <input
@@ -926,9 +926,9 @@ return (
               className="px-2 py-2 border border-gray-300 rounded-md"
             />
 
-            {/* ✅ Checkboxes Group: Hotel, Rental, AV, Food, Bar */}
+            {/* ✅ Checkboxes Group: Hotel, Rental, AV, Food, Bar 
     <div className="flex flex-wrap gap-2 items-center">
-      {["hotel", "rental", "av", "food", "bar"].map((key) => (
+      {["venue_rental", "av", "food", "bar"].map((key) => (
         <label key={key} className="flex items-center gap-1 text-sm">
           <input
             type="checkbox"
@@ -939,7 +939,28 @@ return (
           {key.charAt(0).toUpperCase() + key.slice(1)}
         </label>
       ))}
-    </div>
+    </div>*/}
+
+   {/* ✅ Compact Checkboxes */}
+<div className="flex flex-row flex-wrap gap-x-3 gap-y-1 items-center justify-start">
+  {[
+    { key: "venue_rental", label: "Venue Rental" },
+    { key: "av", label: "AV" },
+    { key: "food", label: "Food" },
+    { key: "bar", label: "Bar" },
+  ].map(({ key, label }) => (
+    <label key={key} className="flex items-center gap-1 text-sm text-gray-700 whitespace-nowrap">
+      <input
+        type="checkbox"
+        checked={venue[key] || false}
+        onChange={(e) => handleVenueChange(index, key, e.target.checked)}
+        className="accent-blue-600 h-3 w-3"
+      />
+      {label}
+    </label>
+  ))}
+</div>
+
 
             {/* Currency Dropdown */}
             <select

@@ -308,8 +308,8 @@ const cleanNumeric = (value) => {
     // Insert new venues
     for (const venue of venues) {
       await pool.query(
-        'INSERT INTO venues (project_id, name, currency, rate, budget, selected, hotel, rental, av, food, bar) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)',
-        [projectId, venue.name, venue.currency, cleanNumeric(venue.rate),cleanNumeric(venue.budget), venue.selected || false, venue.hotel|| false,venue.rental|| false, venue.av|| false, venue.food|| false, venue.bar|| false]
+        'INSERT INTO venues (project_id, name, currency, rate, budget, selected, venue_rental, av, food, bar) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
+        [projectId, venue.name, venue.currency, cleanNumeric(venue.rate),cleanNumeric(venue.budget), venue.selected || false, venue.venue_rental|| false, venue.av|| false, venue.food|| false, venue.bar|| false]
       );      
     }
 
