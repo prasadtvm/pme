@@ -848,8 +848,8 @@ console.log('pronmodel',projectId,JSON.stringify( roadshowData), userId);
     // Insert new trade database
     for (const trade of tradeDatabase) {
       await pool.query(
-        'INSERT INTO trade_database (project_id, trade_name, nos) VALUES ($1, $2, $3)',
-        [projectId, trade.trade_name, trade.nos]
+        'INSERT INTO trade_database (project_id, trade_name, travel_operator,travel_agent,travel_counsellor,media_influencers) VALUES ($1, $2, $3, $4, $5, $6)',
+        [projectId, trade.trade_name, trade.travel_operator,trade.travel_agent,trade.travel_counsellor,trade.media_influencers]
       );      
     }
 

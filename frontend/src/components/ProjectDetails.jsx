@@ -30,7 +30,8 @@ const ProjectDetails = () => {
   const [venues, setVenues] = useState([{ name: '', currency: 'INR', rate:'', budget: '', selected: false , venue_rental:false, av:false, food:false, bar:false}]);
  
   const [associates, setAssociates] = useState([{ name: '',city:'',  selected: false }]);
-  const [tradeDatabase, setTradeDatabase] = useState([{ trade_name: '', nos: '' }]);
+  const [tradeDatabase, setTradeDatabase] = useState([{ trade_name: '', travel_operator: '' ,travel_agent:'',travel_counsellor:'',media_influencers:''}]); 
+       
   const [rsvp, setRsvp] = useState([{ 
     save_the_date: '',
     save_the_date_confirmation_date: '',
@@ -1067,11 +1068,12 @@ return (
           + Add Venue
         </button>
       </div>
-{/*Database Section*/}  
-<div id="database" className="section-container">
+
+
+  <div id="database" className="section-container">
   {/* Header */}
   <div className="flex justify-between items-center mb-5">
-    <h2 className="text-xl font-semibold text-slate-800">Database</h2>
+    <h2 className="text-xl font-semibold text-slate-800">Trade Database</h2>
     <button
       onClick={saveTradeDatabase}
       disabled={saving === 'trade'}
@@ -1083,12 +1085,20 @@ return (
 
   {/* Database Rows */}
   <div className="space-y-3">
-    {tradeDatabase.map((trade, index) => (
-      <div
-        key={index}
-        className="grid grid-cols-1 md:grid-cols-[2fr_1fr_auto] gap-3 items-center p-3 bg-gray-50 rounded-lg border border-gray-200"
-      >
-        {/* Trade Name */}
+    {tradeDatabase.map((trade, index) => {
+      const categoryTotal = 
+        (Number(trade.travel_operator) || 0) +
+        (Number(trade.travel_agent) || 0) +
+        (Number(trade.travel_counsellor) || 0) +
+        (Number(trade.media_influencers) || 0);
+
+      return (
+        <div
+          key={index}
+          className="grid grid-cols-1 md:grid-cols-[2fr_repeat(4,1fr)_auto] gap-3 items-center p-3 bg-gray-50 rounded-lg border border-gray-200"
+        >
+          {/* Trade Name */}
+           
         <input
           type="text"
           placeholder="Trade Name"
@@ -1096,45 +1106,95 @@ return (
           onChange={(e) => handleTradeChange(index, 'trade_name', e.target.value)}
           className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
+          {/* Travel Operator */}
+          <input
+            type="number"
+            placeholder="Operator"
+            value={trade.travel_operator}
+            onChange={(e) => handleTradeChange(index, 'travel_operator', e.target.value)}
+            className="p-2 border border-gray-300 rounded-md"
+          />
 
-        {/* Nos */}
-        <input
-          type="number"
-          placeholder="Nos"
-          value={trade.nos}
-          onChange={(e) => handleTradeChange(index, 'nos', e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        />
+          {/* Travel Agent */}
+          <input
+            type="number"
+            placeholder="Agent"
+            value={trade.travel_agent}
+            onChange={(e) => handleTradeChange(index, 'travel_agent', e.target.value)}
+            className="p-2 border border-gray-300 rounded-md"
+          />
 
-        {/* Delete Button */}
-        {tradeDatabase.length > 1 && (
-          <button
-            type="button"
-            onClick={() => handleRemoveTrade(index)}
-            title="Remove"
-            className="ml-auto p-1.5 text-red-600 hover:text-red-800 transition"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          {/* Counsellor */}
+          <input
+            type="number"
+            placeholder="Counsellor"
+            value={trade.travel_counsellor}
+            onChange={(e) => handleTradeChange(index, 'travel_counsellor', e.target.value)}
+            className="p-2 border border-gray-300 rounded-md"
+          />
+
+          {/* Media_influencers */}
+          <input
+            type="number"
+            placeholder="Media / Influencer"
+            value={trade.media_influencers}
+            onChange={(e) => handleTradeChange(index, 'media_influencers', e.target.value)}
+            className="p-2 border border-gray-300 rounded-md"
+          />
+
+          {/* Category Total */}
+          <div className="font-semibold text-center text-slate-800">
+            {categoryTotal}
+          </div>
+
+          {/* Delete Button (optional) */}
+          {tradeDatabase.length > 1 && (
+            <button
+              onClick={() => handleRemoveTrade(index)}
+              title="Remove"
+              className="ml-auto p-1.5 text-red-600 hover:text-red-800 transition"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-              />
-            </svg>
-          </button>
-        )}
-      </div>
-    ))}
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
+            </button>
+          )}
+        </div>
+      );
+    })}
   </div>
 
-  {/* Add Button */}
+  {/* Grand Total */}
+  <div className="grid grid-cols-[2fr_repeat(4,1fr)_auto] gap-3 items-center mt-5 p-3 bg-gray-200 rounded-lg font-semibold text-slate-900">
+      <div>Column Totals →</div>
+  <div>
+    {tradeDatabase.reduce((sum, t) => sum + (Number(t.travel_operator) || 0), 0)}
+  </div>
+  <div>
+    {tradeDatabase.reduce((sum, t) => sum + (Number(t.travel_agent) || 0), 0)}
+  </div>
+  <div>
+    {tradeDatabase.reduce((sum, t) => sum + (Number(t.travel_counsellor) || 0), 0)}
+  </div>
+  <div>
+    {tradeDatabase.reduce((sum, t) => sum + (Number(t.media_influencer) || 0), 0)}
+  </div>
+     <div className="text-right">
+   
+    {
+      tradeDatabase.reduce(
+        (sum, t) =>
+          sum +
+          (Number(t.travel_operator) || 0) +
+          (Number(t.travel_agent) || 0) +
+          (Number(t.travel_counsellor) || 0) +
+          (Number(t.media_influencers) || 0),
+        0
+      )
+    }
+  </div>
+  </div>
+    {/* Add Button */}
   <button
     type="button"
     onClick={handleAddTrade}
@@ -1143,6 +1203,12 @@ return (
     + Add Trade
   </button>
 </div>
+
+
+
+
+
+
 {/*RSVP SECTION right total of ta..etc Total Readonly totla of ta to etc.. RSVP1 ->add image for main invitation-> save the date remove confirm date singe save ->remove main inviation RSVP2 multiple of main invitation remove confim date*/}    
      <div id="rsvp" className="section-container">
   <div className="section-header">
@@ -1224,7 +1290,7 @@ return (
         />
       </div>
 
-      <div>
+      <div style={{ display: item.save_the_date_confirmation_date ? 'none' : 'block' }}>
         <label className="block text-sm text-gray-600 mb-1">Confirmation Date</label>
         <input
           type="date"
@@ -1425,51 +1491,61 @@ return (
       <label className="block mb-1 font-medium text-slate-700">Backdrop</label>
       <input
         type="text"
+        placeholder="Size 100cm * 150cm"
         value={avSetup.backdrop}
         onChange={(e) => setAvSetup({ ...avSetup, backdrop: e.target.value })}
         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       />
     </div>
-
+    <div>Design Image upload</div>
     <div>
       <label className="block mb-1 font-medium text-slate-700">Screen</label>
       <input
         type="text"
+        placeholder="Size 100cm * 150cm"
         value={avSetup.screen}
         onChange={(e) => setAvSetup({ ...avSetup, screen: e.target.value })}
         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       />
     </div>
-
+    <div>Screen Image upload</div>
     <div>
       <label className="block mb-1 font-medium text-slate-700">Mic</label>
       <input
-        type="text"
+        type="number"
+        placeholder="No of Mics"
         value={avSetup.mic}
         onChange={(e) => setAvSetup({ ...avSetup, mic: e.target.value })}
         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       />
     </div>
-
+    <div>
+      <label className="block mb-1 font-medium text-slate-700">Type</label>
+       Textbox text value</div>
     <div>
       <label className="block mb-1 font-medium text-slate-700">Projector</label>
-      <input
+       <div>Projector Checkbox</div>
+     {/* <input
         type="text"
+        Placeholder="Projector Checkbox"
         value={avSetup.projector}
         onChange={(e) => setAvSetup({ ...avSetup, projector: e.target.value })}
         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-      />
+      />*/}
     </div>
 
     <div>
       <label className="block mb-1 font-medium text-slate-700">Stage</label>
-      <input
+       <div>Stage Image upload</div>
+        {/* <input
         type="text"
+        Placeholder="Upload Stage Image"
         value={avSetup.stage}
         onChange={(e) => setAvSetup({ ...avSetup, stage: e.target.value })}
         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-      />
+      />*/}
     </div>
+     <div>Podium Checkbox</div>
   </div>
 </div>
 
