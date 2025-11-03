@@ -391,7 +391,10 @@ const fetchRemarks = async () => {
 
   // Venue handlers
   const handleAddVenue = () => {
-    setVenues([...venues, { name: '', currency: 'INR',rate:'', budget: '', selected: false , venue_rental: false, av: false, food: false, bar: false}]);
+    setVenues([...venues, { name: '', currency: 'INR',rate: '',
+      rateInput: '',
+      budget: '',
+      budgetInput: '', selected: false , venue_rental: false, av: false, food: false, bar: false}]);
   };
   const handleVenueChange = (index, field, value) => {
     setVenues(venues.map((v, i) => (i === index ? { ...v, [field]: value } : v)));
@@ -400,25 +403,16 @@ const fetchRemarks = async () => {
     setVenues(venues.filter((_, i) => i !== index));
   };
 
-  const parseNumberInput = (value, currency) => {
+  const parseNumberInput = (value, currency) => { 
+  
   if (!value) return "";
 
   // Remove spaces
-  let v = value.replace(/\s/g, "");
+  let v = value.toString().trim();
 
-  // For European locales (EUR → comma = decimal, dot = thousand)
   if (currency === "EUR") {
-    // Convert 1.234,56 → 1234.56
     v = v.replace(/\./g, "").replace(",", ".");
-  }
-
-  // For GBP → same as INR (comma = thousand, dot = decimal)
-  else if (currency === "GBP") {
-    v = v.replace(/,/g, "");
-  }
-
-  // For INR → remove commas (since they’re thousand separators)
-  else if (currency === "INR") {
+  } else {
     v = v.replace(/,/g, "");
   }
 const num = parseFloat(v);
@@ -978,48 +972,40 @@ return (
             <input className="px-2 py-2 border border-gray-300 rounded-md text-right"
               type="text"
               placeholder="Rate"
-              value={
-                venue.rate
-                ? Number(venue.rate).toLocaleString(
-        venue.currency === "INR"
-          ? "en-IN"
-          : venue.currency === "EUR"
-          ? "de-DE"
-          : "en-GB",
-        { minimumFractionDigits: 2, maximumFractionDigits: 2 } // ✅ keeps 2 decimals visible
+               value={venue.rateInput}
+  onChange={(e) => {
+    const input = e.target.value;
+
+    // Update both "rateInput" (for display) and "rate" (for backend)
+    const parsed = parseNumberInput(input, venue.currency);
+
+    setVenues((prev) =>
+      prev.map((v, i) =>
+        i === index
+          ? { ...v, rateInput: input, rate: parsed }
+          : v
       )
-    : ""
-              }
-               onChange={(e) =>
-              handleVenueChange(
-                index,
-                "rate",
-                parseNumberInput(e.target.value, venue.currency)
-              )
-            }              
+    );
+  }}          
             />
 
             {/* Budget */}
             <input className="px-2 py-2 border border-gray-300 rounded-md text-right"
               type="text"
               placeholder="Budget"
-              value={venue.budget
-                ? Number(venue.budget).toLocaleString(
-          venue.currency === "INR"
-          ? "en-IN"
-          : venue.currency === "EUR"
-          ? "de-DE"
-          : "en-GB",
-        { minimumFractionDigits: 2, maximumFractionDigits: 2 } // ✅ keeps 2 decimals visible
+             value={venue.budgetInput}
+  onChange={(e) => {
+    const input = e.target.value;
+    const parsed = parseNumberInput(input, venue.currency);
+
+    setVenues((prev) =>
+      prev.map((v, i) =>
+        i === index
+          ? { ...v, budgetInput: input, budget: parsed }
+          : v
       )
-    : ""
-              }
-              onChange={(e) =>
-              handleVenueChange(
-              index,
-              "budget", parseNumberInput(e.target.value, venue.currency)
-              )
-            }              
+    );
+  }}         
             />
 
             {/* Select Checkbox */}
@@ -1473,81 +1459,151 @@ return (
 </div>
 
       {/* 1)AV & Setting up Section @2Hotel supe name  */}
-      <div id="av" className="section-container">
+<div id="av" className="section-container">
   {/* Header */}
   <div className="flex justify-between items-center mb-5">
     <h2 className="text-xl font-semibold text-slate-800">Hotel AV Setup</h2>
     <button
       onClick={saveAVSetup}
       disabled={saving === 'av'}
-      className={`action-button ${saving === "av" ? "opacity-50 cursor-not-allowed" : ""}`}      
+      className={`action-button ${saving === 'av' ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
       {saving === 'av' ? 'Saving...' : 'Save Hotel AV Setup'}
     </button>
   </div>
-  {/* Form Grid */}
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+  {/* === LINE 1: Backdrop + Screen === */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    {/* Backdrop Section */}
     <div>
       <label className="block mb-1 font-medium text-slate-700">Backdrop</label>
       <input
         type="text"
-        placeholder="Size 100cm * 150cm"
-        value={avSetup.backdrop}
+        placeholder="Size 150cm * 100cm"
+        maxLength={20}
+        value={avSetup.backdrop || ''}
         onChange={(e) => setAvSetup({ ...avSetup, backdrop: e.target.value })}
         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       />
+      <div className="mt-2">
+        <label className="block text-sm font-medium text-gray-600">Upload Backdrop Design (optional)</label>
+        <input
+          type="file"
+          accept=".jpg,.jpeg,.png"
+          onChange={(e) => setAvSetup({ ...avSetup, backdropImage: e.target.files[0] })}
+          className="mt-1 w-full text-sm text-gray-700 border border-gray-300 rounded-md cursor-pointer focus:outline-none"
+        />
+        {avSetup.backdropImage && (
+          <img
+            src={URL.createObjectURL(avSetup.backdropImage)}
+            alt="Backdrop Preview"
+            className="mt-2 rounded-md border border-gray-200 h-24 object-contain"
+          />
+        )}
+      </div>
     </div>
-    <div>Design Image upload</div>
+
+    {/* Screen Section */}
     <div>
       <label className="block mb-1 font-medium text-slate-700">Screen</label>
       <input
         type="text"
-        placeholder="Size 100cm * 150cm"
-        value={avSetup.screen}
+        placeholder="Size 150cm * 150cm"
+        maxLength={20}
+        value={avSetup.screen || ''}
         onChange={(e) => setAvSetup({ ...avSetup, screen: e.target.value })}
         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       />
+      <div className="mt-2">
+        <label className="block text-sm font-medium text-gray-600">Upload Screen Image (optional)</label>
+        <input
+          type="file"
+          accept=".jpg,.jpeg,.png"
+          onChange={(e) => setAvSetup({ ...avSetup, screenImage: e.target.files[0] })}
+          className="mt-1 w-full text-sm text-gray-700 border border-gray-300 rounded-md cursor-pointer focus:outline-none"
+        />
+        {avSetup.screenImage && (
+          <img
+            src={URL.createObjectURL(avSetup.screenImage)}
+            alt="Screen Preview"
+            className="mt-2 rounded-md border border-gray-200 h-24 object-contain"
+          />
+        )}
+      </div>
     </div>
-    <div>Screen Image upload</div>
+  </div>
+
+  {/* === LINE 2: Mic, Type, Projector, Podium, Stage === */}
+  <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+    {/* Mic */}
     <div>
-      <label className="block mb-1 font-medium text-slate-700">Mic</label>
+      <label className="block mb-1 font-medium text-slate-700">Mic (Nos)</label>
       <input
         type="number"
-        placeholder="No of Mics"
-        value={avSetup.mic}
+        placeholder="e.g. 10"
+        min="0"
+        max="999"
+        value={avSetup.mic || ''}
         onChange={(e) => setAvSetup({ ...avSetup, mic: e.target.value })}
         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       />
     </div>
+
+    {/* Type */}
     <div>
       <label className="block mb-1 font-medium text-slate-700">Type</label>
-       Textbox text value</div>
-    <div>
-      <label className="block mb-1 font-medium text-slate-700">Projector</label>
-       <div>Projector Checkbox</div>
-     {/* <input
+      <input
         type="text"
-        Placeholder="Projector Checkbox"
-        value={avSetup.projector}
-        onChange={(e) => setAvSetup({ ...avSetup, projector: e.target.value })}
+        placeholder="Type (max 20 chars)"
+        maxLength={20}
+        value={avSetup.type || ''}
+        onChange={(e) => setAvSetup({ ...avSetup, type: e.target.value })}
         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-      />*/}
+      />
     </div>
 
+    {/* Projector */}
+    <div className="flex items-center gap-2 mt-6">
+      <input
+        type="checkbox"
+        checked={avSetup.projector || false}
+        onChange={(e) => setAvSetup({ ...avSetup, projector: e.target.checked })}
+        className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+      />
+      <label className="text-slate-700">Projector</label>
+    </div>
+
+    {/* Podium */}
+    <div className="flex items-center gap-2 mt-6">
+      <input
+        type="checkbox"
+        checked={avSetup.podium || false}
+        onChange={(e) => setAvSetup({ ...avSetup, podium: e.target.checked })}
+        className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+      />
+      <label className="text-slate-700">Podium</label>
+    </div>
+
+    {/* Stage Image */}
     <div>
       <label className="block mb-1 font-medium text-slate-700">Stage</label>
-       <div>Stage Image upload</div>
-        {/* <input
-        type="text"
-        Placeholder="Upload Stage Image"
-        value={avSetup.stage}
-        onChange={(e) => setAvSetup({ ...avSetup, stage: e.target.value })}
-        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-      />*/}
+      <input
+        type="file"
+        accept=".jpg,.jpeg,.png"
+        onChange={(e) => setAvSetup({ ...avSetup, stageImage: e.target.files[0] })}
+        className="w-full text-sm text-gray-700 border border-gray-300 rounded-md cursor-pointer focus:outline-none"
+      />
+      {avSetup.stageImage && (
+        <img
+          src={URL.createObjectURL(avSetup.stageImage)}
+          alt="Stage Preview"
+          className="mt-2 rounded-md border border-gray-200 h-24 object-contain"
+        />
+      )}
     </div>
-     <div>Podium Checkbox</div>
   </div>
 </div>
+
 
  {/* Hotel av supplier Section */}
       <div id="av_supplier" className="section-container">
