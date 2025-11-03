@@ -1683,7 +1683,7 @@ return (
  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
     {/* Accommodation Contact */}
     <div>
-      <label className="block mb-1 font-medium text-gray-700">Accommodation Contact Name</label>
+      <label className="block mb-1 font-medium text-gray-700">Accommodation Contact</label>
       <input
         type="text"  placeholder="Contact Name"
         value={embassy.accommodation_contact || ''}
