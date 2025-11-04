@@ -27,7 +27,9 @@ const ProjectDetails = () => {
     project_handiled_by:''
   });
 
-  const [venues, setVenues] = useState([{ name: '', currency: 'INR', rate:'', budget: '', selected: false , venue_rental:false, av:false, food:false, bar:false}]);
+  const [venues, setVenues] = useState([{ name: '', currency: 'INR', rate: '', rateInput:'',     
+      budget: '', bugetInput:'',
+       selected: false , venue_rental:false, av:false, food:false, bar:false}]);
  
   const [associates, setAssociates] = useState([{ name: '',city:'',  selected: false }]);
   const [tradeDatabase, setTradeDatabase] = useState([{ trade_name: '', travel_operator: '' ,travel_agent:'',travel_counsellor:'',media_influencers:''}]); 
@@ -391,10 +393,9 @@ const fetchRemarks = async () => {
 
   // Venue handlers
   const handleAddVenue = () => {
-    setVenues([...venues, { name: '', currency: 'INR',rate: '',
-      rateInput: '',
-      budget: '',
-      budgetInput: '', selected: false , venue_rental: false, av: false, food: false, bar: false}]);
+    setVenues([...venues, { name: '', currency: 'INR',rate: '',    rateInput:'',  
+      budget: '',  budgetInput:'',
+      selected: false , venue_rental: false, av: false, food: false, bar: false}]);
   };
   const handleVenueChange = (index, field, value) => {
     setVenues(venues.map((v, i) => (i === index ? { ...v, [field]: value } : v)));
@@ -404,20 +405,39 @@ const fetchRemarks = async () => {
   };
 
   const parseNumberInput = (value, currency) => { 
-  
   if (!value) return "";
-
-  // Remove spaces
   let v = value.toString().trim();
-
   if (currency === "EUR") {
     v = v.replace(/\./g, "").replace(",", ".");
   } else {
     v = v.replace(/,/g, "");
   }
-const num = parseFloat(v);
+  const num = parseFloat(v);
   return isNaN(num) ? "" : num;
 };
+
+const formatNumberOutput = (value, currency) => {
+  if (value === null || value === undefined || value === "") return "";
+
+  const num = Number(value);
+  if (isNaN(num)) return "";
+
+  // Use locale formatting rules
+  return num.toLocaleString(
+    currency === "INR"
+      ? "en-IN"
+      : currency === "EUR"
+      ? "de-DE" // Euro format: 1.234,56
+      : "en-GB", // Pound: 1,234.56
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }
+  );
+};
+
+
+
 
   // Trade handlers
   const handleAddTrade = () => {
@@ -921,22 +941,10 @@ return (
               className="px-2 py-2 border border-gray-300 rounded-md"
             />
 
-            {/* ✅ Checkboxes Group: Hotel, Rental, AV, Food, Bar 
-    <div className="flex flex-wrap gap-2 items-center">
-      {["venue_rental", "av", "food", "bar"].map((key) => (
-        <label key={key} className="flex items-center gap-1 text-sm">
-          <input
-            type="checkbox"
-            checked={venue[key] || false}
-            onChange={(e) => handleVenueChange(index, key, e.target.checked)}
-            className="accent-blue-600"
-          />
-          {key.charAt(0).toUpperCase() + key.slice(1)}
-        </label>
-      ))}
-    </div>*/}
+        
 
    {/* ✅ Compact Checkboxes */}
+{/* Checkbox group */}
 <div className="flex flex-row flex-wrap gap-x-3 gap-y-1 items-center justify-start">
   {[
     { key: "venue_rental", label: "Venue Rental" },
@@ -944,7 +952,10 @@ return (
     { key: "food", label: "Food" },
     { key: "bar", label: "Bar" },
   ].map(({ key, label }) => (
-    <label key={key} className="flex items-center gap-1 text-sm text-gray-700 whitespace-nowrap">
+    <label
+      key={key}
+      className="flex items-center gap-1 text-sm text-gray-700 whitespace-nowrap"
+    >
       <input
         type="checkbox"
         checked={venue[key] || false}
@@ -956,57 +967,78 @@ return (
   ))}
 </div>
 
-
-            {/* Currency Dropdown */}
-            <select
-              value={venue.currency || "INR"}
-              onChange={(e) => handleVenueChange(index, "currency", e.target.value)}
-              className="px-2 py-2 border border-gray-300 rounded-md"
-            >
-              <option value="INR">INR</option>
-              <option value="EUR">Euro</option>
-              <option value="GBP">Pound</option>
-            </select>
-
-            {/* Rate */}
-            <input className="px-2 py-2 border border-gray-300 rounded-md text-right"
-              type="text"
-              placeholder="Rate"
-               value={venue.rateInput}
+{/* Currency Dropdown */}
+<select
+  value={venue.currency || "INR"}
   onChange={(e) => {
-    const input = e.target.value;
+    const newCurrency = e.target.value;
+    handleVenueChange(index, "currency", newCurrency);
 
-    // Update both "rateInput" (for display) and "rate" (for backend)
-    const parsed = parseNumberInput(input, venue.currency);
-
-    setVenues((prev) =>
-      prev.map((v, i) =>
-        i === index
-          ? { ...v, rateInput: input, rate: parsed }
-          : v
-      )
+    // ✅ Reformat displayed rate/budget when currency changes
+    handleVenueChange(
+      index,
+      "rateInput",
+      formatNumberOutput(venue.rate, newCurrency)
     );
-  }}          
-            />
-
-            {/* Budget */}
-            <input className="px-2 py-2 border border-gray-300 rounded-md text-right"
-              type="text"
-              placeholder="Budget"
-             value={venue.budgetInput}
-  onChange={(e) => {
-    const input = e.target.value;
-    const parsed = parseNumberInput(input, venue.currency);
-
-    setVenues((prev) =>
-      prev.map((v, i) =>
-        i === index
-          ? { ...v, budgetInput: input, budget: parsed }
-          : v
-      )
+    handleVenueChange(
+      index,
+      "budgetInput",
+      formatNumberOutput(venue.budget, newCurrency)
     );
-  }}         
-            />
+  }}
+  className="px-2 py-2 border border-gray-300 rounded-md"
+>
+  <option value="INR">INR</option>
+  <option value="EUR">Euro</option>
+  <option value="GBP">Pound</option>
+</select>
+
+{/* Rate Input */}
+<input
+  type="text"
+  placeholder="Rate"
+  value={
+    venue.rateInput !== undefined && venue.rateInput !== ""
+      ? venue.rateInput
+      : formatNumberOutput(venue.rate, venue.currency)
+  }
+  onChange={(e) => handleVenueChange(index, "rateInput", e.target.value)}
+  onBlur={(e) => {
+    const parsed = parseNumberInput(e.target.value, venue.currency);
+    handleVenueChange(index, "rate", parsed);
+    handleVenueChange(
+      index,
+      "rateInput",
+      formatNumberOutput(parsed, venue.currency)
+    );
+  }}
+  className="px-2 py-2 border border-gray-300 rounded-md text-right"
+/>
+
+{/* Budget Input */}
+<input
+  type="text"
+  placeholder="Budget"
+  value={
+    venue.budgetInput !== undefined && venue.budgetInput !== ""
+      ? venue.budgetInput
+      : formatNumberOutput(venue.budget, venue.currency)
+  }
+  onChange={(e) => handleVenueChange(index, "budgetInput", e.target.value)}
+  onBlur={(e) => {
+    const parsed = parseNumberInput(e.target.value, venue.currency);
+    handleVenueChange(index, "budget", parsed);
+    handleVenueChange(
+      index,
+      "budgetInput",
+      formatNumberOutput(parsed, venue.currency)
+    );
+  }}
+  className="px-2 py-2 border border-gray-300 rounded-md text-right"
+/>
+
+
+            
 
             {/* Select Checkbox */}
             <div className="flex items-center gap-2">
@@ -1163,7 +1195,7 @@ return (
     {tradeDatabase.reduce((sum, t) => sum + (Number(t.travel_counsellor) || 0), 0)}
   </div>
   <div>
-    {tradeDatabase.reduce((sum, t) => sum + (Number(t.media_influencer) || 0), 0)}
+    {tradeDatabase.reduce((sum, t) => sum + (Number(t.media_influencers) || 0), 0)}
   </div>
      <div className="text-right">
    

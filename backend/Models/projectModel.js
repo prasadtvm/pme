@@ -819,11 +819,33 @@ console.log('pronmodel',projectId,JSON.stringify( roadshowData), userId);
     // Delete existing venues
     await pool.query('DELETE FROM venues WHERE project_id = $1', [projectId]);
 
+const cleanNumeric = (value) => {
+  if (value === null || value === undefined || value === "") return 0;
+  if (typeof value === "number") return value;
+
+  // Remove spaces and thousand separators
+  let clean = value.toString().trim().replace(/\s/g, "");
+
+  // Remove spaces and thousand separators safely
+  // Case 1: European style 1.234,56 → convert to 1234.56
+  if (/,\d{1,2}$/.test(clean))  {
+    clean = clean.replace(/\./g, "").replace(",", ".");
+  }
+  // Case 2: Normal style 1,234.56 → convert to 1234.56
+  else if (/,/.test(clean)) {
+    clean = clean.replace(/,/g, "");
+  }
+
+  const num = parseFloat(clean);
+  return isNaN(num) ? 0 : num;
+};
+
+
     // Insert new venues
     for (const venue of venues) {
       await pool.query(
         'INSERT INTO venues (project_id, name, currency,rate, budget, selected) VALUES ($1, $2, $3, $4, $5, $6)',
-        [projectId, venue.name, venue.currency,venue.rate, venue.budget, venue.selected || false]
+        [projectId, venue.name, venue.currency,cleanNumeric(venue.rate), cleanNumeric(venue.budget), venue.selected || false]
       );       
     }
 
