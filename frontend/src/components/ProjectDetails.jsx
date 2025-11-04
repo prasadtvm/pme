@@ -1771,7 +1771,7 @@ return (
       />
       <input
         type="number"
-        placeholder="Media Influencer"
+        placeholder="Media / Influence"
         value={saveDate.media || ""}
         onChange={(e) => handleSaveDateChange("media", e.target.value)}
         className="form-input"
