@@ -567,14 +567,14 @@ updateClient: async (projectId, clients, user) => {
       throw new Error('Project not found or access denied');
     }
 
-    // Delete existing associates
+    // Delete existing clients
     await pool.query('DELETE FROM client WHERE project_id = $1', [projectId]);
 
-    // Insert new associates
-    for (const associate of associates) {
+    // Insert new client
+    for (const client of clients) {
       await pool.query(
-        'INSERT INTO client (project_id, name,  selected) VALUES ($1, $2, $3)',
-        [projectId, associate.name,  associate.selected || false]
+        'INSERT INTO client (project_id, name, designation, contact, hotel) VALUES ($1, $2, $3, $4, $5)',
+        [projectId, client.name, client.designation, client.contact, client.hotel]
       );      
     }
 
@@ -1095,9 +1095,9 @@ const cleanNumeric = (value) => {
   // ✅ Insert all new clients
   for (const client of clients) {
     await pool.query(
-      `INSERT INTO client (project_id, name, hotel, address)
-       VALUES ($1, $2, $3, $4)`,
-      [projectId, client.name, client.hotel, client.address]
+      `INSERT INTO client (project_id, name, designation, contact, hotel)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [projectId, client.name, client.designation, client.contact,client.hotel]
     );
   }
 

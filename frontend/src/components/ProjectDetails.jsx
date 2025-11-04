@@ -16,6 +16,70 @@ const ProjectDetails = () => {
   const [message, setMessage] = useState('');
   const [remarks, setRemarks] = useState([]);
  const UPLOAD_BACK_URL = `${import.meta.env.VITE_UPLOAD_BACK_URL?.replace(/\/$/, '')}` || 'http://localhost:5000';
+
+ const [saveDate, setSaveDate] = useState({ date: "", ta: 0, tc: 0, to: 0, media: 0, total: 0 });
+const [mainInvites, setMainInvites] = useState([{ date: "", ta: 0, tc: 0, to: 0, media: 0, total: 0 }]);
+const [totals, setTotals] = useState({ ta: 0, tc: 0, to: 0, media: 0 });
+const [saveTheDateImage, setSaveTheDateImage] = useState(null);
+const [saveTheDateImageURL, setSaveTheDateImageURL] = useState("");
+const [mainInviteImage, setMainInviteImage] = useState(null);
+const [mainInviteImageURL, setMainInviteImageURL] = useState("");
+
+const [columnTotals, setColumnTotals] = useState({
+  ta: 0,
+  tc: 0,
+  to: 0,
+  media: 0,
+  total: 0,
+});
+const handleSaveDateChange = (field, value) => {
+  const updated = { ...saveDate, [field]: Number(value) || 0 };
+  updated.total = updated.ta + updated.tc + updated.to + updated.media;
+  setSaveDate(updated);
+  updateTotals(updated, mainInvites);
+};
+
+const handleMainInviteChange = (index, field, value) => {
+
+  const updatedInvites = mainInvites.map((invite, i) =>
+    i === index ? { ...invite, [field]: Number(value) || 0 } : invite
+  );
+  updatedInvites[index].total =
+    updatedInvites[index].ta + updatedInvites[index].tc + updatedInvites[index].to + updatedInvites[index].media;
+  setMainInvites(updatedInvites);
+  updateTotals(saveDate, updatedInvites);
+};
+
+// Compute Column Totals (like in your DB)
+const updateColumnTotals = (invites) => {
+  const totals = { ta: 0, tc: 0, to: 0, media: 0, total: 0 };
+  invites.forEach((invite) => {
+    totals.ta += Number(invite.ta || 0);
+    totals.tc += Number(invite.tc || 0);
+    totals.to += Number(invite.to || 0);
+    totals.media += Number(invite.media || 0);
+    totals.total += Number(invite.total || 0);
+  });
+  setColumnTotals(totals);
+};
+
+const addMainInvite = () =>
+  setMainInvites([...mainInvites, { date: "", ta: 0, tc: 0, to: 0, media: 0, total: 0 }]);
+
+const removeMainInvite = (index) =>
+  setMainInvites(mainInvites.filter((_, i) => i !== index));
+
+const updateTotals = (saveDate, mainInvites) => {
+  const totals = { ta: saveDate.ta, tc: saveDate.tc, to: saveDate.to, media: saveDate.media };
+  mainInvites.forEach((invite) => {
+    totals.ta += invite.ta;
+    totals.tc += invite.tc;
+    totals.to += invite.to;
+    totals.media += invite.media;
+  });
+  setTotals(totals);
+};
+
   // Core project details
   const [details, setDetails] = useState({
     roadshowName: '',   
@@ -69,11 +133,7 @@ const ProjectDetails = () => {
     accommodation_phone:''
   });
 
-  const [clients, setClients] = useState({
-    name: '',
-    hotel: '',
-    address: ''
-  });
+  const [clients, setClients] = useState({name: '',designation:'', contact:'',hotel:''});
 const [checklists, setChecklists] = useState([{ name: '',  selected: false }]);
 const [menuFile, setMenuFile] = useState({
     fileName: '',
@@ -107,7 +167,11 @@ const [menuFile, setMenuFile] = useState({
       alert("Project creation failed: " + (err.response?.data?.error || err.message));
     }
   };
-
+  
+  // Initialize on mount
+useEffect(() => {
+  updateColumnTotals(mainInvites);
+}, [mainInvites]);
   // Fetch details
   useEffect(() => {
     const fetchProjectDetails = async () => {
@@ -293,7 +357,19 @@ const fetchRemarks = async () => {
     setSaving('');
   }
 };
+const saveMainInvites =async() =>{
+  try {
+    setSaving('main invites');
+    showMessage('main invites successfully!');
+    //Impliement APi call here
+  } catch (e) {
+    console.error(e);
+    alert('Failed to save main invites');
+  } finally {
+    setSaving('');
+  }
 
+};
 
   const saveAVSetup = async () => {
     try {
@@ -463,7 +539,7 @@ const formatNumberOutput = (value, currency) => {
 
   // Client handlers
   const handleAddClient = () => {
-    setClients([...clients, { name: '',hotel:'', address:'' }]);
+    setClients([...clients, { name: '',designation:'', contact:'',hotel:'' }]);
   };
   const handleClientChange = (index, field, value) => {
     setClients(clients.map((v, i) => (i === index ? { ...v, [field]: value } : v)));
@@ -739,6 +815,7 @@ return (
                 alt={details.roadshowName}
                 style={{
                   width: "220px",
+                  display:"none",
                   height: "190px",
                   objectFit: "cover",
                   borderRadius: "6px",
@@ -1127,7 +1204,7 @@ return (
           {/* Travel Operator */}
           <input
             type="number"
-            placeholder="Operator"
+            placeholder="Travel Operator"
             value={trade.travel_operator}
             onChange={(e) => handleTradeChange(index, 'travel_operator', e.target.value)}
             className="p-2 border border-gray-300 rounded-md"
@@ -1136,7 +1213,7 @@ return (
           {/* Travel Agent */}
           <input
             type="number"
-            placeholder="Agent"
+            placeholder="Travel Agent"
             value={trade.travel_agent}
             onChange={(e) => handleTradeChange(index, 'travel_agent', e.target.value)}
             className="p-2 border border-gray-300 rounded-md"
@@ -1145,16 +1222,16 @@ return (
           {/* Counsellor */}
           <input
             type="number"
-            placeholder="Counsellor"
+            placeholder="Counselor"
             value={trade.travel_counsellor}
             onChange={(e) => handleTradeChange(index, 'travel_counsellor', e.target.value)}
             className="p-2 border border-gray-300 rounded-md"
           />
 
-          {/* Media_influencers */}
+          {/* Media_influencers */} 
           <input
             type="number"
-            placeholder="Media / Influencer"
+            placeholder="Media / Influence"
             value={trade.media_influencers}
             onChange={(e) => handleTradeChange(index, 'media_influencers', e.target.value)}
             className="p-2 border border-gray-300 rounded-md"
@@ -1227,7 +1304,7 @@ return (
 
 
 
-{/*RSVP SECTION right total of ta..etc Total Readonly totla of ta to etc.. RSVP1 ->add image for main invitation-> save the date remove confirm date singe save ->remove main inviation RSVP2 multiple of main invitation remove confim date*/}    
+{/*RSVP SECTION right total of ta..etc Total Readonly totla of ta to etc.. RSVP1 ->add image for main invitation-> save the date remove confirm date singe save ->remove main inviation RSVP2 multiple of main invitation remove confim date   
      <div id="rsvp" className="section-container">
   <div className="section-header">
     <h2 className="section-title">RSVP</h2>
@@ -1240,7 +1317,7 @@ return (
     </button>
   </div>
 
-  {/*File Upload  href={`http://localhost:5000/uploads/rsvp/${invitationFile}`}*/}
+  {/*File Upload  href={`http://localhost:5000/uploads/rsvp/${invitationFile}`}
   <div className="form-group">
     <label className="block font-medium text-gray-700">Invitation Design File</label>
     <input type="file" onChange={(e) => setInvitationFile(e.target.files[0])} />
@@ -1293,9 +1370,9 @@ return (
     </svg>
         </button>
       )}
-    </div>
+    </div>*/}
 
-    {/* Save The Date Section */}
+    {/* Save The Date Section 
     <h4 className="text-md font-medium text-blue-700 mb-2">Save The Date</h4>
     <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
       <div>
@@ -1384,9 +1461,9 @@ return (
           className="form-input w-full"
         />
       </div>
-    </div>
+    </div>*/}
 
-    {/* Main Invitation Section */}
+    {/* Main Invitation Section
     <h4 className="text-md font-medium text-blue-700 mb-2">Main Invitation</h4>
     <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
       <div>
@@ -1488,7 +1565,387 @@ return (
   >
     + Add RSVP
   </button>
+</div>*/} 
+
+{/* RSVP SECTION 
+<div id="rsvp" className="section-container">
+  <div className="section-header">
+    <h2 className="section-title">RSVP</h2>
+  </div>
+
+  {/* === SAVE THE DATE (single record) === 
+  <div className="p-4 mb-6 bg-gray-50 border rounded-lg shadow-sm">
+    <h3 className="text-lg font-semibold text-gray-800 mb-2">Save The Date</h3>
+
+    {/* Upload Save The Date image 
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-700">Save The Date Image Upload:</label>
+      <input type="file" onChange={(e) => setSaveTheDateImage(e.target.files[0])} />
+      {saveTheDateImageURL && (
+        <div className="flex items-center gap-3 mt-2">
+          <img
+            src={saveTheDateImageURL}
+            alt="Save The Date"
+            className="w-24 h-16 object-cover rounded border"
+          />
+          <a href={saveTheDateImageURL} target="_blank" rel="noreferrer" className="text-blue-600 underline">
+            View Full Image
+          </a>
+        </div>
+      )}
+    </div>
+
+    {/* Save The Date fields 
+    <div className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-3">
+      <input type="date" value={saveDate.date || ""} onChange={(e) => handleSaveDateChange("date", e.target.value)} className="form-input" />
+      <input type="number" placeholder="Tour Operator" value={saveDate.to } onChange={(e) => handleSaveDateChange("to", e.target.value)} className="form-input" />
+      <input type="number" placeholder="Travel Agent" value={saveDate.ta } onChange={(e) => handleSaveDateChange("ta", e.target.value)} className="form-input" />
+      <input type="number" placeholder="Travel Counselor" value={saveDate.tc } onChange={(e) => handleSaveDateChange("tc", e.target.value)} className="form-input" />      
+      <input type="number" placeholder="Media Influencers" value={saveDate.media } onChange={(e) => handleSaveDateChange("media", e.target.value)} className="form-input" />
+      <input type="text" readOnly value={saveDate.total || 0} className="form-input bg-gray-100 font-semibold" />
+    </div>
+
+    <button onClick={saveRSVP} className="action-button">Save RSVP</button>
+  </div>
+
+  {/* === MAIN INVITATIONS (multiple) === 
+  <div className="section-header mt-6">
+    <h3 className="section-title">Main Invitations</h3>
+    <button onClick={saveMainInvites} className="action-button">Save Main Invites</button>
+  </div>
+
+  {/* Upload Main Invite image 
+  <div className="mb-4">
+    <label className="block text-sm font-medium text-gray-700">Main Invite Image Upload:</label>
+    <input type="file" onChange={(e) => setMainInviteImage(e.target.files[0])} />
+    {mainInviteImageURL && (
+      <div className="flex items-center gap-3 mt-2">
+        <img src={mainInviteImageURL} alt="Main Invite" className="w-24 h-16 object-cover rounded border" />
+        <a href={mainInviteImageURL} target="_blank" rel="noreferrer" className="text-blue-600 underline">View Full Image</a>
+      </div>
+    )}
+  </div>
+
+  {/* Table of Main Invites 
+  {mainInvites.map((invite, index) => (
+    const main_categoryTotal = 
+        (Number(invite.to) || 0) +
+        (Number(invite.ta) || 0) +
+        (Number(invite.tc) || 0) +
+        (Number(invite.media) || 0);
+        return(
+    <div key={index} className="p-3 mb-3 bg-gray-50 border rounded-lg grid grid-cols-1 md:grid-cols-6 gap-3 items-center">
+      <input type="date" value={invite.date || ""} onChange={(e) => handleMainInviteChange(index, "date", e.target.value)} className="form-input" />
+      <input type="number" placeholder="Tour Operator" value={invite.to } onChange={(e) => handleMainInviteChange(index, "to", e.target.value)} className="form-input" />
+      <input type="number" placeholder="Travel Agent" value={invite.ta } onChange={(e) => handleMainInviteChange(index, "ta", e.target.value)} className="form-input" />
+      <input type="number" placeholder="Travel Counselor" value={invite.tc } onChange={(e) => handleMainInviteChange(index, "tc", e.target.value)} className="form-input" />      
+      <input type="number" placeholder="Media Influencers" value={invite.media } onChange={(e) => handleMainInviteChange(index, "media", e.target.value)} className="form-input" />
+      <input type="text" readOnly value={invite.total || 0} className="form-input bg-gray-100 font-semibold" />
+
+      {/* Delete button 
+      {mainInvites.length > 1 && (
+        <button onClick={() => removeMainInvite(index)} className="text-red-600 ml-2">🗑</button>
+      )}
+    </div>)
+        
+  ))}
+  
+
+{/* Column Totals Row 
+<div className="grid grid-cols-7 font-semibold text-sm bg-yellow-100 border-t border-gray-400">
+  <div className="p-2 text-right pr-4">Column Totals →</div>
+  <div className="p-2 text-center">{columnTotals.to}</div>
+  <div className="p-2 text-center">{columnTotals.ta}</div>
+  <div className="p-2 text-center">{columnTotals.tc}</div> 
+  <div className="p-2 text-center">{columnTotals.media}</div>
+  <div className="p-2 text-center">{columnTotals.total}</div>
+  <div></div>
+</div>*/}
+
+
+{/* Grand Total 
+  <div className="grid grid-cols-[2fr_repeat(4,1fr)_auto] gap-3 items-center mt-5 p-3 bg-gray-200 rounded-lg font-semibold text-slate-900">
+      <div>Column Totals →</div>
+  <div>
+    {mainInvites.reduce((sum, t) => sum + (Number(t.travel_operator) || 0), 0)}
+  </div>
+  <div>
+    {mainInvites.reduce((sum, t) => sum + (Number(t.travel_agent) || 0), 0)}
+  </div>
+  <div>
+    {mainInvites.reduce((sum, t) => sum + (Number(t.travel_counsellor) || 0), 0)}
+  </div>
+  <div>
+    {mainInvites.reduce((sum, t) => sum + (Number(t.media_influencers) || 0), 0)}
+  </div>
+     <div className="text-right">
+   
+    {
+      mainInvites.reduce(
+        (sum, t) =>
+          sum +
+          (Number(t.travel_operator) || 0) +
+          (Number(t.travel_agent) || 0) +
+          (Number(t.travel_counsellor) || 0) +
+          (Number(t.media_influencers) || 0),
+        0
+      )
+    }
+  </div>
+  </div>
+
+
+  <button onClick={addMainInvite} className="px-4 py-2 bg-green-600 text-white rounded mt-2">+ Add Main Invite</button>
+
+  {/* === Floating Totals Panel === 
+  <div className="fixed right-5 top-1/3 bg-yellow-200 border border-yellow-400 rounded-lg shadow-lg p-3 text-sm">
+    <h4 className="font-semibold text-gray-800 mb-2">Save The Date + Main Invite Nos</h4>
+     <p>Tour Operator (TO): {totals.to}</p>
+    <p>Travel Agent (TA): {totals.ta}</p>
+    <p>Travel Counselor (TC): {totals.tc}</p>   
+    <p>Media Influencers: {totals.media}</p>
+  </div>
+</div>*/}
+<div id="rsvp" className="section-container">
+  <div className="section-header">
+    <h2 className="section-title">RSVP #1</h2>
+  </div>
+
+  {/* === SAVE THE DATE (single record) === */}
+  <div className="p-4 mb-6 bg-gray-50 border rounded-lg shadow-sm">
+    <h3 className="text-lg font-semibold text-gray-800 mb-2">Save The Date</h3>
+
+    {/* Upload Save The Date image */}
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-700">
+        Save The Date Image Upload:
+      </label>
+      <input type="file" onChange={(e) => setSaveTheDateImage(e.target.files[0])} />
+      {saveTheDateImageURL && (
+        <div className="flex items-center gap-3 mt-2">
+          <img
+            src={saveTheDateImageURL}
+            alt="Save The Date"
+            className="w-24 h-16 object-cover rounded border"
+          />
+          <a
+            href={saveTheDateImageURL}
+            target="_blank"
+            rel="noreferrer"
+            className="text-blue-600 underline"
+          >
+            View Full Image
+          </a>
+        </div>
+      )}
+    </div>
+
+    {/* Fields */}
+    <div className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(4,1fr)_auto] gap-3 items-center mb-3">
+      <input
+        type="date"
+        value={saveDate.date || ""}
+        onChange={(e) => handleSaveDateChange("date", e.target.value)}
+        className="form-input"
+      />
+      <input
+        type="number"
+        placeholder="Tour Operator"
+        value={saveDate.to || ""}
+        onChange={(e) => handleSaveDateChange("to", e.target.value)}
+        className="form-input"
+      />
+      <input
+        type="number"
+        placeholder="Travel Agent"
+        value={saveDate.ta || ""}
+        onChange={(e) => handleSaveDateChange("ta", e.target.value)}
+        className="form-input"
+      />
+      <input
+        type="number"
+        placeholder="Travel Counselor"
+        value={saveDate.tc || ""}
+        onChange={(e) => handleSaveDateChange("tc", e.target.value)}
+        className="form-input"
+      />
+      <input
+        type="number"
+        placeholder="Media Influencer"
+        value={saveDate.media || ""}
+        onChange={(e) => handleSaveDateChange("media", e.target.value)}
+        className="form-input"
+      />
+      {/* Total label */}
+      <div className="text-center font-semibold text-slate-800 bg-gray-100 rounded-md py-2">
+        {(Number(saveDate.to) || 0) +
+          (Number(saveDate.ta) || 0) +
+          (Number(saveDate.tc) || 0) +
+          (Number(saveDate.media) || 0)}
+      </div>
+    </div>
+
+    <button onClick={saveRSVP} className="action-button">
+      Save RSVP
+    </button>
+  </div>
+
+  {/* === MAIN INVITATIONS (multiple) === */}
+  <div className="section-header mt-6">
+    <h3 className="section-title">RSVP #2 Main Invite</h3>
+    <button onClick={saveMainInvites} className="action-button">
+      Save Main Invites
+    </button>
+  </div>
+
+  {/* Upload Main Invite image */}
+  <div className="mb-4">
+    <label className="block text-sm font-medium text-gray-700">
+      Main Invite Image Upload:
+    </label>
+    <input type="file" onChange={(e) => setMainInviteImage(e.target.files[0])} />
+    {mainInviteImageURL && (
+      <div className="flex items-center gap-3 mt-2">
+        <img
+          src={mainInviteImageURL}
+          alt="Main Invite"
+          className="w-24 h-16 object-cover rounded border"
+        />
+        <a
+          href={mainInviteImageURL}
+          target="_blank"
+          rel="noreferrer"
+          className="text-blue-600 underline"
+        >
+          View Full Image
+        </a>
+      </div>
+    )}
+  </div>
+
+  {/* === Main Invite Rows === */}
+  <div className="space-y-3">
+    {mainInvites.map((invite, index) => {
+      const rowTotal =
+        (Number(invite.to) || 0) +
+        (Number(invite.ta) || 0) +
+        (Number(invite.tc) || 0) +
+        (Number(invite.media) || 0);
+
+      return (
+        <div
+          key={index}
+          className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(4,1fr)_auto] gap-3 items-center p-3 bg-gray-50 rounded-lg border border-gray-200"
+        >
+          <input
+            type="date"
+            value={invite.date || ""}
+            onChange={(e) => handleMainInviteChange(index, "date", e.target.value)}
+            className="form-input"
+          />
+          <input
+            type="number"
+            placeholder="Tour Operator"
+            value={invite.to || ""}
+            onChange={(e) => handleMainInviteChange(index, "to", e.target.value)}
+            className="form-input"
+          />
+          <input
+            type="number"
+            placeholder="Travel Agent"
+            value={invite.ta || ""}
+            onChange={(e) => handleMainInviteChange(index, "ta", e.target.value)}
+            className="form-input"
+          />
+          <input
+            type="number"
+            placeholder="Travel Counselor"
+            value={invite.tc || ""}
+            onChange={(e) => handleMainInviteChange(index, "tc", e.target.value)}
+            className="form-input"
+          />
+          <input
+            type="number"
+            placeholder="Media / Influence"
+            value={invite.media || ""}
+            onChange={(e) => handleMainInviteChange(index, "media", e.target.value)}
+            className="form-input"
+          />
+          {/* Total label */}
+          <div className="text-center font-semibold text-slate-800 bg-gray-100 rounded-md py-2">
+            {rowTotal}
+          </div>
+
+          {/* Delete button */}
+          {mainInvites.length > 1 && (
+            <button
+              onClick={() => removeMainInvite(index)}
+              className="text-red-600 hover:text-red-800"
+              title="Remove"
+            >
+              🗑
+            </button>
+          )}
+        </div>
+      );
+    })}
+  </div>
+
+  {/* === Column Totals (computed directly like Trade Database) === */}
+  <div className="grid grid-cols-[1.5fr_repeat(4,1fr)_auto] gap-3 items-center mt-5 p-3 bg-gray-200 rounded-lg font-semibold text-slate-900">
+    <div>Column Totals →</div>
+    <div>{mainInvites.reduce((sum, t) => sum + (Number(t.to) || 0), 0)}</div>
+    <div>{mainInvites.reduce((sum, t) => sum + (Number(t.ta) || 0), 0)}</div>
+    <div>{mainInvites.reduce((sum, t) => sum + (Number(t.tc) || 0), 0)}</div>
+    <div>{mainInvites.reduce((sum, t) => sum + (Number(t.media) || 0), 0)}</div>
+    <div className="text-right">
+      {mainInvites.reduce(
+        (sum, t) =>
+          sum +
+          (Number(t.to) || 0) +
+          (Number(t.ta) || 0) +
+          (Number(t.tc) || 0) +
+          (Number(t.media) || 0),
+        0
+      )}
+    </div>
+  </div>
+
+  <button
+    onClick={addMainInvite}
+    className="px-4 py-2 bg-green-600 text-white rounded mt-2"
+  >
+    + Add Main Invite
+  </button>
+
+  {/* === Floating Grand Total (Save Date + Main Invite) === */}
+  <div className="fixed right-5 top-1/3 bg-yellow-200 border border-yellow-400 rounded-lg shadow-lg p-3 text-sm">
+    <h4 className="font-semibold text-gray-800 mb-2">
+      Grand Totals
+    </h4>
+    <p>
+      Tour Operator (TO):{" "}
+      {(Number(saveDate.to) || 0) +
+        mainInvites.reduce((sum, t) => sum + (Number(t.to) || 0), 0)}
+    </p>
+    <p>
+      Travel Agent (TA):{" "}
+      {(Number(saveDate.ta) || 0) +
+        mainInvites.reduce((sum, t) => sum + (Number(t.ta) || 0), 0)}
+    </p>
+    <p>
+      Travel Counselor (TC):{" "}
+      {(Number(saveDate.tc) || 0) +
+        mainInvites.reduce((sum, t) => sum + (Number(t.tc) || 0), 0)}
+    </p>
+    <p>
+      Media / Influence:{" "}
+      {(Number(saveDate.media) || 0) +
+        mainInvites.reduce((sum, t) => sum + (Number(t.media) || 0), 0)}
+    </p>
+  </div>
 </div>
+
 
       {/* 1)AV & Setting up Section @2Hotel supe name  */}
 <div id="av" className="section-container">
@@ -1856,12 +2313,13 @@ return (
               onChange={(e) => handleClientChange(index, "name", e.target.value)}
               className="px-2 py-2 border border-gray-300 rounded-md"
             />
-            {/* client Hotel  */}
+          
+            {/* client Designation  */}
             <input
               type="text"
               placeholder="Designation"
-              value={client.hotel}
-              onChange={(e) => handleClientChange(index, "hotel", e.target.value)}
+              value={client.designation}
+              onChange={(e) => handleClientChange(index, "designation", e.target.value)}
               className="px-2 py-2 border border-gray-300 rounded-md"
             />
 
@@ -1869,8 +2327,17 @@ return (
             <input
               type="text"
               placeholder="Contact"
-              value={client.address}
-              onChange={(e) => handleClientChange(index, "address", e.target.value)}
+              value={client.contact}
+              onChange={(e) => handleClientChange(index, "contact", e.target.value)}
+              className="px-2 py-2 border border-gray-300 rounded-md"
+            />
+
+                {/* client Hotel */}
+            <input
+              type="text"
+              placeholder="Hotel"
+              value={client.hotel}
+              onChange={(e) => handleClientChange(index, "hotel", e.target.value)}
               className="px-2 py-2 border border-gray-300 rounded-md"
             />
 
