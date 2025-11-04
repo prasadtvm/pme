@@ -441,7 +441,7 @@ const formatNumberOutput = (value, currency) => {
 
   // Trade handlers
   const handleAddTrade = () => {
-    setTradeDatabase([...tradeDatabase, { trade_name: '', nos: '' }]);
+    setTradeDatabase([...tradeDatabase, { trade_name: '', travel_operator: '' ,travel_agent:'',travel_counsellor:'',media_influencers:'' }]);
   };
   const handleTradeChange = (index, field, value) => {
     setTradeDatabase(tradeDatabase.map((t, i) => (i === index ? { ...t, [field]: value } : t)));
