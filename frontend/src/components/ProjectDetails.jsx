@@ -1653,7 +1653,7 @@ return (
         {hotels.map((hotel, index) => (
           <div
             key={index}
-            className="grid grid-cols-[2fr_1fr_auto_auto] gap-2 items-center mb-3 p-3 bg-gray-50 rounded-lg"
+            className="grid grid-cols-[2fr_1fr_auto_auto_auto_auto] gap-2 items-center mb-3 p-3 bg-gray-50 rounded-lg"
           >
              {/* Sponsor supplier */}
             <input
@@ -1667,6 +1667,32 @@ return (
             <input
               type="text"
               placeholder="Contact Name"
+              value={hotel.name}
+              onChange={(e) => handleHotelChange(index, "name", e.target.value)}
+              className="px-2 py-2 border border-gray-300 rounded-md"
+            />
+            {/* ITEm */}
+            <input
+              type="text"
+              placeholder="Item"
+              value={hotel.item}
+              onChange={(e) => handleHotelChange(index, "item", e.target.value)}
+              className="px-2 py-2 border border-gray-300 rounded-md"
+            />
+            <select
+  value={hotel.currency || "INR"}
+ 
+  className="px-2 py-2 border border-gray-300 rounded-md"
+>
+  <option value="INR">INR</option>
+  <option value="EUR">Euro</option>
+  <option value="GBP">Pound</option>
+</select>
+
+            {/* Amount */}
+            <input
+              type="number"
+              placeholder="Amount"
               value={hotel.name}
               onChange={(e) => handleHotelChange(index, "name", e.target.value)}
               className="px-2 py-2 border border-gray-300 rounded-md"
@@ -1723,7 +1749,7 @@ return (
   <div id="embassy" className="section-container">
   {/* Header */}
   <div className="flex justify-between items-center mb-5">
-    <h2 className="text-xl font-semibold text-slate-800">Embassy / Consulate</h2>
+    <h2 className="text-xl font-semibold text-slate-800">Embassy / Counsulate</h2>
     <button
       onClick={saveEmbassy}
       disabled={saving === 'embassy'}
