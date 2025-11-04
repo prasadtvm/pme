@@ -1222,7 +1222,7 @@ return (
           {/* Counsellor */}
           <input
             type="number"
-            placeholder="Counselor"
+            placeholder="Travel Counselor"
             value={trade.travel_counsellor}
             onChange={(e) => handleTradeChange(index, 'travel_counsellor', e.target.value)}
             className="p-2 border border-gray-300 rounded-md"
