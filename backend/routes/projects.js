@@ -28,7 +28,7 @@ router.put('/:id/associates', projectController.updateAssociates);
 router.put('/:id/venues', projectController.updateVenues);
 router.put('/:id/trade-database', projectController.updateTradeDatabase);
 router.put('/:id/rsvp', upload.uploadRSVPFile, projectController.updateRSVP);
-router.put('/:id/av-setup', projectController.updateAVSetup);
+router.put('/:id/av-setup',upload.uploadAvSetupFiles, projectController.updateAVSetup);
 router.put('/:id/hotels', projectController.updateHotels);
 router.put('/:id/embassy', projectController.updateEmbassy);
 router.put('/:id/clients', projectController.updateClients);

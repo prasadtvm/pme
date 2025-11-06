@@ -967,8 +967,9 @@ const cleanNumeric = (value) => {
 },
 
 
-  // Update AV Setup only
+  /* Update AV Setup only
   updateAVSetupOnly: async (projectId, avSetup, userId) => {
+    const { backdrop, backdropImage, screen, screenImage, stageImage, mic, type, projector, stage, podium } = avSetup;
     // Verify project access
     const project = await pool.query(
       'SELECT id FROM projects WHERE id = $1 AND created_by = $2',
@@ -986,20 +987,20 @@ const cleanNumeric = (value) => {
     );
 
     if (existingAV.rows.length > 0) {
-      // Update existing
+      // Update existing backdrop: '',    screen: '',    mic: '',    type:'',    projector: false,    podium: false,    stage: ''
       const result = await pool.query(
         `UPDATE av_setup 
-         SET backdrop = $1, screen = $2, mic = $3, projector = $4, stage = $5 
-         WHERE project_id = $6 RETURNING *`,
-        [avSetup.backdrop, avSetup.screen, avSetup.mic, avSetup.projector, avSetup.stage, projectId]
+         SET backdrop = $1, screen = $2, mic = $3, type = $4, projector = $5, stage = $6 , podium= $7
+         WHERE project_id = $8 RETURNING *`,
+        [avSetup.backdrop, avSetup.screen, avSetup.mic, avSetup.type, avSetup.projector, avSetup.stage, avSetup.podium, projectId]
       );
       return result.rows[0];
     } else {
       // Insert new
       const result = await pool.query(
-        `INSERT INTO av_setup (project_id, backdrop, screen, mic, projector, stage) 
-         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-        [projectId, avSetup.backdrop, avSetup.screen, avSetup.mic, avSetup.projector, avSetup.stage]
+        `INSERT INTO av_setup (project_id, backdrop, screen, mic, type, projector, stage, podium) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+        [projectId, avSetup.backdrop, avSetup.screen, avSetup.mic, avSetup.type, avSetup.projector, avSetup.stage, avSetup.podium]
       );
       return result.rows[0];
     }
@@ -1045,7 +1046,81 @@ const cleanNumeric = (value) => {
       );
       return result.rows[0];
     }
-  },
+  },*/
+
+  updateAVSetupOnly: async (projectId, avSetup, userId) => {
+  const { backdrop, backdrop_image, screen, screen_image, stage_image, mic, type, projector, podium } = avSetup;
+
+  // Verify project access
+  const project = await pool.query(
+    'SELECT id FROM projects WHERE id = $1 AND created_by = $2',
+    [projectId, userId]
+  );
+
+  if (project.rows.length === 0) {
+    throw new Error('Project not found or access denied');
+  }
+
+  // Check if AV setup already exists
+  const existingAV = await pool.query(
+    'SELECT id FROM av_setup WHERE project_id = $1',
+    [projectId]
+  );
+
+  if (existingAV.rows.length > 0) {
+    // ✅ UPDATE existing record
+    const result = await pool.query(
+      `UPDATE av_setup 
+       SET 
+         backdrop = $1, 
+         screen = $2, 
+         mic = $3, 
+         type = $4, 
+         projector = $5,
+         podium = $6,
+         backdrop_image = $7, 
+         screen_image = $8, 
+         stage_image = $9
+       WHERE project_id = $10 
+       RETURNING *`,
+      [
+        backdrop,
+        screen,
+        mic,
+        type,
+        projector,      
+        podium,
+        backdrop_image,
+        screen_image,
+        stage_image,
+        projectId
+      ]
+    );
+    return result.rows[0];
+  } else {
+    // ✅ INSERT new record
+    const result = await pool.query(
+      `INSERT INTO av_setup 
+        (project_id, backdrop, screen, mic, type, projector, podium, backdrop_image, screen_image, stage_image)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+       RETURNING *`,
+      [
+        projectId,
+        backdrop,
+        screen,
+        mic,
+        type,
+        projector,        
+        podium,
+        backdrop_image,
+        screen_image,
+        stage_image
+      ]
+    );
+    return result.rows[0];
+  }
+},
+
 
   // Update Client only
   updateClientOnly: async (projectId, clients, user) => {

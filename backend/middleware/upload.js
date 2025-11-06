@@ -5,6 +5,8 @@ const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('cloudinary').v2;
 
+
+
 //  Cloudinary Configuration
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -16,9 +18,18 @@ cloudinary.config({
 const getFolder = (req, file) => {
   const url = (req.originalUrl || '').toLowerCase();
 console.log("🟣 Upload middleware reached", file.fieldname);
+
+// 🟢 New AV Setup folders
+  if (file.fieldname === 'backdrop_image') return 'avsetup/backdrop';
+  if (file.fieldname === 'screen_image') return 'avsetup/screen';
+  if (file.fieldname === 'stage_image') return 'avsetup/stage';
+
   if (url.includes('/menu') || file.fieldname === 'menu') return 'menu';
   if (url.includes('/rsvp') || file.fieldname === 'invitation_design_file') return 'rsvp';
   if (url.includes('/projects') || file.fieldname === 'image_file') return 'project';
+
+  
+
   return 'misc';
 };
 
@@ -59,7 +70,12 @@ const handleUpload = (fieldName) => (req, res, next) => {
   });
 };
 
-
+// 🟢 Multi-field handler for AV Setup (3 images)
+const uploadAvSetupFiles = upload.fields([
+  { name: 'backdrop_image', maxCount: 1 },
+  { name: 'screen_image', maxCount: 1 },
+  { name: 'stage_image', maxCount: 1 },
+]);
 
 
 
@@ -160,5 +176,6 @@ module.exports = {
   uploadProjectImage: handleUpload('image_file'),
   uploadMenuFile: handleUpload('menu'),
   uploadRSVPFile: handleUpload('invitation_design_file'),
+  uploadAvSetupFiles,
 };
 

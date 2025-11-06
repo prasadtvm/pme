@@ -382,9 +382,39 @@ console.log('Parsed RSVP data:', rsvpData);
     try {
       const { id } = req.params;
       const userId = req.user.id;
-      const { av_setup } = req.body;
+      //const { av_setup } = req.body;
 
-      const updatedAVSetup = await Project.updateAVSetupOnly(id, av_setup, userId);
+    //  const avSetup = req.body;
+
+       console.log("🟡 req.files =", req.files);
+    console.log("🟡 req.body =", req.body);
+
+    // 🟢 Attach uploaded image URLs (Cloudinary gives .path)
+    //if (req.files?.backdrop_image) {
+    //  avSetup.backdrop_image = req.files.backdropImage[0].path;
+    //}
+    //if (req.files?.screen_image) {
+    //  avSetup.screen_image = req.files.screenImage[0].path;
+    //}
+    //if (req.files?.stage_image) {
+   //   avSetup.stage_image = req.files.stageImage[0].path;
+    //}
+    
+
+    const avSetup = {
+      backdrop: req.body.backdrop,
+      screen: req.body.screen,
+      mic: req.body.mic,
+      type: req.body.type,
+      projector: req.body.projector === "true",
+      podium: req.body.podium === "true",      
+      backdrop_image: req.files?.backdrop_image?.[0]?.path || null,
+      screen_image: req.files?.screen_image?.[0]?.path || null,
+      stage_image: req.files?.stage_image?.[0]?.path || null,
+    };
+
+    console.log("🟢 Final AV setup to save:", avSetup);
+      const updatedAVSetup = await Project.updateAVSetupOnly(id, avSetup, userId);
       
       res.json({
         message: 'AV Setup updated successfully',
@@ -422,7 +452,7 @@ console.log('Parsed RSVP data:', rsvpData);
       const user = req.user;
       const { clients } = req.body;
 
-      const updatedClient = await Project.updateClientOnly(id, clients, user);
+      const updatedClient = await Project.updateClient(id, clients, user);
       
       res.json({
         message: 'Client information updated successfully',
@@ -517,7 +547,7 @@ console.log('Parsed RSVP data:', rsvpData);
   getDetails: async (req, res) => {
     const { id } = req.params;
     try {
-      const [detailsRes,associatesRes, venuesRes, tradeRes, rsvpRes,hotelRes, avRes, embassyRes, clientRes,checklistRes, menuRes] = await Promise.all([
+      const [detailsRes, associatesRes, venuesRes, tradeRes, rsvpRes, hotelRes, avRes, embassyRes, clientRes, checklistRes, menuRes] = await Promise.all([
         pool.query('SELECT * FROM project_details WHERE project_id = $1', [id]),
         pool.query('SELECT * FROM associates WHERE project_id = $1', [id]),
         pool.query('SELECT * FROM venues WHERE project_id = $1', [id]),
