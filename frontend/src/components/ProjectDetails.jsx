@@ -82,17 +82,13 @@ const updateTotals = (saveDate, mainInvites) => {
 
   // Core project details
   const [details, setDetails] = useState({
-    roadshowName: '',   
-    event_date: '',
-    associate: '',
+    roadshowName: '',    event_date: '',    associate: '',
     budget: '',
     // Optional: add description for create flow
-    image_file: '',
-    project_handiled_by:''
+    image_file: '',    project_handiled_by:''
   });
 
-  const [venues, setVenues] = useState([{ name: '', currency: 'INR', rate: '', rateInput:'',     
-      budget: '', bugetInput:'',
+  const [venues, setVenues] = useState([{ name: '', currency: 'INR', rate: '', rateInput:'', budget: '', bugetInput:'',
        selected: false , venue_rental:false, av:false, food:false, bar:false}]);
  
   const [associates, setAssociates] = useState([{ name: '',city:'',  selected: false }]);
@@ -116,32 +112,15 @@ const updateTotals = (saveDate, mainInvites) => {
   const [invitationFile, setInvitationFile] = useState(null);
   const [hotels, setHotels] = useState([{sponsor:'', name: '',  selected: false }]);
   const [progress, setProgress] = useState(0);
-  const [avSetup, setAvSetup] = useState({
-    backdrop: '',
-    screen: '',
-    mic: '',
-    projector: '',
-    stage: ''
-  });
+  const [avSetup, setAvSetup] = useState({    backdrop: '',    screen: '',    mic: '',    type:'',    projector: false,    podium: false,   backdrop_image:null,screen_image:null,stage_image:null });
 
-  const [embassy, setEmbassy] = useState({
-    cheif_guest: '',
-    cheif_guest_designation: '',
-    cheif_guest_phone: '',
-    accommodation_contact: '',
-    accommodation_address: '',
-    accommodation_phone:''
-  });
+  const [embassy, setEmbassy] = useState({    cheif_guest: '',    cheif_guest_designation: '',    cheif_guest_phone: '',    accommodation_contact: '',
+    accommodation_address: '',    accommodation_phone:''  });
 
   const [clients, setClients] = useState({name: '',designation:'', contact:'',hotel:''});
 const [checklists, setChecklists] = useState([{ name: '',  selected: false }]);
-const [menuFile, setMenuFile] = useState({
-    fileName: '',
-    fileType: '',
-    fileSize: '',
-    filePath:''
-  });
-  
+const [menuFile, setMenuFile] = useState({    fileName: '',    fileType: '',    fileSize: '',    filePath:''  });
+  const [workingDaysLeft, setWorkingDaysLeft] = useState(0);
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
@@ -167,6 +146,35 @@ const [menuFile, setMenuFile] = useState({
       alert("Project creation failed: " + (err.response?.data?.error || err.message));
     }
   };
+
+  // Utility to count working days (Mon–Fri) between today and the event date
+const calculateWorkingDays = (eventDateStr) => {
+  if (!eventDateStr) return 0;
+  const today = new Date();
+  const eventDate = new Date(eventDateStr);
+
+  // If event date is before today, show 0
+  if (eventDate < today) return 0;
+
+  let count = 0;
+  let current = new Date(today);
+
+  // Move day by day until event date
+  while (current < eventDate) {
+    const day = current.getDay();
+    // 0 = Sunday, 6 = Saturday
+    if (day !== 0 && day !== 6) {
+      count++;
+    }
+    current.setDate(current.getDate() + 1);
+  }
+  // Optionally deduct 1 if you want to *exclude the event day itself*
+  // (for example, if the event is on the 14th and today is the 4th)
+  // Uncomment if desired:
+  // count = Math.max(0, count - 1);
+
+  return count;
+};
   
   // Initialize on mount
 useEffect(() => {
@@ -242,6 +250,13 @@ useEffect(() => {
     setLoading(false); // Skip fetch when creating new project
   }
   }, [id]);
+
+  useEffect(() => {
+  if (details.event_date) {
+    const days = calculateWorkingDays(details.event_date);
+    setWorkingDaysLeft(days);
+  }
+}, [details.event_date]);
 
   // Fetch remarks for this project
 const fetchRemarks = async () => {
@@ -347,7 +362,7 @@ const fetchRemarks = async () => {
     const formData = new FormData();
     formData.append('invitation_design_file', invitationFile);
     formData.append('rsvp', JSON.stringify(rsvp));
-    console.log( JSON.stringify(rsvp));
+  //console.log( JSON.stringify(rsvp));
     await projectSectionsAPI.updateRSVP(id, formData);
     showMessage('RSVP saved successfully!');
   } catch (e) {
@@ -374,7 +389,23 @@ const saveMainInvites =async() =>{
   const saveAVSetup = async () => {
     try {
       setSaving('av');
-      await projectSectionsAPI.updateAVSetup(id, avSetup);
+      const formData = new FormData();
+      formData.append("backdrop", avSetup.backdrop);
+      formData.append("screen", avSetup.screen);
+      formData.append("mic", avSetup.mic);
+      formData.append("type", avSetup.type);
+      formData.append("projector", avSetup.projector);
+      formData.append("podium", avSetup.podium);      
+
+      if (avSetup.backdrop_image instanceof File)
+        formData.append("backdrop_image", avSetup.backdrop_image);
+      if (avSetup.screen_image instanceof File)
+        formData.append("screen_image", avSetup.screen_image);
+      if (avSetup.stage_image instanceof File)
+        formData.append("stage_image", avSetup.stage_image);
+
+
+      await projectSectionsAPI.updateAVSetup(id, formData);
       showMessage('AV setup saved successfully!');
     } catch (e) {
       console.error(e);
@@ -469,8 +500,7 @@ const saveMainInvites =async() =>{
 
   // Venue handlers
   const handleAddVenue = () => {
-    setVenues([...venues, { name: '', currency: 'INR',rate: '',    rateInput:'',  
-      budget: '',  budgetInput:'',
+    setVenues([...venues, { name: '', currency: 'INR',rate: '',    rateInput:'',   budget: '',  budgetInput:'',
       selected: false , venue_rental: false, av: false, food: false, bar: false}]);
   };
   const handleVenueChange = (index, field, value) => {
@@ -1108,15 +1138,12 @@ return (
     handleVenueChange(
       index,
       "budgetInput",
-      formatNumberOutput(parsed, venue.currency)
+      formatNumberOutput(parsed, venues.currency)
     );
   }}
   className="px-2 py-2 border border-gray-300 rounded-md text-right"
 />
-
-
-            
-
+          
             {/* Select Checkbox */}
             <div className="flex items-center gap-2">
               <input
@@ -1190,7 +1217,7 @@ return (
       return (
         <div
           key={index}
-          className="grid grid-cols-1 md:grid-cols-[2fr_repeat(4,1fr)_auto] gap-3 items-center p-3 bg-gray-50 rounded-lg border border-gray-200"
+          className="grid grid-cols-1 md:grid-cols-[2fr_repeat(4,1fr)_auto,_auto] gap-3 items-center p-3 bg-gray-50 rounded-lg border border-gray-200"
         >
           {/* Trade Name */}
            
@@ -1706,16 +1733,543 @@ return (
     <p>Media Influencers: {totals.media}</p>
   </div>
 </div>*/}
-<div id="rsvp" className="section-container">
+ {/*<div id="rsvp" className="section-container">
   <div className="section-header">
     <h2 className="section-title">RSVP #1</h2>
   </div>
+  === SAVE THE DATE (single record) === 
+  <div className="p-4 mb-6 bg-gray-50 border rounded-lg shadow-sm">
+    {/* Title + Save button aligned right 
+    <div className="flex justify-between items-center mb-2">
+      <h3 className="text-lg font-semibold text-gray-800">Save The Date</h3>
+      <button onClick={saveRSVP} className="action-button">
+        Save RSVP
+      </button>
+    </div>*/}
 
-  {/* === SAVE THE DATE (single record) === */}
+  {/* === SAVE THE DATE (single record) === 
   <div className="p-4 mb-6 bg-gray-50 border rounded-lg shadow-sm">
     <h3 className="text-lg font-semibold text-gray-800 mb-2">Save The Date</h3>
+*/}
+    {/* Upload Save The Date image 
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-700">
+        Save The Date Image Upload:
+      </label>
+      <input type="file" onChange={(e) => setSaveTheDateImage(e.target.files[0])} />
+      {saveTheDateImageURL && (
+        <div className="flex items-center gap-3 mt-2">
+          <img
+            src={saveTheDateImageURL}
+            alt="Save The Date"
+            className="w-24 h-16 object-cover rounded border"
+          />
+          <a
+            href={saveTheDateImageURL}
+            target="_blank"
+            rel="noreferrer"
+            className="text-blue-600 underline"
+          >
+            View Full Image
+          </a>
+        </div>
+      )}
+    </div>*/}
 
-    {/* Upload Save The Date image */}
+    {/* Fields 
+    <div className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(4,1fr)_auto] gap-3 items-center mb-3">
+      <input
+        type="date"
+        value={saveDate.date || ""}
+        onChange={(e) => handleSaveDateChange("date", e.target.value)}
+        className="form-input"
+      />
+      <input
+        type="number"
+        placeholder="Tour Operator"
+        value={saveDate.to || ""}
+        onChange={(e) => handleSaveDateChange("to", e.target.value)}
+        className="form-input"
+      />
+      <input
+        type="number"
+        placeholder="Travel Agent"
+        value={saveDate.ta || ""}
+        onChange={(e) => handleSaveDateChange("ta", e.target.value)}
+        className="form-input"
+      />
+      <input
+        type="number"
+        placeholder="Travel Counselor"
+        value={saveDate.tc || ""}
+        onChange={(e) => handleSaveDateChange("tc", e.target.value)}
+        className="form-input"
+      />
+      <input
+        type="number"
+        placeholder="Media / Influence"
+        value={saveDate.media || ""}
+        onChange={(e) => handleSaveDateChange("media", e.target.value)}
+        className="form-input"
+      />
+      {/* Total label 
+      <div className="text-center font-semibold text-slate-800 bg-gray-100 rounded-md py-2">
+        {(Number(saveDate.to) || 0) +
+          (Number(saveDate.ta) || 0) +
+          (Number(saveDate.tc) || 0) +
+          (Number(saveDate.media) || 0)}
+      </div>
+    </div>
+  <div className="text-right text-sm">
+    <div className="text-gray-700 font-medium">Countdown</div>
+    <div className="text-red-600 font-bold text-lg border border-red-500 inline-block px-3 py-1 rounded">
+      {workingDaysLeft}
+    </div>
+    <div className="text-xs text-gray-500">working days</div>
+  </div> 
+         
+   
+  </div>*/}
+
+  {/* === MAIN INVITATIONS (multiple) === 
+  <div className="section-header mt-6">
+    <h3 className="section-title">RSVP #2 Main Invite</h3>
+    <button onClick={saveMainInvites} className="action-button">
+      Save Main Invites
+    </button>
+  </div>*/}
+
+  {/* Upload Main Invite image 
+  <div className="mb-4">
+    <label className="block text-sm font-medium text-gray-700">
+      Main Invite Image Upload:
+    </label>
+    <input type="file" onChange={(e) => setMainInviteImage(e.target.files[0])} />
+    {mainInviteImageURL && (
+      <div className="flex items-center gap-3 mt-2">
+        <img
+          src={mainInviteImageURL}
+          alt="Main Invite"
+          className="w-24 h-16 object-cover rounded border"
+        />
+        <a
+          href={mainInviteImageURL}
+          target="_blank"
+          rel="noreferrer"
+          className="text-blue-600 underline"
+        >
+          View Full Image
+        </a>
+      </div>
+    )}
+  </div>*/}
+
+  {/* === Main Invite Rows === 
+  <div className="space-y-3">
+    {mainInvites.map((invite, index) => {
+      const rowTotal =
+        (Number(invite.to) || 0) +
+        (Number(invite.ta) || 0) +
+        (Number(invite.tc) || 0) +
+        (Number(invite.media) || 0);
+
+      return (
+        <div
+          key={index}
+          className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(4,1fr)_auto] gap-3 items-center p-3 bg-gray-50 rounded-lg border border-gray-200"
+        >
+          <input
+            type="date"
+            value={invite.date || ""}
+            onChange={(e) => handleMainInviteChange(index, "date", e.target.value)}
+            className="form-input"
+          />
+          <input
+            type="number"
+            placeholder="Tour Operator"
+            value={invite.to || ""}
+            onChange={(e) => handleMainInviteChange(index, "to", e.target.value)}
+            className="form-input"
+          />
+          <input
+            type="number"
+            placeholder="Travel Agent"
+            value={invite.ta || ""}
+            onChange={(e) => handleMainInviteChange(index, "ta", e.target.value)}
+            className="form-input"
+          />
+          <input
+            type="number"
+            placeholder="Travel Counselor"
+            value={invite.tc || ""}
+            onChange={(e) => handleMainInviteChange(index, "tc", e.target.value)}
+            className="form-input"
+          />
+          <input
+            type="number"
+            placeholder="Media / Influence"
+            value={invite.media || ""}
+            onChange={(e) => handleMainInviteChange(index, "media", e.target.value)}
+            className="form-input"
+          />
+          {/* Total label 
+          <div className="text-center font-semibold text-slate-800 bg-gray-100 rounded-md py-2">
+            {rowTotal}
+          </div>
+
+          {/* Delete button 
+          {mainInvites.length > 1 && (
+            <button
+              onClick={() => removeMainInvite(index)}
+              className="text-red-600 hover:text-red-800"
+              title="Remove"
+            >
+              🗑
+            </button>
+          )}
+        </div>
+      );
+    })}
+  </div>*/}
+
+  {/* === Column Totals (computed directly like Trade Database) === 
+  <div className="grid grid-cols-[1.5fr_repeat(4,1fr)_auto] gap-3 items-center mt-5 p-3 bg-gray-200 rounded-lg font-semibold text-slate-900">
+    <div>Column Totals →</div>
+    <div>{mainInvites.reduce((sum, t) => sum + (Number(t.to) || 0), 0)}</div>
+    <div>{mainInvites.reduce((sum, t) => sum + (Number(t.ta) || 0), 0)}</div>
+    <div>{mainInvites.reduce((sum, t) => sum + (Number(t.tc) || 0), 0)}</div>
+    <div>{mainInvites.reduce((sum, t) => sum + (Number(t.media) || 0), 0)}</div>
+    <div className="text-right">
+      {mainInvites.reduce(
+        (sum, t) =>
+          sum +
+          (Number(t.to) || 0) +
+          (Number(t.ta) || 0) +
+          (Number(t.tc) || 0) +
+          (Number(t.media) || 0),
+        0
+      )}
+    </div>
+  </div>
+
+  <button
+    onClick={addMainInvite}
+    className="px-4 py-2 bg-green-600 text-white rounded mt-2"
+  >
+    + Add Main Invite
+  </button>*/}
+
+  {/* === Floating Grand Total (Save Date + Main Invite) === 
+  <div className="fixed right-5 top-1/3 bg-yellow-200 border border-yellow-400 rounded-lg shadow-lg p-3 text-sm">
+    <p className="mt-2 border-t border-gray-300 pt-2 text-center">
+  🕒 Countdown: <span className="font-bold">{workingDaysLeft}</span> working days
+</p>
+    
+    <h4 className="font-semibold text-gray-800 mb-2">
+      Grand Totals
+    </h4>
+    <p>
+      Tour Operator (TO):{" "}
+      {(Number(saveDate.to) || 0) +
+        mainInvites.reduce((sum, t) => sum + (Number(t.to) || 0), 0)}
+    </p>
+    <p>
+      Travel Agent (TA):{" "}
+      {(Number(saveDate.ta) || 0) +
+        mainInvites.reduce((sum, t) => sum + (Number(t.ta) || 0), 0)}
+    </p>
+    <p>
+      Travel Counselor (TC):{" "}
+      {(Number(saveDate.tc) || 0) +
+        mainInvites.reduce((sum, t) => sum + (Number(t.tc) || 0), 0)}
+    </p>
+    <p>
+      Media / Influence:{" "}
+      {(Number(saveDate.media) || 0) +
+        mainInvites.reduce((sum, t) => sum + (Number(t.media) || 0), 0)}
+    </p>
+  </div>
+</div>*/}
+
+{/* ================= RSVP SECTION ================= 
+<div id="rsvp" className="section-container">
+  {/* Section Header 
+  <div className="section-header">
+    <h2 className="section-title">RSVP #1</h2>
+  </div>*/}
+
+  {/* === SAVE THE DATE (single record) === 
+  <div className="p-4 mb-6 bg-gray-50 border rounded-lg shadow-sm">
+    {/* Header line: Title + Save button 
+    <div className="flex justify-between items-center mb-3">
+      <h3 className="text-lg font-semibold text-gray-800">Save The Date</h3>
+      <button onClick={saveRSVP} className="action-button">
+        Save RSVP
+      </button>
+    </div>*/}
+
+    {/* Upload Save The Date image 
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-700">
+        Save The Date Image Upload:
+      </label>
+      <input type="file" onChange={(e) => setSaveTheDateImage(e.target.files[0])} />
+      {saveTheDateImageURL && (
+        <div className="flex items-center gap-3 mt-2">
+          <img
+            src={saveTheDateImageURL}
+            alt="Save The Date"
+            className="w-24 h-16 object-cover rounded border"
+          />
+          <a
+            href={saveTheDateImageURL}
+            target="_blank"
+            rel="noreferrer"
+            className="text-blue-600 underline"
+          >
+            View Full Image
+          </a>
+        </div>
+      )}
+    </div>*/}
+
+    {/* Fields grid 
+    <div className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(4,1fr)_auto] gap-3 items-center mb-3">
+      <input
+        type="date"
+        value={saveDate.date || ""}
+        onChange={(e) => handleSaveDateChange("date", e.target.value)}
+        className="form-input"
+      />
+      <input
+        type="number"
+        placeholder="Tour Operator"
+        value={saveDate.to || ""}
+        onChange={(e) => handleSaveDateChange("to", e.target.value)}
+        className="form-input"
+      />
+      <input
+        type="number"
+        placeholder="Travel Agent"
+        value={saveDate.ta || ""}
+        onChange={(e) => handleSaveDateChange("ta", e.target.value)}
+        className="form-input"
+      />
+      <input
+        type="number"
+        placeholder="Travel Counselor"
+        value={saveDate.tc || ""}
+        onChange={(e) => handleSaveDateChange("tc", e.target.value)}
+        className="form-input"
+      />
+      <input
+        type="number"
+        placeholder="Media / Influence"
+        value={saveDate.media || ""}
+        onChange={(e) => handleSaveDateChange("media", e.target.value)}
+        className="form-input"
+      />
+
+      {/* Total 
+      <div className="text-center font-semibold text-slate-800 bg-gray-100 rounded-md py-2">
+        {(Number(saveDate.to) || 0) +
+          (Number(saveDate.ta) || 0) +
+          (Number(saveDate.tc) || 0) +
+          (Number(saveDate.media) || 0)}
+      </div>
+    </div>
+
+    {/* Countdown aligned right 
+    <div className="flex justify-end items-center gap-4 text-sm mt-2">
+      <div className="text-right">
+        <div className="text-gray-700 font-medium">Countdown</div>
+        <div className="text-red-600 font-bold text-lg border border-red-500 inline-block px-3 py-1 rounded">
+          {workingDaysLeft}
+        </div>
+        <div className="text-xs text-gray-500">working days</div>
+      </div>
+    </div>
+  </div>
+
+  {/* === MAIN INVITATION SECTION === 
+  <div className="flex justify-between items-center section-header mt-6">
+    <h3 className="section-title">RSVP #2– Main Invite</h3>
+    <button onClick={saveMainInvites} className="action-button">
+      Save Main Invites
+    </button>
+  </div>
+
+  {/* Upload Main Invite image 
+  <div className="mb-4">
+    <label className="block text-sm font-medium text-gray-700">
+      Main Invite Image Upload:
+    </label>
+    <input type="file" onChange={(e) => setMainInviteImage(e.target.files[0])} />
+    {mainInviteImageURL && (
+      <div className="flex items-center gap-3 mt-2">
+        <img
+          src={mainInviteImageURL}
+          alt="Main Invite"
+          className="w-24 h-16 object-cover rounded border"
+        />
+        <a
+          href={mainInviteImageURL}
+          target="_blank"
+          rel="noreferrer"
+          className="text-blue-600 underline"
+        >
+          View Full Image
+        </a>
+      </div>
+    )}
+  </div>
+
+  {/* === Main Invite Rows === 
+  <div className="space-y-3">
+    {mainInvites.map((invite, index) => {
+      const rowTotal =
+        (Number(invite.to) || 0) +
+        (Number(invite.ta) || 0) +
+        (Number(invite.tc) || 0) +
+        (Number(invite.media) || 0);
+
+      return (
+        <div
+          key={index}
+          className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(4,1fr)_auto,_auto] gap-3 items-center p-3 bg-gray-50 rounded-lg border border-gray-200"
+        >
+          {/* 🟩 Dynamic header for each Main Invite 
+        <h3 className="text-md font-semibold text-gray-800">
+          RSVP #{index + 2}
+        </h3>
+          <input
+            type="date"
+            value={invite.date || ""}
+            onChange={(e) => handleMainInviteChange(index, "date", e.target.value)}
+            className="form-input"
+          />
+          <input
+            type="number"
+            placeholder="Tour Operator"
+            value={invite.to || ""}
+            onChange={(e) => handleMainInviteChange(index, "to", e.target.value)}
+            className="form-input"
+          />
+          <input
+            type="number"
+            placeholder="Travel Agent"
+            value={invite.ta || ""}
+            onChange={(e) => handleMainInviteChange(index, "ta", e.target.value)}
+            className="form-input"
+          />
+          <input
+            type="number"
+            placeholder="Travel Counselor"
+            value={invite.tc || ""}
+            onChange={(e) => handleMainInviteChange(index, "tc", e.target.value)}
+            className="form-input"
+          />
+          <input
+            type="number"
+            placeholder="Media / Influence"
+            value={invite.media || ""}
+            onChange={(e) => handleMainInviteChange(index, "media", e.target.value)}
+            className="form-input"
+          />
+          {/* Total 
+          <div className="text-center font-semibold text-slate-800 bg-gray-100 rounded-md py-2">
+            {rowTotal}
+          </div>
+
+          {/* Delete Button 
+          {mainInvites.length > 1 && (
+            <button
+              onClick={() => removeMainInvite(index)}
+              className="text-red-600 hover:text-red-800"
+              title="Remove"
+            >
+              🗑
+            </button>
+          )}
+        </div>
+      );
+    })}
+  </div>
+
+  {/* === Column Totals === 
+  <div className="grid grid-cols-[1.5fr_repeat(4,1fr)_auto] gap-3 items-center mt-5 p-3 bg-gray-200 rounded-lg font-semibold text-slate-900">
+    <div>Column Totals →</div>
+    <div>{mainInvites.reduce((sum, t) => sum + (Number(t.to) || 0), 0)}</div>
+    <div>{mainInvites.reduce((sum, t) => sum + (Number(t.ta) || 0), 0)}</div>
+    <div>{mainInvites.reduce((sum, t) => sum + (Number(t.tc) || 0), 0)}</div>
+    <div>{mainInvites.reduce((sum, t) => sum + (Number(t.media) || 0), 0)}</div>
+    <div className="text-right">
+      {mainInvites.reduce(
+        (sum, t) =>
+          sum +
+          (Number(t.to) || 0) +
+          (Number(t.ta) || 0) +
+          (Number(t.tc) || 0) +
+          (Number(t.media) || 0),
+        0
+      )}
+    </div>
+  </div>
+
+  {/* === Add Invite Button aligned right === 
+  <div className="flex justify-end mt-4">
+    <button
+      onClick={addMainInvite}
+      className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+    >
+      + Add Main Invite
+    </button>
+  </div>
+
+  {/* === Floating Grand Total === 
+  <div className="fixed right-5 top-1/3 bg-yellow-200 border border-yellow-400 rounded-lg shadow-lg p-3 text-sm">
+    <p className="mt-2 border-t border-gray-300 pt-2 text-center">
+      🕒 Countdown:{" "}
+      <span className="font-bold">{workingDaysLeft}</span> working days
+    </p>
+    <h4 className="font-semibold text-gray-800 mb-2">Grand Totals</h4>
+    <p>
+      Tour Operator (TO):{" "}
+      {(Number(saveDate.to) || 0) +
+        mainInvites.reduce((sum, t) => sum + (Number(t.to) || 0), 0)}
+    </p>
+    <p>
+      Travel Agent (TA):{" "}
+      {(Number(saveDate.ta) || 0) +
+        mainInvites.reduce((sum, t) => sum + (Number(t.ta) || 0), 0)}
+    </p>
+    <p>
+      Travel Counselor (TC):{" "}
+      {(Number(saveDate.tc) || 0) +
+        mainInvites.reduce((sum, t) => sum + (Number(t.tc) || 0), 0)}
+    </p>
+    <p>
+      Media / Influence:{" "}
+      {(Number(saveDate.media) || 0) +
+        mainInvites.reduce((sum, t) => sum + (Number(t.media) || 0), 0)}
+    </p>
+  </div>
+</div>*/}
+<div id="rsvp" className="section-container">
+  {/* === RSVP #1 – Save The Date === */}
+  <div className="section-header">
+    <h2 className="section-title">RSVP #1 – Save The Date</h2>
+  </div>
+
+  <div className="p-4 mb-6 bg-gray-50 border rounded-lg shadow-sm">
+    <div className="flex justify-between items-center mb-3">
+      <h3 className="text-lg font-semibold text-gray-800">Save The Date</h3>
+      <button onClick={saveRSVP} className="action-button">
+        Save RSVP
+      </button>
+    </div>
+
+    {/* Image Upload */}
     <div className="mb-4">
       <label className="block text-sm font-medium text-gray-700">
         Save The Date Image Upload:
@@ -1776,7 +2330,7 @@ return (
         onChange={(e) => handleSaveDateChange("media", e.target.value)}
         className="form-input"
       />
-      {/* Total label */}
+
       <div className="text-center font-semibold text-slate-800 bg-gray-100 rounded-md py-2">
         {(Number(saveDate.to) || 0) +
           (Number(saveDate.ta) || 0) +
@@ -1785,14 +2339,21 @@ return (
       </div>
     </div>
 
-    <button onClick={saveRSVP} className="action-button">
-      Save RSVP
-    </button>
+    {/* Countdown */}
+    <div className="flex justify-end items-center gap-4 text-sm mt-2">
+      <div className="text-right">
+        <div className="text-gray-700 font-medium">Countdown</div>
+        <div className="text-red-600 font-bold text-lg border border-red-500 inline-block px-3 py-1 rounded">
+          {workingDaysLeft}
+        </div>
+        <div className="text-xs text-gray-500">working days</div>
+      </div>
+    </div>
   </div>
 
-  {/* === MAIN INVITATIONS (multiple) === */}
-  <div className="section-header mt-6">
-    <h3 className="section-title">RSVP #2 Main Invite</h3>
+  {/* === RSVP #2 – Main Invite (Image Upload + First Record) === */}
+  <div className="flex justify-between items-center section-header mt-6">
+    <h3 className="section-title">RSVP #2 – Main Invite</h3>
     <button onClick={saveMainInvites} className="action-button">
       Save Main Invites
     </button>
@@ -1823,8 +2384,8 @@ return (
     )}
   </div>
 
-  {/* === Main Invite Rows === */}
-  <div className="space-y-3">
+  {/* === Dynamic Main Invite Rows (RSVP #2, #3, #4...) === */}
+  <div className="space-y-6">
     {mainInvites.map((invite, index) => {
       const rowTotal =
         (Number(invite.to) || 0) +
@@ -1835,63 +2396,72 @@ return (
       return (
         <div
           key={index}
-          className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(4,1fr)_auto] gap-3 items-center p-3 bg-gray-50 rounded-lg border border-gray-200"
+          className="p-4 bg-gray-50 border rounded-lg shadow-sm space-y-3"
         >
-          <input
-            type="date"
-            value={invite.date || ""}
-            onChange={(e) => handleMainInviteChange(index, "date", e.target.value)}
-            className="form-input"
-          />
-          <input
-            type="number"
-            placeholder="Tour Operator"
-            value={invite.to || ""}
-            onChange={(e) => handleMainInviteChange(index, "to", e.target.value)}
-            className="form-input"
-          />
-          <input
-            type="number"
-            placeholder="Travel Agent"
-            value={invite.ta || ""}
-            onChange={(e) => handleMainInviteChange(index, "ta", e.target.value)}
-            className="form-input"
-          />
-          <input
-            type="number"
-            placeholder="Travel Counselor"
-            value={invite.tc || ""}
-            onChange={(e) => handleMainInviteChange(index, "tc", e.target.value)}
-            className="form-input"
-          />
-          <input
-            type="number"
-            placeholder="Media / Influence"
-            value={invite.media || ""}
-            onChange={(e) => handleMainInviteChange(index, "media", e.target.value)}
-            className="form-input"
-          />
-          {/* Total label */}
-          <div className="text-center font-semibold text-slate-800 bg-gray-100 rounded-md py-2">
-            {rowTotal}
+          {/* 🟩 Header per row */}
+          <div className="flex justify-between items-center">
+            <h3 className="text-md font-semibold text-gray-800">
+              RSVP #{index + 2} – Main Invite
+            </h3>
+            {mainInvites.length > 1 && (
+              <button
+                onClick={() => removeMainInvite(index)}
+                className="ml-auto p-1.5 text-red-600 hover:text-red-800 transition"
+                title="Remove"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
+              </button>
+            )}
           </div>
 
-          {/* Delete button */}
-          {mainInvites.length > 1 && (
-            <button
-              onClick={() => removeMainInvite(index)}
-              className="text-red-600 hover:text-red-800"
-              title="Remove"
-            >
-              🗑
-            </button>
-          )}
+          {/* Fields */}
+          <div className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(4,1fr)_auto] gap-3 items-center">
+            <input
+              type="date"
+              value={invite.date || ""}
+              onChange={(e) => handleMainInviteChange(index, "date", e.target.value)}
+              className="form-input"
+            />
+            <input
+              type="number"
+              placeholder="Tour Operator"
+              value={invite.to || ""}
+              onChange={(e) => handleMainInviteChange(index, "to", e.target.value)}
+              className="form-input"
+            />
+            <input
+              type="number"
+              placeholder="Travel Agent"
+              value={invite.ta || ""}
+              onChange={(e) => handleMainInviteChange(index, "ta", e.target.value)}
+              className="form-input"
+            />
+            <input
+              type="number"
+              placeholder="Travel Counselor"
+              value={invite.tc || ""}
+              onChange={(e) => handleMainInviteChange(index, "tc", e.target.value)}
+              className="form-input"
+            />
+            <input
+              type="number"
+              placeholder="Media / Influence"
+              value={invite.media || ""}
+              onChange={(e) => handleMainInviteChange(index, "media", e.target.value)}
+              className="form-input"
+            />
+            <div className="text-center font-semibold text-slate-800 bg-gray-100 rounded-md py-2">
+              {rowTotal}
+            </div>
+          </div>
         </div>
       );
     })}
   </div>
 
-  {/* === Column Totals (computed directly like Trade Database) === */}
+  {/* Totals Row */}
   <div className="grid grid-cols-[1.5fr_repeat(4,1fr)_auto] gap-3 items-center mt-5 p-3 bg-gray-200 rounded-lg font-semibold text-slate-900">
     <div>Column Totals →</div>
     <div>{mainInvites.reduce((sum, t) => sum + (Number(t.to) || 0), 0)}</div>
@@ -1911,18 +2481,22 @@ return (
     </div>
   </div>
 
-  <button
-    onClick={addMainInvite}
-    className="px-4 py-2 bg-green-600 text-white rounded mt-2"
-  >
-    + Add Main Invite
-  </button>
+  {/* Add button */}
+  <div className="flex justify-end mt-4">
+    <button
+      onClick={addMainInvite}
+      className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+    >
+      + Add Main Invite
+    </button>
+  </div>
 
-  {/* === Floating Grand Total (Save Date + Main Invite) === */}
+  {/* Floating Totals */}
   <div className="fixed right-5 top-1/3 bg-yellow-200 border border-yellow-400 rounded-lg shadow-lg p-3 text-sm">
-    <h4 className="font-semibold text-gray-800 mb-2">
-      Grand Totals
-    </h4>
+    <p className="mt-2 border-t border-gray-300 pt-2 text-center">
+      🕒 Countdown: <span className="font-bold">{workingDaysLeft}</span> working days
+    </p>
+    <h4 className="font-semibold text-gray-800 mb-2">Grand Totals</h4>
     <p>
       Tour Operator (TO):{" "}
       {(Number(saveDate.to) || 0) +
@@ -1975,20 +2549,25 @@ return (
         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       />
       <div className="mt-2">
-        <label className="block text-sm font-medium text-gray-600">Upload Backdrop Design (optional)</label>
+        <label className="block text-sm font-medium text-gray-600">Upload Backdrop Design</label>
         <input
           type="file"
           accept=".jpg,.jpeg,.png"
-          onChange={(e) => setAvSetup({ ...avSetup, backdropImage: e.target.files[0] })}
+          onChange={(e) => setAvSetup({ ...avSetup, backdrop_image: e.target.files[0] })}
           className="mt-1 w-full text-sm text-gray-700 border border-gray-300 rounded-md cursor-pointer focus:outline-none"
         />
-        {avSetup.backdropImage && (
-          <img
-            src={URL.createObjectURL(avSetup.backdropImage)}
-            alt="Backdrop Preview"
-            className="mt-2 rounded-md border border-gray-200 h-24 object-contain"
-          />
-        )}
+      
+        {avSetup.backdrop_image && (
+        <img
+          src={
+            avSetup.backdrop_image instanceof File
+             ? URL.createObjectURL(avSetup.backdrop_image)
+             : avSetup.backdrop_image
+          }
+          alt="Backdrop Preview"
+          className="h-24 w-auto rounded shadow"
+        />
+      )}
       </div>
     </div>
 
@@ -2004,20 +2583,25 @@ return (
         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       />
       <div className="mt-2">
-        <label className="block text-sm font-medium text-gray-600">Upload Screen Image (optional)</label>
+        <label className="block text-sm font-medium text-gray-600">Upload Screen Image</label>
         <input
           type="file"
           accept=".jpg,.jpeg,.png"
-          onChange={(e) => setAvSetup({ ...avSetup, screenImage: e.target.files[0] })}
+          onChange={(e) => setAvSetup({ ...avSetup, screen_image: e.target.files[0] })}
           className="mt-1 w-full text-sm text-gray-700 border border-gray-300 rounded-md cursor-pointer focus:outline-none"
         />
-        {avSetup.screenImage && (
+        {avSetup.screen_image && (
           <img
-            src={URL.createObjectURL(avSetup.screenImage)}
+             src={
+            avSetup.screen_image instanceof File
+             ? URL.createObjectURL(avSetup.screen_image)
+             : avSetup.screen_image
+          }
             alt="Screen Preview"
             className="mt-2 rounded-md border border-gray-200 h-24 object-contain"
           />
-        )}
+        )}    
+
       </div>
     </div>
   </div>
@@ -2029,7 +2613,7 @@ return (
       <label className="block mb-1 font-medium text-slate-700">Mic (Nos)</label>
       <input
         type="number"
-        placeholder="e.g. 10"
+        placeholder="10"
         min="0"
         max="999"
         value={avSetup.mic || ''}
@@ -2043,7 +2627,7 @@ return (
       <label className="block mb-1 font-medium text-slate-700">Type</label>
       <input
         type="text"
-        placeholder="Type (max 20 chars)"
+        placeholder="Type"
         maxLength={20}
         value={avSetup.type || ''}
         onChange={(e) => setAvSetup({ ...avSetup, type: e.target.value })}
@@ -2052,25 +2636,25 @@ return (
     </div>
 
     {/* Projector */}
-    <div className="flex items-center gap-2 mt-6">
+    <div className="flex items-center gap-1 mt-6 text-sm text-gray-700">
       <input
         type="checkbox"
         checked={avSetup.projector || false}
         onChange={(e) => setAvSetup({ ...avSetup, projector: e.target.checked })}
-        className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+        className="accent-blue-600 h-3 w-3"
       />
-      <label className="text-slate-700">Projector</label>
+      <label className="whitespace-nowrap">Projector</label>
     </div>
 
     {/* Podium */}
-    <div className="flex items-center gap-2 mt-6">
+    <div className="flex items-center gap-1 mt-6 text-sm text-gray-700">
       <input
         type="checkbox"
         checked={avSetup.podium || false}
         onChange={(e) => setAvSetup({ ...avSetup, podium: e.target.checked })}
-        className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+        className="accent-blue-600 h-3 w-3"
       />
-      <label className="text-slate-700">Podium</label>
+      <label className="whitespace-nowrap">Podium</label>
     </div>
 
     {/* Stage Image */}
@@ -2079,14 +2663,19 @@ return (
       <input
         type="file"
         accept=".jpg,.jpeg,.png"
-        onChange={(e) => setAvSetup({ ...avSetup, stageImage: e.target.files[0] })}
+        onChange={(e) => setAvSetup({ ...avSetup, stage_image: e.target.files[0] })}
         className="w-full text-sm text-gray-700 border border-gray-300 rounded-md cursor-pointer focus:outline-none"
       />
-      {avSetup.stageImage && (
+    
+       {avSetup.stage_image && (
         <img
-          src={URL.createObjectURL(avSetup.stageImage)}
-          alt="Stage Preview"
-          className="mt-2 rounded-md border border-gray-200 h-24 object-contain"
+          src={
+            avSetup.stage_image instanceof File
+             ? URL.createObjectURL(avSetup.stage_image)
+             : avSetup.stage_image
+          }
+          alt="Backdrop Preview"
+          className="h-24 w-auto rounded shadow"
         />
       )}
     </div>

@@ -105,7 +105,11 @@ export const projectSectionsAPI = {
   }),
   
   // AV Setup //router.put('/:id/av-setup', projectController.updateAVSetup);
-  updateAVSetup: (id, avSetup) => api.put(`/projects/${id}/av-setup`, { av_setup: avSetup }),
+  //updateAVSetup: (id, avSetup) => api.put(`/projects/${id}/av-setup`, { av_setup: avSetup }),
+  updateAVSetup: (id, formData) =>
+     api.put(`/projects/${id}/av-setup`, formData,{
+      headers: { 'Content-Type': 'multipart/form-data' },
+     }),
 
    // Hotels //router.put('/:id/hotels', projectController.updateHotles);
   updateHotels: (id, hotels) => api.put(`/projects/${id}/hotels`, { hotels }),
