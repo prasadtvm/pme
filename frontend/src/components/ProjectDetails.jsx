@@ -92,7 +92,16 @@ const updateTotals = (saveDate, mainInvites) => {
        selected: false , venue_rental:false, av:false, food:false, bar:false}]);
  
   const [associates, setAssociates] = useState([{ name: '',city:'',  selected: false }]);
-  const [tradeDatabase, setTradeDatabase] = useState([{ trade_name: '', travel_operator: '' ,travel_agent:'',travel_counsellor:'',media_influencers:''}]); 
+ // const [tradeDatabase, setTradeDatabase] = useState([{ trade_name: '', travel_operator: '' ,travel_agent:'',travel_counsellor:'',media_influencers:''}]); 
+  const defaultTrades = [
+  { trade_name: 'Associate', travel_operator: '', travel_agent: '', travel_counsellor: '', media_influencers: '' },
+  { trade_name: 'Stark', travel_operator: '', travel_agent: '', travel_counsellor: '', media_influencers: '' },
+  { trade_name: 'Consulate / embassy', travel_operator: '', travel_agent: '', travel_counsellor: '', media_influencers: '' },
+  { trade_name: 'Kerala trade', travel_operator: '', travel_agent: '', travel_counsellor: '', media_influencers: '' },
+  { trade_name: 'KTM', travel_operator: '', travel_agent: '', travel_counsellor: '', media_influencers: '' },
+  { trade_name: 'Others', travel_operator: '', travel_agent: '', travel_counsellor: '', media_influencers: '' },
+];
+const [tradeDatabase, setTradeDatabase] = useState(defaultTrades);
        
   const [rsvp, setRsvp] = useState([{ 
     save_the_date: '',
@@ -212,7 +221,11 @@ useEffect(() => {
           
           setAssociates(d.associates || []);
           setVenues(d.venues || []);
-          setTradeDatabase(d.trade_database || []);
+         // setTradeDatabase(d.trade_database || []);
+         setTradeDatabase(d.trade_database && d.trade_database.length > 0
+        ? d.trade_database
+        : defaultTrades
+        );
           setHotels(d.hotels || []);
           setRsvp(d.rsvp || []);        
           setInvitationFile(d.rsvp?.[0]?.invitation_design_file_path || '');
