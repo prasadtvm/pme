@@ -356,7 +356,7 @@ const ViewProject = () => {
                 <div>Screen: {details.av_setup.screen}</div>
                 <div>Mic: {details.av_setup.mic}</div>
                 <div>Type: {details.av_setup.type}</div>
-                <div>Projector: {details.av_setup.projector.selected ? (
+                <div>Projector: {details.av_setup?.projector?.selected ? (
                     <span className="text-green-600 font-semibold">Selected</span>
                   ) : (
                     <span className="text-gray-500">Not Selected</span>
