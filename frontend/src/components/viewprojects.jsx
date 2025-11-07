@@ -160,7 +160,7 @@ const ViewProject = () => {
               <div style={{ marginBottom: '25px' }}>
               
               <div className="grid-form">
-              <p><strong>City:</strong> {details.city}</p>
+              {/*</div><p><strong>City:</strong> {details.city}</p>*/}
               <p><strong>Project Handled By:</strong> {details.project_handiled_by}</p>              
               <p><strong>Budget:</strong> ₹{details.budget}</p>
               </div>
@@ -177,7 +177,7 @@ const ViewProject = () => {
                   key={i}
                   className="p-3 bg-gray-50 border border-gray-200 rounded text-gray-700"
                 >
-                  {a.name}  {" — "}
+                  {a.name}  {a.city} {" — "}
                   {a.selected ? (
                     <span className="text-green-600 font-semibold">Selected</span>
                   ) : (
@@ -241,8 +241,11 @@ const ViewProject = () => {
                     className="p-3 bg-gray-50 border border-gray-200 rounded text-gray-700"
                   >
                     <span className="font-medium text-slate-800">{t.trade_name}</span>
-                    {" — "}
-                    <span className="text-gray-600">{t.nos} Nos</span>
+                     <span className="font-medium text-slate-800">Tour Operator (TO):</span> {t.travel_operator || '0'}
+                      <span className="font-medium text-slate-800">Travel Agent (TA):</span> {t.travel_agent || '0'}
+                      <span className="font-medium text-slate-800">Travel Counselor (TC):</span> {t.travel_counsellor || '0'}
+                      <span className="font-medium text-slate-800">Media / Influence:</span> {t.media || '0'}
+                    {/*<span className="text-gray-600">{t.nos} Nos</span>*/}
                   </div>
                 ))}
               </div>
@@ -343,7 +346,7 @@ const ViewProject = () => {
 </div>
 
 
-          {/* Hotel AV Setup Section */}
+          {/* Hotel AV Setup Section  {/*<div>Stage: {details.av_setup.stage_image}</div>*\}*/}
           <div id="av" className="mb-6">
             <h3 className="text-lg font-semibold text-slate-800 mb-3">Hotel AV Setup</h3>
 
@@ -352,8 +355,20 @@ const ViewProject = () => {
                 <div>Backdrop: {details.av_setup.backdrop}</div>
                 <div>Screen: {details.av_setup.screen}</div>
                 <div>Mic: {details.av_setup.mic}</div>
-                <div>Projector: {details.av_setup.projector}</div>
-                <div>Stage: {details.av_setup.stage}</div>
+                <div>Type: {details.av_setup.type}</div>
+                <div>Projector: {details.av_setup.projector.selected ? (
+                    <span className="text-green-600 font-semibold">Selected</span>
+                  ) : (
+                    <span className="text-gray-500">Not Selected</span>
+                  )}     
+                  </div>
+                   <div>Podium: {details.av_setup.podium.selected ? (
+                    <span className="text-green-600 font-semibold">Selected</span>
+                  ) : (
+                    <span className="text-gray-500">Not Selected</span>
+                  )}     
+                  </div>
+               
               </div>
             ) : (
               <p className="text-gray-500">No Hotel AV setup</p>
@@ -367,7 +382,7 @@ const ViewProject = () => {
             {details.hotel ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 p-3 bg-gray-50 rounded border border-gray-200">
                 <div>Supplier: {details.hotel.sponsor}</div>
-                <div>Name: {details.hotel.name}</div>
+                <div>Contact Name: {details.hotel.name}</div>
                 <div>— {details.hotel.selected ? (
                     <span className="text-green-600 font-semibold">Selected</span>
                   ) : (
@@ -386,11 +401,11 @@ const ViewProject = () => {
             {details.embassy ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 p-3 bg-gray-50 rounded border border-gray-200">
                 <div>Cheif Guest: {details.embassy.cheif_guest}</div>
-                <div>Cheif Guest Designation: {details.embassy.cheif_guest_designation}</div>
-                <div>Cheif Guest Phone: {details.embassy.cheif_guest_phone}</div>
+                <div>Designation: {details.embassy.cheif_guest_designation}</div>
+                <div>Contact: {details.embassy.cheif_guest_phone}</div>
                 <div>Accommodation Contact: {details.embassy.accommodation_contact}</div>
-                <div>Accommodation Address: {details.embassy.accommodation_address}</div>
-                <div>Accommodation Phone: {details.embassy.accommodation_phone}</div>
+                <div>Designation: {details.embassy.accommodation_address}</div>
+                <div>Contact: {details.embassy.accommodation_phone}</div>
               </div>
             ) : (
               <p className="text-gray-500">No Embassy/consulate data</p>
@@ -402,8 +417,9 @@ const ViewProject = () => {
           {details.client ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 p-3 bg-gray-50 rounded border border-gray-200">
               <div>Name: {details.client.name}</div>
-              <div>Hotel: {details.client.hotel}</div>
-              <div>Address: {details.client.address}</div>
+              <div>Designation: {details.client.designation}</div>
+              <div>Contact: {details.client.contact}</div>
+               <div>Hotel: {details.client.hotel}</div>
             </div>
           ) : <p className="text-gray-500">No client data</p>}
           </div>

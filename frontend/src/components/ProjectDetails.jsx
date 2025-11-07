@@ -769,8 +769,6 @@ return (
           {progress}% Completed
         </div>
       </div>
-
-
       </div>
        
       {/* 🧭 Sidebar + Main Layout */}
@@ -782,13 +780,13 @@ return (
             <a href="#associate" className="hover:text-blue-600">Associate</a>
             <a href="#venue" className="hover:text-blue-600">Venue</a>            
             <a href="#database" className="hover:text-blue-600">Database</a>
-             <a href="#rsvp" className="hover:text-blue-600">RSVP</a>
-             <a href="#av" className="hover:text-blue-600">Hotel Av Setup</a>
+            <a href="#rsvp" className="hover:text-blue-600">RSVP</a>
+            <a href="#av" className="hover:text-blue-600">Hotel Av Setup</a>
             <a href="#av_supplier" className="hover:text-blue-600">Av Supplier</a>
             <a href="#embassy" className="hover:text-blue-600">Embassy / Consulate</a>
             <a href="#client" className="hover:text-blue-600">Client</a>
             <a href="#checklist" className="hover:text-blue-600">Check List</a>
-             <a href="#menu" className="hover:text-blue-600">Menu (image upload)</a>
+            <a href="#menu" className="hover:text-blue-600">Menu (image upload)</a>
             <a href="#remarks" className="hover:text-blue-600">Remarks</a>
             <a href="#print" className="hover:text-blue-600">Print</a>
           </nav>
