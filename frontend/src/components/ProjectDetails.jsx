@@ -102,6 +102,16 @@ const updateTotals = (saveDate, mainInvites) => {
   { trade_name: 'Others', travel_operator: '', travel_agent: '', travel_counsellor: '', media_influencers: '' },
 ];
 const [tradeDatabase, setTradeDatabase] = useState(defaultTrades);
+
+const defaultChecklists = [
+          { name: 'Visiting Card', selected: false },
+          { name: 'Mementos', selected: false },
+          { name: 'Presentation', selected: false },
+          { name: 'Gifts', selected: false },
+          { name: 'Others', selected: false },
+        ];
+
+const [checklists, setChecklists] = useState(defaultChecklists);
        
   const [rsvp, setRsvp] = useState([{ 
     save_the_date: '',
@@ -127,7 +137,7 @@ const [tradeDatabase, setTradeDatabase] = useState(defaultTrades);
     accommodation_address: '',    accommodation_phone:''  });
 
   const [clients, setClients] = useState({name: '',designation:'', contact:'',hotel:''});
-const [checklists, setChecklists] = useState([{ name: '',  selected: false }]);
+//const [checklists, setChecklists] = useState([{ name: '',  selected: false }]);
 const [menuFile, setMenuFile] = useState({    fileName: '',    fileType: '',    fileSize: '',    filePath:''  });
   const [workingDaysLeft, setWorkingDaysLeft] = useState(0);
   const handleCreate = async (e) => {
@@ -232,8 +242,17 @@ useEffect(() => {
           
           setAvSetup(d.av_setup || {});
           setEmbassy(d.embassy || {});         
-          setClients(d.clients || {});        
-          setChecklists(d.checklist || []);
+          setClients(d.clients || {});   
+          
+          
+
+          setChecklists(d.checklist && d.checklist.length > 0
+          ? d.checklist 
+          : defaultChecklists
+        );
+
+          
+        
          
           //setMenuFile(d.menuFile || {});
           //setMenuFile(d.menuFile || '');
@@ -244,7 +263,8 @@ useEffect(() => {
   fileType: d.menuFile[0]?.mime_type || ''
 });
           setRemarks(remarks.data||[]);
-        }   
+        }
+         
        //  console.log(menuFile.fileName)   
       // console.log('projectDetails fetch',menuFile); 
        
@@ -294,8 +314,6 @@ const fetchRemarks = async () => {
       const formData = new FormData();
      // roadshow_name: details.roadshowName,
        // event_date: details.event_date,
-       // budget: details.budget,
-       // project_handiled_by:details.project_handiled_by ,
        // image_file: details.image_file || null, // add this line  
 
     formData.append('roadshow_name', details.roadshowName);
@@ -2991,30 +3009,33 @@ return (
             {saving === "checklists" ? "Saving..." : "Save Checklists"}
           </button>
         </div>
-
+       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-3">
         {checklists.map((checklist, index) => (
           <div
             key={index}
-            className="grid grid-cols-[2fr_auto_auto] gap-3 items-center mb-3 p-3 bg-gray-50 rounded-lg"
+            className="flex items-center justify-between bg-gray-50 p-2 rounded-lg shadow-sm"
           >
-            {/* checklist Name */}
-            <input
-              type="text"
-              placeholder="name"
-              value={checklist.name}
-              onChange={(e) => handleChecklistChange(index, "name", e.target.value)}
-              className="px-2 py-2 border border-gray-300 rounded-md"
-            />
+             <div className="flex items-center gap-2">
+                {/* checklist Name */}
+                <input
+                  type="text"
+                  placeholder="name"
+                  value={checklist.name}
+                  onChange={(e) => handleChecklistChange(index, "name", e.target.value)}
+                  className="px-2 py-1 border border-gray-300 rounded-md "
+                />
 
-            {/* Select Checkbox */}
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={checklist.selected}
-                onChange={(e) => handleChecklistChange(index, "selected", e.target.checked)}
-              />
-              <span className="text-sm">Select</span>
-            </div>
+                {/* Select Checkbox */}
+                
+                  <input
+                    type="checkbox"
+                    checked={checklist.selected}
+                    onChange={(e) => handleChecklistChange(index, "selected", e.target.checked)}
+                    className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                  />
+                  <span className="text-sm">Select</span>
+            
+             </div>
 
             {/* Delete Button */}
             {checklists.length > 1 && (
@@ -3042,7 +3063,7 @@ return (
             )}
           </div>
         ))}
-
+ </div>
         {/* Add Checklist Button */}
         <button
           type="button"
@@ -3051,6 +3072,7 @@ return (
         >
           + Add Checklist
         </button>
+       
       </div>
 
    
