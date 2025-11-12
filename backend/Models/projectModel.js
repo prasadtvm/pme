@@ -1069,7 +1069,7 @@ const cleanNumeric = (value) => {
       );
       return result.rows[0];
     }
-  },
+  },*/
 
   // Update Embassy only
   updateEmbassyOnly: async (projectId, embassy, userId) => {
@@ -1111,7 +1111,7 @@ const cleanNumeric = (value) => {
       );
       return result.rows[0];
     }
-  },*/
+  },
 
   updateAVSetupOnly: async (projectId, avSetup, userId) => {
   const { backdrop, backdrop_image, screen, screen_image, stage_image, mic, type, projector, podium } = avSetup;
