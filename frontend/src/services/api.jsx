@@ -3,7 +3,7 @@ import axios from 'axios';
 //const API_BASE_URL = 'http://localhost:5000/api';
 console.log(import.meta.env);
 
-const API_BACK_URL = `${import.meta.env.VITE_API_BACK_URL?.replace(/\/$/, '')}/api` || 'http://localhost:5000/';
+const API_BACK_URL = `${import.meta.env.VITE_API_BACK_URL?.replace(/\/$/, '')}/api` || 'http://localhost:5000/api';
 
 console.log('aervice [api.jsx]',API_BACK_URL);
 
@@ -99,10 +99,16 @@ export const projectSectionsAPI = {
   
   // RSVP //router.put('/:id/rsvp', projectController.updateRSVP);
   //updateRSVP: (id, rsvp) => api.put(`/projects/${id}/rsvp`, { rsvp }),
-  updateRSVP: (id, formData) =>
+ updateRSVP : (id, formData) =>
   api.put(`/projects/${id}/rsvp`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
+
+  updateMainInvite : (id, formData) =>
+  api.put(`/projects/${id}/maininvite`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  }),
+  
   
   // AV Setup //router.put('/:id/av-setup', projectController.updateAVSetup);
   //updateAVSetup: (id, avSetup) => api.put(`/projects/${id}/av-setup`, { av_setup: avSetup }),

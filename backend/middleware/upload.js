@@ -26,6 +26,7 @@ console.log("🟣 Upload middleware reached", file.fieldname);
 
   if (url.includes('/menu') || file.fieldname === 'menu') return 'menu';
   if (url.includes('/rsvp') || file.fieldname === 'invitation_design_file') return 'rsvp';
+  if (url.includes('/maininvite') || file.fieldname === 'maininvite_design_file') return 'maininvite';
   if (url.includes('/projects') || file.fieldname === 'image_file') return 'project';
 
   
@@ -176,6 +177,7 @@ module.exports = {
   uploadProjectImage: handleUpload('image_file'),
   uploadMenuFile: handleUpload('menu'),
   uploadRSVPFile: handleUpload('invitation_design_file'),
+  uploadMainInviteFile: handleUpload('main_invite_design_file'),
   uploadAvSetupFiles,
 };
 

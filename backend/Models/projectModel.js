@@ -453,13 +453,8 @@ const cleanNumeric = (value) => {
       result = await pool.query(
         `SELECT r.id,
             r.project_id,
-            r.invitation_design_file_path,TO_CHAR(r.save_the_date, 'YYYY-MM-DD') AS save_the_date,
-            TO_CHAR(r.save_the_date_confirmation_date, 'YYYY-MM-DD') AS save_the_date_confirmation_date,  -- ✅ Fix applied here too
-            r.save_the_date_ta_nos,r.save_the_date_to_nos,r.save_the_date_travel_counsellors_nos,r.save_the_date_influencers_nos,
-            r.save_the_date_total_nos,TO_CHAR(r.main_invitation_date,'YYYY-MM-DD') AS main_invitation_date,
-            TO_CHAR(r.main_invitation_confirmation_date,'YYYY-MM-DD') AS main_invitation_confirmation_date,
-            main_invitation_ta_nos, main_invitation_to_nos,  main_invitation_travel_counsellors_nos,
-            main_invitation_influencers_nos, main_invitation_total_nos             
+            r.invitation_design_file_path,TO_CHAR(r.save_the_date, 'YYYY-MM-DD') AS save_the_date,            
+            r.save_the_date_ta_nos,r.save_the_date_to_nos,r.save_the_date_travel_counsellors_nos,r.save_the_date_influencers_nos                        
             FROM rsvp r 
          JOIN projects p ON r.project_id = p.id 
          WHERE r.project_id = $1 AND p.created_by = $2 
@@ -469,13 +464,9 @@ const cleanNumeric = (value) => {
     } else {
       result = await pool.query(
         `SELECT r.project_id,
-            r.invitation_design_file_path,TO_CHAR(r.save_the_date, 'YYYY-MM-DD') AS save_the_date,
-            TO_CHAR(r.save_the_date_confirmation_date, 'YYYY-MM-DD') AS save_the_date_confirmation_date,  -- ✅ Fix applied here too
-            r.save_the_date_ta_nos,r.save_the_date_to_nos,r.save_the_date_travel_counsellors_nos,r.save_the_date_influencers_nos,
-            r.save_the_date_total_nos,TO_CHAR(r.main_invitation_date,'YYYY-MM-DD') AS main_invitation_date,
-            TO_CHAR(r.main_invitation_confirmation_date,'YYYY-MM-DD') AS main_invitation_confirmation_date,
-            main_invitation_ta_nos, main_invitation_to_nos,  main_invitation_travel_counsellors_nos,
-            main_invitation_influencers_nos, main_invitation_total_nos FROM rsvp r WHERE r.project_id = $1 ORDER BY r.created_at`,
+            r.invitation_design_file_path,TO_CHAR(r.save_the_date, 'YYYY-MM-DD') AS save_the_date,          
+            r.save_the_date_ta_nos,r.save_the_date_to_nos,r.save_the_date_travel_counsellors_nos,r.save_the_date_influencers_nos
+             FROM rsvp r WHERE r.project_id = $1 ORDER BY r.created_at`,
         [projectId]
       );
     }
@@ -486,6 +477,89 @@ const cleanNumeric = (value) => {
     return [];
   }
 },
+getMainInvite: async (projectId, user) => {
+  try {
+    let result;
+    if (user.role === '1') {
+      result = await pool.query(
+        `SELECT r.id,
+                r.project_id,
+                r.main_invite_design_file_path,
+                TO_CHAR(r.main_invite_date, 'YYYY-MM-DD') AS main_invite_date,
+                r.main_invite_ta_nos,
+                r.main_invite_to_nos,
+                r.main_invite_travel_counsellors_nos,
+                r.main_invite_influencers_nos
+           FROM rsvp_main_invite r
+           JOIN projects p ON r.project_id = p.id
+           WHERE r.project_id = $1 AND p.created_by = $2
+           ORDER BY r.created_at`,
+        [projectId, user.id]
+      );
+    } else {
+      result = await pool.query(
+        `SELECT r.project_id,
+                r.main_invite_design_file_path,
+                TO_CHAR(r.main_invite_date, 'YYYY-MM-DD') AS main_invite_date,
+                r.main_invite_ta_nos,
+                r.main_invite_to_nos,
+                r.main_invite_travel_counsellors_nos,
+                r.main_invite_influencers_nos
+           FROM rsvp_main_invite r
+          WHERE r.project_id = $1
+          ORDER BY r.created_at`,
+        [projectId]
+      );
+    }
+
+    return result.rows;
+  } catch (error) {
+    console.error('Error fetching Main Invite:', error);
+    return [];
+  }
+},
+
+
+updateMainInvite: async (projectId, mainInviteArray, userId, filePath = null) => {
+  // Verify project access
+  const project = await pool.query(
+    'SELECT id FROM projects WHERE id = $1 AND created_by = $2',
+    [projectId, userId]
+  );
+  if (project.rows.length === 0) {
+    throw new Error('Project not found or access denied');
+  }
+
+  // Remove previous records
+  await pool.query('DELETE FROM rsvp_main_invite WHERE project_id = $1', [projectId]);
+
+  // Insert new ones
+  for (const item of mainInviteArray) {
+    await pool.query(
+      `INSERT INTO rsvp_main_invite (
+        project_id,
+        main_invite_design_file_path,
+        main_invite_date,
+        main_invite_ta_nos,
+        main_invite_to_nos,
+        main_invite_travel_counsellors_nos,
+        main_invite_influencers_nos
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+      [
+        projectId,
+        filePath || null,
+        item.main_invite_date || null,
+        item.main_invite_ta_nos || 0,
+        item.main_invite_to_nos || 0,
+        item.main_invite_travel_counsellors_nos || 0,
+        item.main_invite_influencers_nos || 0
+      ]
+    );
+  }
+
+  return await Project.getMainInvite(projectId, { id: userId, role: '1' });
+},
+
 
 
   // AV Setup - Basic implementation for now
@@ -929,17 +1003,9 @@ const cleanNumeric = (value) => {
         save_the_date_ta_nos,
         save_the_date_to_nos,
         save_the_date_travel_counsellors_nos,
-        save_the_date_influencers_nos,
-        save_the_date_total_nos,
-        main_invitation_date,
-        main_invitation_confirmation_date,
-        main_invitation_ta_nos,
-        main_invitation_to_nos,
-        main_invitation_travel_counsellors_nos,
-        main_invitation_influencers_nos,
-        main_invitation_total_nos
+        save_the_date_influencers_nos       
       ) VALUES (
-        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16
+        $1,$2,$3,$4,$5,$6,$7,$8
       )`,
       [
         projectId,
@@ -949,19 +1015,18 @@ const cleanNumeric = (value) => {
         item.save_the_date_ta_nos || 0,
         item.save_the_date_to_nos || 0,
         item.save_the_date_travel_counsellors_nos || 0,
-        item.save_the_date_influencers_nos || 0,
-        item.save_the_date_total_nos || 0,
-        item.main_invitation_date || null,
-        item.main_invitation_confirmation_date || null,
-        item.main_invitation_ta_nos || 0,
-        item.main_invitation_to_nos || 0,
-        item.main_invitation_travel_counsellors_nos || 0,
-        item.main_invitation_influencers_nos || 0,
-        item.main_invitation_total_nos || 0
+        item.save_the_date_influencers_nos || 0       
       ]
     );
   }
-
+ //save_the_date_total_nos,
+     //   main_invitation_date,
+       // main_invitation_confirmation_date,
+      //  main_invitation_ta_nos,
+       // main_invitation_to_nos,
+      //  main_invitation_travel_counsellors_nos,
+      //  main_invitation_influencers_nos,
+       // main_invitation_total_nos
   // Return updated list
   return await Project.getRSVP(projectId, { id: userId, role: '1' });
 },

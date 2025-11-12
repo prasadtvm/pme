@@ -148,6 +148,7 @@ const projectController = {
       // Get additional data with error handling
       const tradeDatabase = await Project.getTradeDatabase(projectId, user);
       const rsvp = await Project.getRSVP(projectId, user);
+      const mainInvites = await Project.getMainInvite(projectId, user);
       const hotels = await Project.getHotels(projectId, user);
       const avSetup = await Project.getAVSetup(projectId, user);
       const embassy = await Project.getEmbassy(projectId, user);
@@ -161,6 +162,7 @@ const projectController = {
         venues,
         trade_database: tradeDatabase,
         rsvp,
+        mainInvites,
         hotels,
         av_setup: avSetup,
         embassy,
@@ -339,6 +341,43 @@ const projectController = {
       res.status(500).json({ error: error.message || 'Internal server error' });
     }
   },*/
+
+  updateMainInvite: async(req,res)=> {
+ try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    
+
+    let mainInviteData  = req.body.Main_invite;
+    if (typeof mainInviteData === 'string') {
+      try {
+        mainInviteData = JSON.parse(mainInviteData);
+      } catch (err) {
+        console.error('❌ Invalid mainInviteData JSON format:', err);
+        rsvpData = [];
+      }
+    }
+
+    // ✅ 2. Ensure it's always an array
+    if (!Array.isArray(mainInviteData)) {
+      mainInviteData = [mainInviteData];
+    }
+    //const { rsvp } = req.body;
+    const filePath = req.file ? req.file.path : null;
+console.log('Parsed main Invite data:', mainInviteData);
+    console.log('Uploaded file path:', filePath);
+    const updatedRSVP = await Project.updateMainInvite(id, mainInviteData, userId, filePath);
+
+    res.json({
+      message: 'mainInviteData updated successfully',
+      data: updateMainInvite
+        });
+  } catch (error) {
+    console.error('Error updating main Invite:', error);
+    res.status(500).json({ error: error.message || 'Internal server error' });
+  }
+
+  },
 
   // ✅ Update RSVP with file upload + multiple entries
 updateRSVP: async (req, res) => {
