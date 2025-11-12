@@ -366,11 +366,11 @@ const projectController = {
     const filePath = req.file ? req.file.path : null;
 console.log('Parsed main Invite data:', mainInviteData);
     console.log('Uploaded file path:', filePath);
-    const updatedRSVP = await Project.updateMainInvite(id, mainInviteData, userId, filePath);
+    const updatedMainInvite = await Project.updateMainInvite(id, mainInviteData, userId, filePath);
 
     res.json({
       message: 'mainInviteData updated successfully',
-      data: updateMainInvite
+      data: updatedMainInvite
         });
   } catch (error) {
     console.error('Error updating main Invite:', error);
@@ -402,7 +402,7 @@ updateRSVP: async (req, res) => {
     }
     //const { rsvp } = req.body;
     const filePath = req.file ? req.file.path : null;
-console.log('Parsed RSVP data:', rsvpData);
+    console.log('Parsed RSVP data:', rsvpData);
     console.log('Uploaded file path:', filePath);
     const updatedRSVP = await Project.updateRSVPOnly(id, rsvpData, userId, filePath);
 
