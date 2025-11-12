@@ -171,7 +171,7 @@ const [checklists, setChecklists] = useState(defaultChecklists);
     save_the_date_influencers_nos: 0,
      }]);
   const [invitationFile, setInvitationFile] = useState(null);
-  const [hotels, setHotels] = useState([{sponsor:'', name: '',  selected: false }]);
+  const [hotels, setHotels] = useState([{sponsor:'', name: '',  selected: false,item:'',currency:'INR', amount: '' }]);
   const [progress, setProgress] = useState(0);
   const [avSetup, setAvSetup] = useState({    backdrop: '',    screen: '',    mic: '',    type:'',    projector: false,    podium: false,   backdrop_image:null,screen_image:null,stage_image:null });
 
@@ -524,7 +524,18 @@ const saveMainInvites =async() =>{
   const saveHotels = async () => {
     try {
       setSaving('hotels');
-      await projectSectionsAPI.updateHotels(id, hotels);
+      //console.log('test hotel or supplier',JSON.stringify(hotels));
+// ✅ Clean the data before saving
+    const cleanedHotels = hotels.map((h) => ({
+      ...h,
+      amount: h.amount ? parseFloat(h.amount) : 0,  // ensure number      
+      currency: h.currency || "INR", // fallback default
+    }));
+
+    console.log("test hotel or supplier", JSON.stringify(cleanedHotels, null, 2));
+
+
+      await projectSectionsAPI.updateHotels(id, cleanedHotels);
       showMessage('Hotels saved successfully!');
     } catch (e) {
       console.error(e);
@@ -664,11 +675,35 @@ const formatNumberOutput = (value, currency) => {
 
   // Hotel handlers
   const handleAddHotel = () => {
-    setHotels([...hotels, { sponsor: '',name:'', selected: false }]);
+    setHotels([...hotels, { sponsor: '',name:'', selected: false,item:'',currency:'INR', amount: '' }]);
   };
   const handleHotelChange = (index, field, value) => {
-    setHotels(hotels.map((v, i) => (i === index ? { ...v, [field]: value } : v)));
-  };
+    //setHotels(hotels.map((v, i) => (i === index ? { ...v, [field]: value } : v)));
+
+   
+  setHotels((prevHotels) =>
+    prevHotels.map((hotel, i) => {
+      if (i !== index) return hotel;
+
+      if (field === "currency") {
+        // Change currency, keep same amount but reformat it
+        const formattedAmount = formatNumberOutput(
+          parseNumberInput(hotel.amount, hotel.currency),
+          value
+        );
+        return { ...hotel, currency: value, amount: formattedAmount };
+      }
+
+      if (field === "amount") {
+        // Format for display while typing
+        return { ...hotel, [field]: value };
+      }
+
+      return { ...hotel, [field]: value };
+    })
+  );
+};
+ 
   const handleRemoveHotel = (index) => {
     setHotels(hotels.filter((_, i) => i !== index));
   };
@@ -2512,21 +2547,28 @@ return (
               className="px-2 py-2 border border-gray-300 rounded-md"
             />
             <select
-  value={hotel.currency || "INR"}
- 
+  value={hotel.currency || "INR"} 
+  onChange={(e) => handleHotelChange(index, "currency", e.target.value)}
   className="px-2 py-2 border border-gray-300 rounded-md"
 >
   <option value="INR">INR</option>
   <option value="EUR">Euro</option>
   <option value="GBP">Pound</option>
+  <option value="USD">USD</option>
 </select>
 
             {/* Amount */}
             <input
-              type="number"
+              type="text"
               placeholder="Amount"
-              value={hotel.name}
-              onChange={(e) => handleHotelChange(index, "name", e.target.value)}
+             value={hotel._editing ? hotel.amount : formatNumberOutput(hotel.amount, hotel.currency)}
+  onFocus={() => handleHotelChange(index, "_editing", true)}
+  onBlur={(e) => {
+    const parsed = parseNumberInput(e.target.value, hotel.currency);
+    handleHotelChange(index, "amount", parsed);
+    handleHotelChange(index, "_editing", false);
+  }}
+  onChange={(e) => handleHotelChange(index, "amount", e.target.value)}
               className="px-2 py-2 border border-gray-300 rounded-md"
             />
 
