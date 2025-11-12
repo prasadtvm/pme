@@ -2285,22 +2285,22 @@ return (
     <h4 className="font-semibold text-gray-800 mb-2">Grand Totals</h4>
     <p>
       Tour Operator (TO):{" "}
-      {(Number(saveDate.to) || 0) +
+      {(Number(saveDate.save_the_date_to_nos) || 0) +
         mainInvites.reduce((sum, t) => sum + (Number(t.main_invite_to_nos) || 0), 0)}
     </p>
     <p>
       Travel Agent (TA):{" "}
-      {(Number(saveDate.ta) || 0) +
+      {(Number(saveDate.save_the_date_ta_nos) || 0) +
         mainInvites.reduce((sum, t) => sum + (Number(t.main_invite_ta_nos) || 0), 0)}
     </p>
     <p>
       Travel Counselor (TC):{" "}
-      {(Number(saveDate.tc) || 0) +
+      {(Number(saveDate.save_the_date_travel_counsellors_nos) || 0) +
         mainInvites.reduce((sum, t) => sum + (Number(t.main_invite_travel_counsellors_nos) || 0), 0)}
     </p>
     <p>
       Media / Influence:{" "}
-      {(Number(saveDate.media) || 0) +
+      {(Number(saveDate.save_the_date_influencers_nos) || 0) +
         mainInvites.reduce((sum, t) => sum + (Number(t.main_invite_influencers_nos) || 0), 0)}
     </p>
   </div>
