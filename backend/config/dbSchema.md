@@ -183,6 +183,23 @@ CREATE TABLE IF NOT EXISTS public.client
         ON UPDATE NO ACTION
         ON DELETE CASCADE
 )
+CREATE TABLE IF NOT EXISTS public.Stark
+(
+    -- Use SERIAL PRIMARY KEY. This automatically creates the necessary sequence 
+    -- (e.g., 'stark_id_seq') and sets the default to nextval().
+    id SERIAL PRIMARY KEY, 
+    project_id integer,
+    name text COLLATE pg_catalog."default",
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    hotel text COLLATE pg_catalog."default",
+    
+    -- The PRIMARY KEY constraint is now handled by SERIAL PRIMARY KEY, 
+    -- so we only need the foreign key constraint:
+    CONSTRAINT Stark_project_id_fkey FOREIGN KEY (project_id)
+        REFERENCES public.projects (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+);
 
 CREATE TABLE IF NOT EXISTS public.checklists
 (

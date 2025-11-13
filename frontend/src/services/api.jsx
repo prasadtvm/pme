@@ -126,6 +126,10 @@ export const projectSectionsAPI = {
   // Client //router.put('/:id/clients', projectController.updateClients);
   updateClients: (id, clients) => api.put(`/projects/${id}/clients`, { clients }),
 
+// Stark //router.put('/:id/starks', projectController.updateStarks);
+  updateStarks: (id, starks) => api.put(`/projects/${id}/starks`, { starks }),
+  
+
   // Checklists //router.put('/:id/checklists', projectController.updateChecklists);
   updateChecklists: (id, checklists) => api.put(`/projects/${id}/checklists`, { checklists }),
   

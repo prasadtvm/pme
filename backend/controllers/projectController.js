@@ -153,6 +153,7 @@ const projectController = {
       const avSetup = await Project.getAVSetup(projectId, user);
       const embassy = await Project.getEmbassy(projectId, user);
       const clients = await Project.getClients(projectId, user);
+      const starks = await Project.getStarks(projectId, user);
       const checklist = await Project.getChecklists(projectId, user);
       const menuFile =  await Project.getMenu(projectId, user);
 //console.log('projectcontroller getprojectdetails');
@@ -167,6 +168,7 @@ const projectController = {
         av_setup: avSetup,
         embassy,
         clients,
+        starks,
         checklist,
         menuFile
       });
@@ -499,6 +501,24 @@ updateRSVP: async (req, res) => {
       });
     } catch (error) {
       console.error('Error updating client:', error);
+      res.status(500).json({ error: error.message || 'Internal server error' });
+    }
+  },
+  // Update client only
+  updateStarks: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const user = req.user;
+      const { starks } = req.body;
+
+      const updatedStark = await Project.updateStark(id, starks, user);
+      
+      res.json({
+        message: 'Stark information updated successfully',
+        data: updatedStark
+      });
+    } catch (error) {
+      console.error('Error updating stark:', error);
       res.status(500).json({ error: error.message || 'Internal server error' });
     }
   },

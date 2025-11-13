@@ -655,6 +655,43 @@ updateClient: async (projectId, clients, user) => {
     return await Project.getClients(projectId, user);
   },
 
+ // Stark - Basic implementation for now
+updateStark: async (projectId, starks, user) => {
+    // First, verify project access
+//console.log('updateassocia  proj mode',user.id,user.role);
+     let project;
+  if(user.role === '1'){
+        
+    project  = await pool.query(
+      'SELECT id FROM projects WHERE id = $1 AND created_by = $2',
+      [projectId, user.id]
+    );
+  }
+  else{
+    project = await pool.query(
+      'SELECT id FROM projects WHERE id = $1',
+      [projectId]
+    );
+  }
+
+    if (project.rows.length === 0) {
+      throw new Error('Project not found or access denied');
+    }
+
+    // Delete existing clients
+    await pool.query('DELETE FROM stark WHERE project_id = $1', [projectId]);
+
+    // Insert new client
+    for (const stark of starks) {
+      await pool.query(
+        'INSERT INTO stark (project_id, name, hotel) VALUES ($1, $2, $3)',
+        [projectId, stark.name,  stark.hotel]
+      );      
+    }
+
+    return await Project.getStarks(projectId, user);
+  },
+
   getClients: async (projectId, user) => {
     console.log('getclient',projectId,user.id);
     try {
@@ -679,6 +716,33 @@ updateClient: async (projectId, clients, user) => {
     } catch (error) {
       // If table doesn't exist yet, return empty object
       console.log('Client table might not exist yet, returning empty object');
+      return {};
+    }
+  },
+  getStarks: async (projectId, user) => {
+    console.log('getstark',projectId,user.id);
+    try {
+       let result;
+  if(user.role==='1'){
+        result = await pool.query(
+        `SELECT s.* FROM stark s 
+         JOIN projects p ON s.project_id = p.id 
+         WHERE s.project_id = $1 AND p.created_by = $2`,
+        [projectId, user.id]
+      );
+    }
+    else{
+       result = await pool.query(
+        `SELECT s.* FROM stark s 
+         JOIN projects p ON s.project_id = p.id 
+         WHERE s.project_id = $1`,
+        [projectId]
+      );
+    }
+      return result.rows;
+    } catch (error) {
+      // If table doesn't exist yet, return empty object
+      console.log('Stark table might not exist yet, returning empty object');
       return {};
     }
   },
@@ -1373,8 +1437,10 @@ calculateProgress: async (projectId) => {
       'client',
       'av_setup',
       'rsvp',
+      'rsvp_main_invite',
       'embassy',
       'client',
+      'stark',
       'hotels',
       'checklists'    
     ];

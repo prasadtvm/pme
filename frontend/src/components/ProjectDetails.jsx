@@ -179,6 +179,7 @@ const [checklists, setChecklists] = useState(defaultChecklists);
     accommodation_address: '',    accommodation_phone:''  });
 
   const [clients, setClients] = useState({name: '',designation:'', contact:'',hotel:''});
+  const [starks, setStarks] = useState({name: '',hotel:''});
 //const [checklists, setChecklists] = useState([{ name: '',  selected: false }]);
 const [menuFile, setMenuFile] = useState({    fileName: '',    fileType: '',    fileSize: '',    filePath:''  });
   const [workingDaysLeft, setWorkingDaysLeft] = useState(0);
@@ -321,6 +322,7 @@ useEffect(() => {
           setAvSetup(d.av_setup || {});
           setEmbassy(d.embassy || {});         
           setClients(d.clients || {});   
+          setStarks(d.starks || {});  
           
           setChecklists(d.checklist && d.checklist.length > 0
           ? d.checklist 
@@ -526,17 +528,26 @@ const saveMainInvites =async() =>{
       setSaving('hotels');
       //console.log('test hotel or supplier',JSON.stringify(hotels));
 // ✅ Clean the data before saving
-    const cleanedHotels = hotels.map((h) => ({
-      ...h,
-      amount: h.amount ? parseFloat(h.amount) : 0,  // ensure number      
-      currency: h.currency || "INR", // fallback default
-    }));
+// 2. Use parseNumberInput to get the raw float for the API
+    const cleanedHotels = hotels.map((h) => {
+      // Convert the current display string (h.amount) to a raw float number
+                const rawFloat = parseNumberInput(h.amount, h.currency);
+                return {
+                    ...h,
+                    // Use the float for the backend, defaulting to 0
+                    amount: rawFloat ?? 0, 
+                    currency: h.currency || "INR",
+                };
+      //...h,
+      //amount: h.amount ? parseFloat(h.amount) : 0,  // ensure number      
+      //currency: h.currency || "INR", // fallback default
+    });
 
     console.log("test hotel or supplier", JSON.stringify(cleanedHotels, null, 2));
 
 
       await projectSectionsAPI.updateHotels(id, cleanedHotels);
-      showMessage('Hotels saved successfully!');
+      showMessage('Av Supplier saved successfully!');
     } catch (e) {
       console.error(e);
       alert('Failed to save hotels');
@@ -566,6 +577,18 @@ const saveMainInvites =async() =>{
     } catch (e) {
       console.error(e);
       alert('Failed to save clients');
+    } finally {
+      setSaving('');
+    }
+  };
+  const saveStark = async () => {
+    try {
+      setSaving('starks');
+      await projectSectionsAPI.updateStarks(id, starks);
+      showMessage('Starks  saved successfully!');
+    } catch (e) {
+      console.error(e);
+      alert('Failed to save starks');
     } finally {
       setSaving('');
     }
@@ -631,7 +654,8 @@ const saveMainInvites =async() =>{
   if (!value) return "";
   let v = value.toString().trim();
   if (currency === "EUR") {
-    v = v.replace(/\./g, "").replace(",", ".");
+    //v = v.replace(/\./g, "").replace(",", ".");
+    v = v.replace(/\./g, "_TEMP_").replace(/,/g, ".").replace(/_TEMP_/g, "");
   } else {
     v = v.replace(/,/g, "");
   }
@@ -655,6 +679,7 @@ const formatNumberOutput = (value, currency) => {
     {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
+       useGrouping: true // Ensure thousands separators are included
     }
   );
 };
@@ -675,7 +700,7 @@ const formatNumberOutput = (value, currency) => {
 
   // Hotel handlers
   const handleAddHotel = () => {
-    setHotels([...hotels, { sponsor: '',name:'', selected: false,item:'',currency:'INR', amount: '' }]);
+    setHotels([...hotels, { sponsor: '',name:'', selected: false,item:'',currency:'INR', amount: '', _editing: false  }]);
   };
   const handleHotelChange = (index, field, value) => {
     //setHotels(hotels.map((v, i) => (i === index ? { ...v, [field]: value } : v)));
@@ -685,22 +710,37 @@ const formatNumberOutput = (value, currency) => {
     prevHotels.map((hotel, i) => {
       if (i !== index) return hotel;
 
-      if (field === "currency") {
+    //  if (field === "currency") {
         // Change currency, keep same amount but reformat it
-        const formattedAmount = formatNumberOutput(
-          parseNumberInput(hotel.amount, hotel.currency),
-          value
-        );
-        return { ...hotel, currency: value, amount: formattedAmount };
-      }
+     //   const formattedAmount = formatNumberOutput(
+     //     parseNumberInput(hotel.amount, hotel.currency),
+     //     value
+      //  );
+      //  return { ...hotel, currency: value, amount: formattedAmount };
+    //  }
 
-      if (field === "amount") {
+     // if (field === "amount") {
         // Format for display while typing
-        return { ...hotel, [field]: value };
-      }
+    //    return { ...hotel, [field]: value };
+    //  }
 
-      return { ...hotel, [field]: value };
-    })
+    //  return { ...hotel, [field]: value };
+   // })
+   if (field === "currency") {
+                    // Get the unformatted number from the current localized display string
+                    const rawNumber = parseNumberInput(hotel.amount, hotel.currency);
+                    
+                    // Reformat this unformatted number using the NEW currency rules for display
+                    const formattedAmount = formatNumberOutput(rawNumber, value);
+
+                    // Update state with new currency and the newly formatted string amount
+                    return { ...hotel, currency: value, amount: formattedAmount };
+                }
+
+                // For 'amount' and other fields, just update the state value
+                // For 'amount', 'value' is the raw string input from the user (e.g., "45.500,5")
+                return { ...hotel, [field]: value };
+            })
   );
 };
  
@@ -717,6 +757,17 @@ const formatNumberOutput = (value, currency) => {
   };
   const handleRemoveClient = (index) => {
     setClients(clients.filter((_, i) => i !== index));
+  };
+
+  // Stark handlers
+  const handleAddStark = () => {
+    setStarks([...starks, { name: '',hotel:'' }]);
+  };
+  const handleStarkChange = (index, field, value) => {
+    setStarks(starks.map((v, i) => (i === index ? { ...v, [field]: value } : v)));
+  };
+  const handleRemoveStark = (index) => {
+    setStarks(starks.filter((_, i) => i !== index));
   };
 
   // RSVP handlers
@@ -927,6 +978,7 @@ return (
             <a href="#av_supplier" className="hover:text-blue-600">Av Supplier</a>
             <a href="#embassy" className="hover:text-blue-600">Embassy / Consulate</a>
             <a href="#client" className="hover:text-blue-600">Client</a>
+             <a href="#stark" className="hover:text-blue-600">Stark</a>
             <a href="#checklist" className="hover:text-blue-600">Check List</a>
             <a href="#menu" className="hover:text-blue-600">Menu (image upload)</a>
             <a href="#remarks" className="hover:text-blue-600">Remarks</a>
@@ -2558,8 +2610,8 @@ return (
 </select>
 
             {/* Amount */}
-            <input
-              type="text"
+           {/*<input
+             type="text"
               placeholder="Amount"
              value={hotel._editing ? hotel.amount : formatNumberOutput(hotel.amount, hotel.currency)}
   onFocus={() => handleHotelChange(index, "_editing", true)}
@@ -2570,7 +2622,37 @@ return (
   }}
   onChange={(e) => handleHotelChange(index, "amount", e.target.value)}
               className="px-2 py-2 border border-gray-300 rounded-md"
-            />
+            />*/}
+
+             {/* Amount Input (The Fix is Here) */}
+                        <input
+                            type="text"
+                            placeholder="Amount"
+                            // FIX: The value is now simply the state amount. It is either the raw string (while typing)
+                            // or the cleaned, formatted string (while blurred).
+                            value={hotel.amount} 
+                            
+                            // On focus, switch to editing mode. The input value remains the current string in state.
+                            onFocus={() => handleHotelChange(index, "_editing", true)}
+                            
+                            // On blur, clean up the user's raw input and format it back to a display string.
+                            onBlur={(e) => {
+                                // 1. Parse the user's localized input string to get the raw float number
+                                const rawNumber = parseNumberInput(e.target.value, hotel.currency);
+                                
+                                // 2. Format that raw number back into a clean, display string (e.g., "45.500,50")
+                                const formattedString = formatNumberOutput(rawNumber, hotel.currency);
+                                
+                                // 3. Update state with the clean display string and turn off editing
+                                handleHotelChange(index, "amount", formattedString);
+                                handleHotelChange(index, "_editing", false);
+                            }}
+                            
+                            // While typing, just store the raw string input to state
+                            onChange={(e) => handleHotelChange(index, "amount", e.target.value)}
+                            
+                            className="px-3 py-2 border border-gray-300 rounded-md text-right font-mono focus:ring-2 focus:ring-blue-500 transition duration-150"
+                        />
 
             {/* Select Checkbox */}
             <div className="flex items-center gap-2">
@@ -2793,6 +2875,81 @@ return (
           className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 mt-3"
         >
           + Add Client
+        </button>
+      </div>
+
+      {/* Stark Section */}
+      <div id="Stark" className="section-container">
+        <div className="section-header">
+          <h2 className="section-title">Stark</h2>
+          <button  
+            onClick={saveStark}
+            disabled={saving === "starks"}
+            className={`action-button ${saving === "stark" ? "opacity-50 cursor-not-allowed" : ""}`}
+          >
+            {saving === "starks" ? "Saving..." : "Save stark"}
+          </button>
+        </div>
+
+        {starks.map((stark, index) => (
+          <div
+            key={index}
+            className="grid grid-cols-[2fr_1fr_auto_auto_auto] gap-3 items-center mb-3 p-3 bg-gray-50 rounded-lg"
+          >
+             {/* stark name*/}
+            <input
+              type="text"
+              placeholder="Name"
+              value={stark.name}
+              onChange={(e) => handleStarkChange(index, "name", e.target.value)}
+              className="px-2 py-2 border border-gray-300 rounded-md"
+            />
+          
+
+                {/* stark hotel*/}
+            <input
+              type="text"
+              placeholder="Hotel"
+              value={stark.hotel}
+              onChange={(e) => handleStarkChange(index, "hotel", e.target.value)}
+              className="px-2 py-2 border border-gray-300 rounded-md"
+            />
+
+
+            {/* Delete Button */}
+            {clients.length > 1 && (
+              <button
+                type="button"
+                onClick={() => handleRemoveStark(index)}
+                className="small-delete-btn"
+                title="Remove"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="small-delete-icon"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+              </button>
+            )}
+          </div>
+        ))}
+
+        {/* Add Client Button */}
+        <button
+          type="button"
+          onClick={handleAddStark}
+          className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 mt-3"
+        >
+          + Add Member
         </button>
       </div>
 
