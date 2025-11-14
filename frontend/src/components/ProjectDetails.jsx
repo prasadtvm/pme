@@ -782,14 +782,7 @@ const formatNumberOutput = (value, currency) => {
   };*/
   const handleAddRSVP = () => {
    // ,
-    //  save_the_date_total_nos: 0,
-    //  main_invitation_date: '',
-    //  main_invitation_confirmation_date: '',
-    //  main_invitation_ta_nos: 0,
-     // main_invitation_to_nos: 0,
-     // main_invitation_travel_counsellors_nos: 0,
-     // main_invitation_influencers_nos: 0,
-     // main_invitation_total_nos: 0
+    
   setRsvp([
     ...rsvp,
     {
@@ -1616,18 +1609,7 @@ return (
 
     
 
-      <div>
-        <label className="block text-sm text-gray-600 mb-1">Total</label>
-        <input
-          type="number"
-          min="0"
-          value={item.save_the_date_total_nos || 0}
-          onChange={(e) =>
-            handleRSVPChange(index, 'save_the_date_total_nos', e.target.value)
-          }
-          className="form-input w-full"
-        />
-      </div>
+     
     </div>*/}
 
     {/* Main Invitation Section
@@ -1733,16 +1715,7 @@ return (
  
      <div className="text-right">
    
-    {
-      mainInvites.reduce(
-        (sum, t) =>
-          sum +
-          (Number(t.travel_operator) || 0) +
-          (Number(t.travel_agent) || 0) +
-          (Number(t.travel_counsellor) || 0) +
-          (Number(t.media_influencers) || 0),
-        0
-      )
+    
     }
   </div>
   </div>
@@ -1866,13 +1839,7 @@ return (
             onChange={(e) => handleMainInviteChange(index, "date", e.target.value)}
             className="form-input"
           />
-          <input
-            type="number"
-            placeholder="Tour Operator"
-            value={invite.to || ""}
-            onChange={(e) => handleMainInviteChange(index, "to", e.target.value)}
-            className="form-input"
-          />
+          
         
 
           {/* Delete button 
@@ -1976,12 +1943,7 @@ return (
      
 
       {/* Total 
-      <div className="text-center font-semibold text-slate-800 bg-gray-100 rounded-md py-2">
-        {(Number(saveDate.to) || 0) +
-          (Number(saveDate.ta) || 0) +
-          (Number(saveDate.tc) || 0) +
-          (Number(saveDate.media) || 0)}
-      </div>
+    
     </div>
 
     {/* Countdown aligned right 
@@ -2032,11 +1994,7 @@ return (
   {/* === Main Invite Rows === 
   <div className="space-y-3">
     {mainInvites.map((invite, index) => {
-      const rowTotal =
-        (Number(invite.to) || 0) +
-        (Number(invite.ta) || 0) +
-        (Number(invite.tc) || 0) +
-        (Number(invite.media) || 0);
+     
 
       return (
         <div
@@ -2047,20 +2005,7 @@ return (
         <h3 className="text-md font-semibold text-gray-800">
           RSVP #{index + 2}
         </h3>
-          <input
-            type="date"
-            value={invite.date || ""}
-            onChange={(e) => handleMainInviteChange(index, "date", e.target.value)}
-            className="form-input"
-          />
          
-          <input
-            type="number"
-            placeholder="Media / Influence"
-            value={invite.media || ""}
-            onChange={(e) => handleMainInviteChange(index, "media", e.target.value)}
-            className="form-input"
-          />
           {/* Total 
           <div className="text-center font-semibold text-slate-800 bg-gray-100 rounded-md py-2">
             {rowTotal}
@@ -2430,7 +2375,7 @@ return (
           className="mt-1 w-full text-sm text-gray-700 border border-gray-300 rounded-md cursor-pointer focus:outline-none"
         />
       
-        {avSetup.backdrop_image && (
+       {/*} {avSetup.backdrop_image && (
         <img
           src={
             avSetup.backdrop_image instanceof File
@@ -2440,7 +2385,33 @@ return (
           alt="Backdrop Preview"
           className="h-24 w-auto rounded shadow"
         />
-      )}
+      )}*/}
+
+      {avSetup.backdrop_image && (
+      <div className="flex items-center gap-3 mt-2">
+        <img
+          src={
+            avSetup.backdrop_image instanceof File
+             ? URL.createObjectURL(avSetup.backdrop_image)
+             : avSetup.backdrop_image
+          }
+          alt="Backdrop Preview"
+          className="w-24 h-16 object-cover rounded border"
+        />
+        <a
+          href={
+            avSetup.backdrop_image instanceof File
+             ? URL.createObjectURL(avSetup.backdrop_image)
+             : avSetup.backdrop_image
+          }
+          target="_blank"
+          rel="noreferrer"
+          className="text-blue-600 underline"
+        >
+          View Full Image
+        </a>
+      </div>
+    )}
       </div>
     </div>
 
@@ -2463,7 +2434,7 @@ return (
           onChange={(e) => setAvSetup({ ...avSetup, screen_image: e.target.files[0] })}
           className="mt-1 w-full text-sm text-gray-700 border border-gray-300 rounded-md cursor-pointer focus:outline-none"
         />
-        {avSetup.screen_image && (
+        {/*{avSetup.screen_image && (
           <img
              src={
             avSetup.screen_image instanceof File
@@ -2473,7 +2444,33 @@ return (
             alt="Screen Preview"
             className="mt-2 rounded-md border border-gray-200 h-24 object-contain"
           />
-        )}    
+        )}   */}
+
+        {avSetup.screen_image && (
+      <div className="flex items-center gap-3 mt-2">
+        <img
+          src={
+            avSetup.screen_image instanceof File
+             ? URL.createObjectURL(avSetup.screen_image)
+             : avSetup.screen_image
+          }
+          alt="Screen Preview"
+          className="w-24 h-16 object-cover rounded border"
+        />
+        <a
+          href={
+            avSetup.screen_image instanceof File
+             ? URL.createObjectURL(avSetup.screen_image)
+             : avSetup.screen_image
+          }
+          target="_blank"
+          rel="noreferrer"
+          className="text-blue-600 underline"
+        >
+          View Full Image
+        </a>
+      </div>
+    )} 
 
       </div>
     </div>
@@ -2551,6 +2548,25 @@ return (
           className="h-24 w-auto rounded shadow"
         />
       )}
+
+
+      {/* {mainInviteImageURL && (
+      <div className="flex items-center gap-3 mt-2">
+        <img
+          src={mainInviteImageURL}
+          alt="Main Invite"
+          className="w-24 h-16 object-cover rounded border"
+        />
+        <a
+          href={mainInviteImageURL}
+          target="_blank"
+          rel="noreferrer"
+          className="text-blue-600 underline"
+        >
+          View Full Image
+        </a>
+      </div>
+    )}*/}
     </div>
   </div>
 </div>
