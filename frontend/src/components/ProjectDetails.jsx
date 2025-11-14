@@ -959,25 +959,46 @@ return (
        
       {/* 🧭 Sidebar + Main Layout */}
       <div className="flex gap-0">
-        {/* Sidebar */}
+        {/* Sidebar 
         <div className="w-48 bg-gray-100 p-5 border-r border-gray-200 min-h-screen sticky top-0 rounded-lg shadow-sm h-fit">
           <nav className="flex flex-col space-y-2 text-sm font-medium text-gray-700">
-            <a href="#information" className="hover:text-blue-600">Information</a>
-            <a href="#associate" className="hover:text-blue-600">Associate</a>
-            <a href="#venue" className="hover:text-blue-600">Venue</a>            
-            <a href="#database" className="hover:text-blue-600">Database</a>
+            <a href="#information" className="hover:text-blue-600">INFORMATION</a>
+            <a href="#associate" className="hover:text-blue-600">ASSOCIATE</a>
+            <a href="#venue" className="hover:text-blue-600">VENUE</a>            
+            <a href="#database" className="hover:text-blue-600">DATABASE</a>
             <a href="#rsvp" className="hover:text-blue-600">RSVP</a>
-            <a href="#av" className="hover:text-blue-600">Hotel Av Setup</a>
-            <a href="#av_supplier" className="hover:text-blue-600">Av Supplier</a>
-            <a href="#embassy" className="hover:text-blue-600">Embassy / Consulate</a>
-            <a href="#client" className="hover:text-blue-600">Client</a>
-             <a href="#stark" className="hover:text-blue-600">Stark</a>
-            <a href="#checklist" className="hover:text-blue-600">Check List</a>
-            <a href="#menu" className="hover:text-blue-600">Menu (image upload)</a>
-            <a href="#remarks" className="hover:text-blue-600">Remarks</a>
-            <a href="#print" className="hover:text-blue-600">Print</a>
+            <a href="#av" className="hover:text-blue-600">HOTEL AV</a>
+            <a href="#av_supplier" className="hover:text-blue-600">AV SUPPLIER</a>
+            <a href="#embassy" className="hover:text-blue-600">EMBASSY / CONSULATE</a>
+            <a href="#client" className="hover:text-blue-600">CLIENT</a>
+             <a href="#stark" className="hover:text-blue-600">STARK</a>
+            <a href="#checklist" className="hover:text-blue-600">CHECKLIST</a>
+            <a href="#menu" className="hover:text-blue-600">MENU(IMAGE UPLOAD)</a>
+            <a href="#remarks" className="hover:text-blue-600">REMARKS</a>
+            <a href="#print" className="hover:text-blue-600">PRINT</a>
           </nav>
-        </div>
+        </div> bg-blue-800 p-5 border-r border-blue-900 */}
+       <div className="w-48  min-h-screen sticky top-0 rounded-lg shadow-sm h-fit" 
+       style={{ backgroundColor: "#70AD47", borderColor: "#5A8D39" }}
+       >
+  <nav className="flex flex-col space-y-2 text-sm font-medium text-white pt-5">
+    <a href="#information" className="hover:font-bold hover:text-white">INFORMATION</a>
+    <a href="#associate" className="hover:font-bold hover:text-white">ASSOCIATE</a>
+    <a href="#venue" className="hover:font-bold hover:text-white">VENUE</a>
+    <a href="#database" className="hover:font-bold hover:text-white">DATABASE</a>
+    <a href="#rsvp" className="hover:font-bold hover:text-white">RSVP</a>
+    <a href="#av" className="hover:font-bold hover:text-white">HOTEL AV</a>
+    <a href="#av_supplier" className="hover:font-bold hover:text-white">AV SUPPLIER</a>
+    <a href="#embassy" className="hover:font-bold hover:text-white">EMBASSY / CONSULATE</a>
+    <a href="#client" className="hover:font-bold hover:text-white">CLIENT</a>
+    <a href="#stark" className="hover:font-bold hover:text-white">STARK</a>
+    <a href="#checklist" className="hover:font-bold hover:text-white">CHECKLIST</a>
+    <a href="#menu" className="hover:font-bold hover:text-white">MENU (IMAGE UPLOAD)</a>
+    <a href="#remarks" className="hover:font-bold hover:text-white">REMARKS</a>
+    <a href="#print" className="hover:font-bold hover:text-white">PRINT</a>
+  </nav>
+</div>
+
         {/* Main Content */}
         <div className="flex-1 space-y-8">     
 
@@ -986,7 +1007,7 @@ return (
 <div id="information" className="section-container">
   {/* Header */}
   <div className="section-header">
-    <h2 className="section-title">Information</h2>
+    <h2 className="section-title">INFORMATION</h2>
     <button
       onClick={saveRoadshowInfo}
       disabled={saving === "roadshow"}
@@ -1126,7 +1147,7 @@ return (
       {/* Associates Section */}
       <div id="associate" className="section-container">
         <div className="section-header">
-          <h2 className="section-title">Associate Considered</h2>
+          <h2 className="section-title">ASSOCIATE</h2>
           <button
             onClick={saveAssociates}
             disabled={saving === "associates"}
@@ -1209,7 +1230,7 @@ return (
       {/* Venues Section  add after hotel checkboxes of rental,av,food,bar*/}
       <div id="venue" className="section-container">
         <div className="section-header">
-          <h2 className="section-title">Venue Considered</h2>
+          <h2 className="section-title">VENUE</h2>
           <button
             onClick={saveVenues}
             disabled={saving === "venues"}
@@ -1378,7 +1399,7 @@ return (
   <div id="database" className="section-container">
   {/* Header */}
   <div className="flex justify-between items-center mb-5">
-    <h2 className="text-xl font-semibold text-slate-800">Trade Database</h2>
+    <h2 className="text-xl font-semibold text-slate-800">DATABASE</h2>
     <button
       onClick={saveTradeDatabase}
       disabled={saving === 'trade'}
@@ -1432,7 +1453,7 @@ return (
           {/* Counsellor */}
           <input
             type="number"
-            placeholder="Travel Counselor"
+            placeholder="Travel Counsellors"
             value={trade.travel_counsellor}
             onChange={(e) => handleTradeChange(index, 'travel_counsellor', e.target.value)}
             className="p-2 border border-gray-300 rounded-md"
@@ -1441,7 +1462,7 @@ return (
           {/* Media_influencers */} 
           <input
             type="number"
-            placeholder="Media / Influence"
+            placeholder="Media / Influencer"
             value={trade.media_influencers}
             onChange={(e) => handleTradeChange(index, 'media_influencers', e.target.value)}
             className="p-2 border border-gray-300 rounded-md"
@@ -1595,19 +1616,6 @@ return (
         />
       </div>
 
-      <div style={{ display: item.save_the_date_confirmation_date ? 'none' : 'block' }}>
-        <label className="block text-sm text-gray-600 mb-1">Confirmation Date</label>
-        <input
-          type="date"
-          value={item.save_the_date_confirmation_date || ''}
-          onChange={(e) =>
-            handleRSVPChange(index, 'save_the_date_confirmation_date', e.target.value)
-          }
-          className="form-input w-full"
-        />
-      </div>
-
-    
 
      
     </div>*/}
@@ -1615,42 +1623,9 @@ return (
     {/* Main Invitation Section
     <h4 className="text-md font-medium text-blue-700 mb-2">Main Invitation</h4>
     <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      <div>
-        <label className="block text-sm text-gray-600 mb-1">Invitation Date</label>
-        <input
-          type="date"
-          value={item.main_invitation_date || ''}
-          onChange={(e) =>
-            handleRSVPChange(index, 'main_invitation_date', e.target.value)
-          }
-          className="form-input w-full"
-        />
-      </div>
+     
 
-      <div>
-        <label className="block text-sm text-gray-600 mb-1">Confirmation Date</label>
-        <input
-          type="date"
-          value={item.main_invitation_confirmation_date || ''}
-          onChange={(e) =>
-            handleRSVPChange(index, 'main_invitation_confirmation_date', e.target.value)
-          }
-          className="form-input w-full"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm text-gray-600 mb-1">TA Nos</label>
-        <input
-          type="number"
-          min="0"
-          value={item.main_invitation_ta_nos || 0}
-          onChange={(e) =>
-            handleRSVPChange(index, 'main_invitation_ta_nos', e.target.value)
-          }
-          className="form-input w-full"
-        />
-      </div>
+   
 
    
     </div>
@@ -1689,36 +1664,15 @@ return (
   </div>
 
   {/* Table of Main Invites 
-  {mainInvites.map((invite, index) => (
-    const main_categoryTotal = 
-     
-      {/* Delete button 
-      {mainInvites.length > 1 && (
-        <button onClick={() => removeMainInvite(index)} className="text-red-600 ml-2">🗑</button>
-      )}
-    </div>)
-        
-  ))}
+ 
   
 
 {/* Column Totals Row 
-<div className="grid grid-cols-7 font-semibold text-sm bg-yellow-100 border-t border-gray-400">
- 
-  <div className="p-2 text-center">{columnTotals.total}</div>
-  <div></div>
-</div>*/}
+
 
 
 {/* Grand Total 
-  <div className="grid grid-cols-[2fr_repeat(4,1fr)_auto] gap-3 items-center mt-5 p-3 bg-gray-200 rounded-lg font-semibold text-slate-900">
-      <div>Column Totals →</div>
  
-     <div className="text-right">
-   
-    
-    }
-  </div>
-  </div>
 
 
   <button onClick={addMainInvite} className="px-4 py-2 bg-green-600 text-white rounded mt-2">+ Add Main Invite</button>
@@ -1820,42 +1774,7 @@ return (
   </div>*/}
 
   {/* === Main Invite Rows === 
-  <div className="space-y-3">
-    {mainInvites.map((invite, index) => {
-      const rowTotal =
-        (Number(invite.to) || 0) +
-        (Number(invite.ta) || 0) +
-        (Number(invite.tc) || 0) +
-        (Number(invite.media) || 0);
-
-      return (
-        <div
-          key={index}
-          className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(4,1fr)_auto] gap-3 items-center p-3 bg-gray-50 rounded-lg border border-gray-200"
-        >
-          <input
-            type="date"
-            value={invite.date || ""}
-            onChange={(e) => handleMainInviteChange(index, "date", e.target.value)}
-            className="form-input"
-          />
-          
-        
-
-          {/* Delete button 
-          {mainInvites.length > 1 && (
-            <button
-              onClick={() => removeMainInvite(index)}
-              className="text-red-600 hover:text-red-800"
-              title="Remove"
-            >
-              🗑
-            </button>
-          )}
-        </div>
-      );
-    })}
-  </div>*/}
+  
 
   {/* === Column Totals (computed directly like Trade Database) === 
   <div className="grid grid-cols-[1.5fr_repeat(4,1fr)_auto] gap-3 items-center mt-5 p-3 bg-gray-200 rounded-lg font-semibold text-slate-900">
@@ -1890,176 +1809,10 @@ return (
   </div>
 </div>*/}
 
-{/* ================= RSVP SECTION ================= 
-<div id="rsvp" className="section-container">
-  {/* Section Header 
-  <div className="section-header">
-    <h2 className="section-title">RSVP #1</h2>
-  </div>*/}
 
-  {/* === SAVE THE DATE (single record) === 
-  <div className="p-4 mb-6 bg-gray-50 border rounded-lg shadow-sm">
-    {/* Header line: Title + Save button 
-    <div className="flex justify-between items-center mb-3">
-      <h3 className="text-lg font-semibold text-gray-800">Save The Date</h3>
-      <button onClick={saveRSVP} className="action-button">
-        Save RSVP
-      </button>
-    </div>*/}
-
-    {/* Upload Save The Date image 
-    <div className="mb-4">
-      <label className="block text-sm font-medium text-gray-700">
-        Save The Date Image Upload:
-      </label>
-      <input type="file" onChange={(e) => setSaveTheDateImage(e.target.files[0])} />
-      {saveTheDateImageURL && (
-        <div className="flex items-center gap-3 mt-2">
-          <img
-            src={saveTheDateImageURL}
-            alt="Save The Date"
-            className="w-24 h-16 object-cover rounded border"
-          />
-          <a
-            href={saveTheDateImageURL}
-            target="_blank"
-            rel="noreferrer"
-            className="text-blue-600 underline"
-          >
-            View Full Image
-          </a>
-        </div>
-      )}
-    </div>*/}
-
-    {/* Fields grid 
-    <div className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(4,1fr)_auto] gap-3 items-center mb-3">
-      <input
-        type="date"
-        value={saveDate.date || ""}
-        onChange={(e) => handleSaveDateChange("date", e.target.value)}
-        className="form-input"
-      />
-     
-
-      {/* Total 
-    
-    </div>
-
-    {/* Countdown aligned right 
-    <div className="flex justify-end items-center gap-4 text-sm mt-2">
-      <div className="text-right">
-        <div className="text-gray-700 font-medium">Countdown</div>
-        <div className="text-red-600 font-bold text-lg border border-red-500 inline-block px-3 py-1 rounded">
-          {workingDaysLeft}
-        </div>
-        <div className="text-xs text-gray-500">working days</div>
-      </div>
-    </div>
-  </div>
-
-  {/* === MAIN INVITATION SECTION === 
-  <div className="flex justify-between items-center section-header mt-6">
-    <h3 className="section-title">RSVP #2– Main Invite</h3>
-    <button onClick={saveMainInvites} className="action-button">
-      Save Main Invites
-    </button>
-  </div>
-
-  {/* Upload Main Invite image 
-  <div className="mb-4">
-    <label className="block text-sm font-medium text-gray-700">
-      Main Invite Image Upload:
-    </label>
-    <input type="file" onChange={(e) => setMainInviteImage(e.target.files[0])} />
-    {mainInviteImageURL && (
-      <div className="flex items-center gap-3 mt-2">
-        <img
-          src={mainInviteImageURL}
-          alt="Main Invite"
-          className="w-24 h-16 object-cover rounded border"
-        />
-        <a
-          href={mainInviteImageURL}
-          target="_blank"
-          rel="noreferrer"
-          className="text-blue-600 underline"
-        >
-          View Full Image
-        </a>
-      </div>
-    )}
-  </div>
-
-  {/* === Main Invite Rows === 
-  <div className="space-y-3">
-    {mainInvites.map((invite, index) => {
-     
-
-      return (
-        <div
-          key={index}
-          className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(4,1fr)_auto,_auto] gap-3 items-center p-3 bg-gray-50 rounded-lg border border-gray-200"
-        >
-          {/* 🟩 Dynamic header for each Main Invite 
-        <h3 className="text-md font-semibold text-gray-800">
-          RSVP #{index + 2}
-        </h3>
-         
-          {/* Total 
-          <div className="text-center font-semibold text-slate-800 bg-gray-100 rounded-md py-2">
-            {rowTotal}
-          </div>
-
-          {/* Delete Button 
-          {mainInvites.length > 1 && (
-            <button
-              onClick={() => removeMainInvite(index)}
-              className="text-red-600 hover:text-red-800"
-              title="Remove"
-            >
-              🗑
-            </button>
-          )}
-        </div>
-      );
-    })}
-  </div>
-
-  {/* === Column Totals === 
-  <div className="grid grid-cols-[1.5fr_repeat(4,1fr)_auto] gap-3 items-center mt-5 p-3 bg-gray-200 rounded-lg font-semibold text-slate-900">
-    <div>Column Totals →</div>
-    <div>{mainInvites.reduce((sum, t) => sum + (Number(t.to) || 0), 0)}</div>
-    <div>{mainInvites.reduce((sum, t) => sum + (Number(t.ta) || 0), 0)}</div>
    
-    </div>
-  </div>
 
-  {/* === Add Invite Button aligned right === 
-  <div className="flex justify-end mt-4">
-    <button
-      onClick={addMainInvite}
-      className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-    >
-      + Add Main Invite
-    </button>
-  </div>
 
-  {/* === Floating Grand Total === 
-  <div className="fixed right-5 top-1/3 bg-yellow-200 border border-yellow-400 rounded-lg shadow-lg p-3 text-sm">
-    <p className="mt-2 border-t border-gray-300 pt-2 text-center">
-      🕒 Countdown:{" "}
-      <span className="font-bold">{workingDaysLeft}</span> working days
-    </p>
-    <h4 className="font-semibold text-gray-800 mb-2">Grand Totals</h4>
-    
-    <p>
-      Media / Influence:{" "}
-      {(Number(saveDate.media) || 0) +
-        mainInvites.reduce((sum, t) => sum + (Number(t.media) || 0), 0)}
-    </p>
-  </div>
-</div>*/}
 <div id="rsvp" className="section-container">
   {/* === RSVP #1 – Save The Date === */}
   <div className="section-header">
@@ -2124,14 +1877,14 @@ return (
       />
       <input
         type="number"
-        placeholder="Travel Counselor"
+        placeholder="Travel Counsellors"
         value={saveDate.save_the_date_travel_counsellors_nos || ""}
         onChange={(e) => handleSaveDateChange("save_the_date_travel_counsellors_nos", e.target.value)}
         className="form-input"
       />
       <input
         type="number"
-        placeholder="Media / Influence"
+        placeholder="Media / Influencer"
         value={saveDate.save_the_date_influencers_nos || ""}
         onChange={(e) => handleSaveDateChange("save_the_date_influencers_nos", e.target.value)}
         className="form-input"
@@ -2249,14 +2002,14 @@ return (
             />
             <input
               type="number"
-              placeholder="Travel Counselor"
+              placeholder="Travel Counsellors"
               value={invite.main_invite_travel_counsellors_nos || ""}
               onChange={(e) => handleMainInviteChange(index, "main_invite_travel_counsellors_nos", e.target.value)}
               className="form-input"
             />
             <input
               type="number"
-              placeholder="Media / Influence"
+              placeholder="Media / Influencer"
               value={invite.main_invite_influencers_nos || ""}
               onChange={(e) => handleMainInviteChange(index, "main_invite_influencers_nos", e.target.value)}
               className="form-input"
@@ -2314,7 +2067,7 @@ return (
     <p className="mt-2 border-t border-gray-300 pt-2 text-center">
       🕒 Countdown: <span className="font-bold">{workingDaysLeft}</span> working days
     </p>
-    <h4 className="font-semibold text-gray-800 mb-2">Grand Totals</h4>
+    <h4 className="font-semibold text-gray-800 mb-2">CONFIRMATIONS</h4>
     <p>
       Tour Operator (TO):{" "}
       {(Number(saveDate.save_the_date_to_nos) || 0) +
@@ -2326,12 +2079,12 @@ return (
         mainInvites.reduce((sum, t) => sum + (Number(t.main_invite_ta_nos) || 0), 0)}
     </p>
     <p>
-      Travel Counselor (TC):{" "}
+      Travel Counsellors (TC):{" "}
       {(Number(saveDate.save_the_date_travel_counsellors_nos) || 0) +
         mainInvites.reduce((sum, t) => sum + (Number(t.main_invite_travel_counsellors_nos) || 0), 0)}
     </p>
     <p>
-      Media / Influence:{" "}
+      Media / Influencer:{" "}
       {(Number(saveDate.save_the_date_influencers_nos) || 0) +
         mainInvites.reduce((sum, t) => sum + (Number(t.main_invite_influencers_nos) || 0), 0)}
     </p>
@@ -2343,7 +2096,7 @@ return (
 <div id="av" className="section-container">
   {/* Header */}
   <div className="flex justify-between items-center mb-5">
-    <h2 className="text-xl font-semibold text-slate-800">Hotel AV Setup</h2>
+    <h2 className="text-xl font-semibold text-slate-800">HOTEL AV</h2>
     <button
       onClick={saveAVSetup}
       disabled={saving === 'av'}
@@ -2434,18 +2187,7 @@ return (
           onChange={(e) => setAvSetup({ ...avSetup, screen_image: e.target.files[0] })}
           className="mt-1 w-full text-sm text-gray-700 border border-gray-300 rounded-md cursor-pointer focus:outline-none"
         />
-        {/*{avSetup.screen_image && (
-          <img
-             src={
-            avSetup.screen_image instanceof File
-             ? URL.createObjectURL(avSetup.screen_image)
-             : avSetup.screen_image
-          }
-            alt="Screen Preview"
-            className="mt-2 rounded-md border border-gray-200 h-24 object-contain"
-          />
-        )}   */}
-
+       
         {avSetup.screen_image && (
       <div className="flex items-center gap-3 mt-2">
         <img
@@ -2548,25 +2290,7 @@ return (
           className="h-24 w-auto rounded shadow"
         />
       )}
-
-
-      {/* {mainInviteImageURL && (
-      <div className="flex items-center gap-3 mt-2">
-        <img
-          src={mainInviteImageURL}
-          alt="Main Invite"
-          className="w-24 h-16 object-cover rounded border"
-        />
-        <a
-          href={mainInviteImageURL}
-          target="_blank"
-          rel="noreferrer"
-          className="text-blue-600 underline"
-        >
-          View Full Image
-        </a>
-      </div>
-    )}*/}
+    
     </div>
   </div>
 </div>
@@ -2575,7 +2299,7 @@ return (
  {/* Hotel av supplier Section */}
       <div id="av_supplier" className="section-container">
         <div className="section-header">
-          <h2 className="section-title">Av Supplier</h2>
+          <h2 className="section-title">AV SUPPLIER</h2>
           <button  
             onClick={saveHotels}
             disabled={saving === "hotels"}
@@ -2805,7 +2529,7 @@ return (
      {/* Client Section */}
       <div id="client" className="section-container">
         <div className="section-header">
-          <h2 className="section-title">Client</h2>
+          <h2 className="section-title">CLIENT</h2>
           <button  
             onClick={saveClient}
             disabled={saving === "clients"}
@@ -2897,7 +2621,7 @@ return (
       {/* Stark Section */}
       <div id="Stark" className="section-container">
         <div className="section-header">
-          <h2 className="section-title">Stark</h2>
+          <h2 className="section-title">STARK</h2>
           <button  
             onClick={saveStark}
             disabled={saving === "starks"}
@@ -2972,7 +2696,7 @@ return (
       {/* Checklists Section */}
       <div id="checklist" className="section-container">
         <div className="section-header">
-          <h2 className="section-title">Check List</h2>
+          <h2 className="section-title">CHECKLIST</h2>
           <button
             onClick={saveChecklists}
             disabled={saving === "checklists"}
@@ -3052,7 +2776,7 @@ return (
 <div id="menu" className="section-container">
   {/* Header */}
   <div className="flex justify-between items-center mb-5">
-    <h2 className="text-xl font-semibold text-slate-800">Menu</h2>
+    <h2 className="text-xl font-semibold text-slate-800">MENU</h2>
     <button
       onClick={saveMenu}
       disabled={saving === 'menu'}
@@ -3107,7 +2831,7 @@ return (
 {/* Remarks Section for Admin */}
 <div id="remarks" className="section-container">
   <div className="flex justify-between items-center mb-5">
-    <h2 className="text-xl font-semibold text-slate-800">Viewer Remarks</h2>
+    <h2 className="text-xl font-semibold text-slate-800">VIEWER REMARKS</h2>
   </div>
 
   {remarks.length > 0 ? (
