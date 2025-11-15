@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { projectAPI, projectSectionsAPI } from '../services/api.jsx';
 import '../styles/tailwind.css';
+import logo from "../assets/images/company_logo.png";
+
+
 const ProjectDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -922,6 +925,7 @@ const handleRemoveRSVP = (index) => {
 return (
   <div className="p-6">
       {/* Header   progress bar percentage & budget*/}
+      <img src={logo} alt="Company Logo" className="h-12" />
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
           <button 

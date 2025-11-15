@@ -73,6 +73,7 @@ const projectController = {
         name,
         image_file: imageFile || '',
         event_date,
+        project_handiled_by,
         created_by: userId
       };
       console.log("🆕 Creating project with data:", projectData);

@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { projectAPI } from '../services/api.jsx';  // ✅ use centralized API
-//import { sendChatMessage } from "../services/chatAPI";
+import { projectAPI } from '../services/api.jsx';
 import '../styles/tailwind.css';
+import companyLogo from '../assets/images/company_logo.png';
 
 const ProjectPage = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
+
+  // ⭐ ADDED
+  const [searchTerm, setSearchTerm] = useState("");
+  const [yearFilter, setYearFilter] = useState("");
+
   const navigate = useNavigate();
   const UPLOAD_BACK_URL = `${import.meta.env.VITE_UPLOAD_BACK_URL?.replace(/\/$/, '')}` || 'http://localhost:5000';
-  
+
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -18,9 +23,7 @@ const ProjectPage = () => {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const response = await projectAPI.getAll();   // ✅ no need to add token manually
-      // ✅ Handle both array or object responses safely
-      //console.log(JSON.stringify(response.data));
+      const response = await projectAPI.getAll();
       const fetchedProjects = Array.isArray(response.data)
         ? response.data
         : Array.isArray(response.data.data)
@@ -35,38 +38,33 @@ const ProjectPage = () => {
     }
   };
 
-// Basic project data structure
+  // ⭐ MODIFY projectData to include project_handiled_by
   const [projectData, setProjectData] = useState({
     name: '',
     image_file: null,
     event_date: '',
+    project_handiled_by: '' // ⭐ ADDED
   });
 
   const handleCreateProject = async (e) => {
     e.preventDefault();
     try {
-      //const basicProject = {
-      //  name: projectData.name,
-      //  description: projectData.description,
-      //  year: projectData.year,
-      //};
-//console.log('🔵 handleCreateProject triggered');
-    const formData = new FormData();
-    formData.append('name', projectData.name);
-    formData.append('event_date', projectData.event_date);
+      const formData = new FormData();
+      formData.append('name', projectData.name);
+      formData.append('event_date', projectData.event_date);
+      formData.append('project_handiled_by', projectData.project_handiled_by); // ⭐ ADDED
 
-    if (projectData.image_file instanceof File) {
-      formData.append('image_file', projectData.image_file);    }
-    
-     //console.log('ProjectPage -Create project form data:',JSON.stringify( projectData));
-    const projectResponse = await projectAPI.create(formData);
+      if (projectData.image_file instanceof File) {
+        formData.append('image_file', projectData.image_file);
+      }
 
-    const createdProject = projectResponse.data;   
+      const projectResponse = await projectAPI.create(formData);
+      const createdProject = projectResponse.data;
 
       setProjects([...projects, createdProject]);
       setShowCreateForm(false);
       resetForm();
-      alert('Project created successfully! You can add details later.');
+      alert('Project created successfully!');
 
       navigate(`/project/${createdProject.id}`);
     } catch (error) {
@@ -78,211 +76,251 @@ const ProjectPage = () => {
   const resetForm = () => {
     setProjectData({
       name: '',
-      image_file: null,       // was description
-       event_date: '',
+      image_file: null,
+      event_date: '',
+      project_handiled_by: ''
     });
   };
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
-    //navigate('/login');
     window.location.href = "/login";
   };
 
   const handleProjectClick = (projectId) => {
     navigate(`/project/${projectId}`);
   };
-  const handleCreateClick = () => {
-    navigate("/project/new");
-  };
 
-   return (
-    <div className="page-container">
-      <div className="header-container">    
-        <h1 className="text-3xl font-bold text-green-500">Roadshow Project Management</h1>
+  // ⭐ SIMPLE LOCAL FILTERING
+  const filteredProjects = projects.filter(p =>
+    (searchTerm ? p.name.toLowerCase().includes(searchTerm.toLowerCase()) : true) &&
+    (yearFilter ? p.event_date?.startsWith(yearFilter) : true)
+  );
 
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button 
-            onClick={handleCreateClick}
-            className="action-button"
-            style={{ fontSize: '16px' }}
+  return (
+    // Updated container class to make it full screen and enable flex for sidebar/main layout
+    <div className="flex min-h-screen">
+      
+      {/* ⭐ LEFT SIDEBAR (GREEN) */}
+      <div className="w-64 bg-green-700 p-4 flex flex-col items-center">
+        <div className="w-full">
+          {/* Logo at the top of the sidebar */}
+          <img
+            src={companyLogo}
+            alt="Company Logo"
+            className="w-20 max-w-[100px] object-contain mb-8"
+          />
+          
+          {/* "Road show List" button/link with grey background */}
+          <div className="mt-4">
+            <button className="w-full text-left p-2 rounded bg-gray-600 text-white font-semibold hover:bg-gray-500">
+              Road show List
+            </button>
+          </div>
+        </div>
+      </div>
+      {/* END LEFT SIDEBAR */}
+
+
+      {/* MAIN CONTENT */}
+      <div className="flex-1 p-6">
+        
+        {/* ⭐ TOP RIGHT ACTION BUTTONS */}
+        <div className="flex justify-end gap-3 mb-4">
+          <button
+            onClick={() => setShowCreateForm(true)}
+            className="action-button bg-green-600 text-white font-semibold py-2 px-4 rounded hover:bg-green-700 transition-colors"
           >
-            + Create New Project 
+            + Create New Project
           </button>
-          <button 
+          <button
             onClick={handleLogout}
-           className="danger-button"
+            className="danger-button bg-red-600 text-white font-semibold py-2 px-4 rounded hover:bg-red-700 transition-colors"
           >
             Logout
           </button>
         </div>
-      </div>
 
-      {/* Simple Create Project Form */}
-      {showCreateForm && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h2>Create New Project</h2>
-              <button 
-                onClick={() => setShowCreateForm(false)}
-                className="close-button"
-              >
-                ×
-              </button>
-            </div>
 
-            <form onSubmit={handleCreateProject}>
-              <div className="form-group">
-                <label className="form-label">
-                  Project Name * 
-                </label>
-                <input
-                  type="text"
-                  value={projectData.name}
-                  onChange={(e) => setProjectData({...projectData, name: e.target.value})}
-                  required
-                  className="form-input"
-                />
-              </div>
-              
-              {/* Image Upload */}
-            <div className="form-group">
-              <label className="form-label">Image File</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) =>
-                  setProjectData({
-                    ...projectData,
-                    image_file: e.target.files[0] || null,
-                  })
-                }
-                className="form-input"
-              />
-            </div>
-              
-             {/* Event Date */}
-              <div className="form-group">
-                <label className="form-label">Event Date *</label>
-                <input
-                  type="date"
-                  value={projectData.event_date || ''}
-                  onChange={(e) =>
-                    setProjectData({ ...projectData, event_date: e.target.value })
-                  }
-                  required
-                  className="form-input"
-                />
-              </div>
-              
-              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-                <button 
-                  type="submit"
-                  className="primary-button"
-                >
-                  Create Project
-                </button>
-                <button 
-                  type="button"
-                  onClick={() => setShowCreateForm(false)}
-                   className="secondary-button"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+        {/* ⭐ HEADING and SEARCH/FILTER ALIGNMENT */}
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
+          
+          {/* "Roadshow Project Management" aligned with search box area */}
+          <h1 className="text-3xl font-bold text-green-500 mb-4 md:mb-0">Roadshow Project Management</h1>
+          
+          {/* Search and Filter box */}
+          <div className="flex gap-3">
+            <input
+              type="text"
+              placeholder="Search project..."
+              className="border p-2 rounded"
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+
+            <select
+              className="border p-2 rounded"
+              value={yearFilter}
+              onChange={(e) => setYearFilter(e.target.value)}
+            >
+              <option value="">All Years</option>
+              <option value="2023">2023</option>
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+              <option value="2026">2026</option>
+            </select>
           </div>
         </div>
-      )}
-
-      {/* Projects List */}
-      {loading ? (
-        <div className="loading-text">
-          <p>Loading projects...</p>
-        </div>
-      ) : (
-        <div className="projects-grid">
-          
-          {Array.isArray(projects) && projects.length > 0 ? (
-            projects.map((project) => (
-            <div 
-              key={project.id}
-              onClick={() => handleProjectClick(project.id)}
-              className="project-card"
-            >
-              <div className="project-header">
-                <h3 className="project-name">{project.name}</h3>
-                {/*<span className={`status-badge ${
-                  project.status === 'completed' ? 'status-completed' : 'status-draft'
-                }`}>
-                  {project.status || 'Draft'}
-                </span>*/}
-                {/* ✅ Progress Bar replacing status  */}
-
-               <div className="w-full bg-gray-300 rounded-lg overflow-hidden h-3.5 mt-2 relative">
-              <div
-                className="h-full bg-green-600 transition-all duration-500"
-                style={{ width: `${project.progress || 0}%` }}
-              />
-              <span className="absolute top-0 left-1/2 -translate-x-1/2 text-[11px] text-white font-semibold leading-[14px]">
-                {project.progress ? `${project.progress}%` : '0%'}
-              </span>
-            </div>
+        {/* END HEADING and SEARCH/FILTER ALIGNMENT */}
 
 
-              </div>
-              {/*`${UPLOAD_BACK_URL}/uploads/project/*/}
-            <div className="project-image-container">
-                {project.image_file ? (
-                  <img
-                    src={project.image_file}
-                    alt={project.name}
-                    style={{
-                      width: '100%',
-                      height: '180px',
-                      objectFit: 'cover',
-                      borderRadius: '8px 8px 0 0',
-                    }}
-                    onError={(e) => {
-                      // Fallback if image fails to load
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
-                    }}
-                  />
-                ) : null}
-                
-                {/* Show placeholder if no image or if image fails to load */}
-                <div
-                  style={{
-                    width: '100%',
-                    height: '180px',
-                    background: '#f0f0f0',
-                    display: project.image_file ? 'none' : 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#888',
-                    borderRadius: '8px 8px 0 0',
-                  }}
+        {/* CREATE PROJECT MODAL (Existing logic remains) */}
+        {showCreateForm && (
+          <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="modal-content bg-white p-6 rounded-lg shadow-xl max-w-lg w-full">
+              <div className="modal-header flex justify-between items-center border-b pb-2 mb-4">
+                <h2 className="text-2xl font-semibold">Create New Project</h2>
+                <button
+                  onClick={() => setShowCreateForm(false)}
+                  className="text-gray-500 hover:text-gray-800 text-3xl leading-none"
                 >
-                  No Image
+                  &times;
+                </button>
+              </div>
+
+              <form onSubmit={handleCreateProject}>
+
+                {/* Project Name */}
+                <div className="form-group mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Project Name *</label>
+                  <input
+                    type="text"
+                    value={projectData.name}
+                    onChange={(e) => setProjectData({ ...projectData, name: e.target.value })}
+                    required
+                    className="form-input w-full border border-gray-300 p-2 rounded"
+                  />
                 </div>
-              </div>
-              <div className="project-meta">
-                <div>Event Date: {project.event_date}</div>                
-              </div>
+
+                {/* ⭐ PROJECT HANDLED BY */}
+                <div className="form-group mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Project Handled By *</label>
+                  <input
+                    type="text"
+                    value={projectData.project_handiled_by}
+                    onChange={(e) =>
+                      setProjectData({ ...projectData, project_handiled_by: e.target.value })
+                    }
+                    required
+                    className="form-input w-full border border-gray-300 p-2 rounded"
+                  />
+                </div>
+
+                {/* Image Upload */}
+                <div className="form-group mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Image File</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      setProjectData({ ...projectData, image_file: e.target.files[0] || null })
+                    }
+                    className="form-input w-full border border-gray-300 p-2 rounded"
+                  />
+                </div>
+
+                {/* Event Date */}
+                <div className="form-group mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Event Date *</label>
+                  <input
+                    type="date"
+                    value={projectData.event_date}
+                    onChange={(e) =>
+                      setProjectData({ ...projectData, event_date: e.target.value })
+                    }
+                    required
+                    className="form-input w-full border border-gray-300 p-2 rounded"
+                  />
+                </div>
+
+                <div className="flex gap-3 justify-end">
+                  <button type="submit" 
+                    className="action-button bg-green-600 text-white font-semibold py-2 px-4 rounded hover:bg-green-700 transition-colors">
+                      Create Project
+                  </button>
+                  <button type="button" onClick={() => setShowCreateForm(false)} 
+                    className="secondary-button bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded hover:bg-gray-400 transition-colors">
+                      Cancel
+                  </button>
+                </div>
+
+              </form>
             </div>
-          ))
-        ):(
-          <div className="empty-state">
-              <p>No projects found. Click "Create New Project" to get started!</p>
-            </div>
+          </div>
         )}
-          
-          
-        </div>
-      )}
+
+        {/* PROJECT LIST */}
+        {loading ? (
+          <div className="loading-text text-center text-gray-500 mt-10"><p>Loading projects...</p></div>
+        ) : (
+          // projects-grid uses Tailwind CSS grid classes for the card layout
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredProjects.length > 0 ? (
+              filteredProjects.map((project) => (
+                <div
+                  key={project.id}
+                  onClick={() => handleProjectClick(project.id)}
+                  className="project-card border rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
+                >
+                  <div className="p-4">
+                    <div className="project-header">
+                      <h3 className="project-name text-lg font-semibold truncate mb-1">{project.name}</h3>
+
+                      <div className="w-full bg-gray-300 rounded-lg overflow-hidden h-3.5 mt-2 relative">
+                        <div
+                          className="h-full bg-green-600 transition-all duration-500"
+                          style={{ width: `${project.progress || 0}%` }}
+                        />
+                        <span className="absolute top-0 left-1/2 -translate-x-1/2 text-[11px] text-white font-semibold leading-[14px]">
+                          {project.progress ? `${project.progress}%` : '0%'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="project-image-container">
+                    {/* Simplified Image display logic */}
+                    <div className="w-full h-48 flex items-center justify-center bg-gray-100 text-gray-500 text-sm">
+                        {project.image_file ? (
+                          <img
+                            src={project.image_file}
+                            alt={project.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">
+                            No Image
+                          </div>
+                        )}
+                    </div>
+                  </div>
+                  
+                  <div className="project-meta p-4 text-sm text-gray-600 border-t">
+                    <div className="mb-1">Event Date: **{project.event_date || "—"}**</div>
+                    <div>Handled By: **{project.project_handiled_by || "—"}**</div> {/* ⭐ NEW */}
+                  </div>
+
+                </div>
+              ))
+            ) : (
+              <div className="empty-state col-span-full text-center text-gray-500 mt-10">
+                <p>No projects found matching the criteria.</p>
+              </div>
+            )}
+          </div>
+        )}
+
+      </div>
     </div>
   );
 };

@@ -9,17 +9,31 @@ const Project = {
     if (!user) {
     throw new Error('User not provided');
   }
-    let query = 'SELECT id, name, image_file, TO_CHAR(event_date, \'YYYY-MM-DD\') AS event_date, status, created_by, created_at FROM projects';
+    //let query = 'SELECT p.id, p.name, p.image_file, TO_CHAR(p.event_date, \'YYYY-MM-DD\') AS event_date, p.status, p.created_by, p.created_at,pd.project_handiled_by FROM projects p inner join project_details pd on  params.id=pd.project_id';
+    
+  let query = `SELECT 
+      p.id, 
+      p.name, 
+      p.image_file, 
+      TO_CHAR(p.event_date, 'YYYY-MM-DD') AS event_date, 
+      p.status, 
+      p.created_by, 
+      p.created_at,
+      pd.project_handiled_by
+    FROM projects p
+    LEFT JOIN project_details pd ON p.id = pd.project_id
+  `;
+
     const params = [];
 
     if (user.role === '1') {
       // Admin: fetch only projects created by them
-      query += ' WHERE created_by = $1';
+      query += ' WHERE p.created_by = $1';
       params.push(user.id);
     } 
     // Viewer: fetch all projects (no WHERE filter)
 
-    query += ' ORDER BY id DESC';
+    query += ' ORDER BY p.id DESC';
     console.log('🧩 Running query:', query, 'params:', params);
 
     const result = await pool.query(query, params);
@@ -66,8 +80,8 @@ const Project = {
 
   // Insert matching project_details row
   await pool.query(
-    'INSERT INTO project_details (project_id, roadshow_name, event_date) VALUES ($1, $2, $3)',
-    [project.id, project.name, project.event_date]
+    'INSERT INTO project_details (project_id, roadshow_name, event_date,project_handiled_by) VALUES ($1, $2, $3)',
+    [project.id, project.name, project.event_date,project.project_handiled_by]
   );
 
   return project;
