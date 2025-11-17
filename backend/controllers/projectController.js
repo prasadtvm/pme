@@ -157,7 +157,7 @@ const projectController = {
       const starks = await Project.getStarks(projectId, user);
       const checklist = await Project.getChecklists(projectId, user);
       const menuFile =  await Project.getMenu(projectId, user);
-//console.log('projectcontroller getprojectdetails');
+console.log('projectcontroller getprojectdetails');
       res.json({
         ...details,
         associates,
