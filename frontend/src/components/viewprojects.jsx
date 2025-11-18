@@ -533,12 +533,6 @@ const [selectedYear, setSelectedYear] = useState("all");
     <p className="text-gray-500">No AV Supplier data</p>
   )}
 </div>
-
-
-
-
-
-
           {/* Embassy Section */}
           <div id="embassy" >
             <h3 className="text-lg font-semibold  mb-3">EMBASSY/CONSULATE</h3>
@@ -556,9 +550,6 @@ const [selectedYear, setSelectedYear] = useState("all");
               <p className="text-gray-500">No Embassy/consulate data</p>
             )}
           </div>
-
-
-{/* =======================  CLIENT  ======================= */}
 {/* ======================= CLIENT SECTION ======================= */}
 <div id="client" className="mb-6">
   <h3 className="text-lg font-semibold text-slate-800 mb-3">CLIENT</h3>
@@ -591,9 +582,6 @@ const [selectedYear, setSelectedYear] = useState("all");
   )}
 </div>
 
-
-
-{/* =======================  STARK  ======================= */}
 {/* ======================= STARK SECTION ======================= */}
 <div id="stark" className="mb-6">
   <h3 className="text-lg font-semibold text-slate-800 mb-3">STARK</h3>
@@ -624,9 +612,6 @@ const [selectedYear, setSelectedYear] = useState("all");
   )}
 </div>
 
-
-
-{/* =======================  CHECK LIST ======================= */}
      {/* checklist Section */}
         <div id="checklist" className="mb-6">
           <h3 className="text-lg font-semibold text-slate-800 mb-3">CHECKLIST</h3>
@@ -651,8 +636,7 @@ const [selectedYear, setSelectedYear] = useState("all");
                   ) : (
                     <span className="text-red-600 font-bold text-lg">✖️</span>
                   )}
-                  </span>
-                  {/*{a.name} — {a.selected ? "Selected" : "Not Selected"}*/}
+                  </span>               
                 </div>
               ))}
             </div>
@@ -660,9 +644,41 @@ const [selectedYear, setSelectedYear] = useState("all");
             <p className="text-gray-500">No checklist data</p>
           )}
         </div>
-
-
+  {/* Menu */}
+          <div className="mb-6">
+          <h3 className="text-lg font-semibold text-slate-800 mb-3">Menu File</h3>
+          {details.menuFile ? (
+            <a href={details.menuFile.file_path} target="_blank" rel="noreferrer">
+              {details.menuFile.filename}
+            </a>
+          ) : <p className="text-gray-500">No menu file uploaded</p>}
+          </div>
+          <hr />    
             {/* REMARKS */}
+
+ {/* Show Remarks List */}
+          {remarks.length > 0 ? (
+            <div  className="mb-4">
+              {remarks.map((r) => (
+                <div
+                  key={r.id}
+                  className="bg-gray-50 p-3 mb-2 rounded border border-gray-300 relative"
+                >
+                  <strong>{r.username || "Viewer"}:</strong> {r.remarktext}
+                  <span
+                    className={`absolute right-3 top-3 text-sm font-medium ${
+                      r.isapproved ? "text-green-600" : "text-orange-500"
+                    }`}
+                  >
+                    {r.isapproved ? "Resolved" : "Pending"}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500">No remarks yet.</p>
+          )}
+{/* Giving Remarks  */}
             <div className="mt-5">
               <h3 className="text-lg font-semibold mb-3">Remarks</h3>
 
