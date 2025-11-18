@@ -183,6 +183,8 @@ const [selectedYear, setSelectedYear] = useState("all");
               <a className='hover:font-bold hover:text-white text-left pt-5 pl-5' href="#client">CLIENT</a>
               <a className='hover:font-bold hover:text-white text-left pt-5 pl-5' href="#stark">STARK</a>
               <a className='hover:font-bold hover:text-white text-left pt-5 pl-5' href="#checklist">CHECKLIST</a>
+              <a className='hover:font-bold hover:text-white text-left pt-5 pl-5' href="#menu">MENU</a>
+              <a className='hover:font-bold hover:text-white text-left pt-5 pl-5' href="#remark">REMARK</a>
                
             </nav>
           </div>
@@ -645,7 +647,7 @@ const [selectedYear, setSelectedYear] = useState("all");
           )}
         </div>
   {/* Menu */}
-          <div className="mb-6">
+          <div id='menu' className="mb-6">
           <h3 className="text-lg font-semibold text-slate-800 mb-3">Menu File</h3>
           {details.menuFile ? (
             <a href={details.menuFile.file_path} target="_blank" rel="noreferrer">
@@ -657,6 +659,7 @@ const [selectedYear, setSelectedYear] = useState("all");
             {/* REMARKS */}
 
  {/* Show Remarks List */}
+   <div id='remark' className="mb-6">
           {remarks.length > 0 ? (
             <div  className="mb-4">
               {remarks.map((r) => (
@@ -678,6 +681,7 @@ const [selectedYear, setSelectedYear] = useState("all");
           ) : (
             <p className="text-gray-500">No remarks yet.</p>
           )}
+          </div>
 {/* Giving Remarks  */}
             <div className="mt-5">
               <h3 className="text-lg font-semibold mb-3">Remarks</h3>
