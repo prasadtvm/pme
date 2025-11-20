@@ -1689,22 +1689,10 @@ return (
       )}
     </div>*/}
 
-    {/* Save The Date Section 
-    <h4 className="text-md font-medium text-blue-700 mb-2">Save The Date</h4>
-    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
-      <div>
-        <label className="block text-sm text-gray-600 mb-1">Save The Date</label>
-        <input
-          type="date"
-          value={item.save_the_date || ''}
-          onChange={(e) => handleRSVPChange(index, 'save_the_date', e.target.value)}
-          className="form-input w-full"
-        />
-      </div>
+
 
 
      
-    </div>*/}
 
     {/* Main Invitation Section
     <h4 className="text-md font-medium text-blue-700 mb-2">Main Invitation</h4>
@@ -1742,12 +1730,7 @@ return (
       )}
     </div>
 
-    {/* Save The Date fields 
-    <div className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-3">
-      <input type="date" value={saveDate.date || ""} onChange={(e) => handleSaveDateChange("date", e.target.value)} className="form-input" />
-      <input type="number" placeholder="Tour Operator" value={saveDate.to } onChange={(e) => handleSaveDateChange("to", e.target.value)} className="form-input" />
-  
-  </div>
+
 
   {/* Table of Main Invites 
  
@@ -1800,20 +1783,8 @@ return (
 
     {/* Fields 
     <div className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(4,1fr)_auto] gap-3 items-center mb-3">
-      <input
-        type="date"
-        value={saveDate.date || ""}
-        onChange={(e) => handleSaveDateChange("date", e.target.value)}
-        className="form-input"
-      />
-      <input
-        type="number"
-        placeholder="Tour Operator"
-        value={saveDate.to || ""}
-        onChange={(e) => handleSaveDateChange("to", e.target.value)}
-        className="form-input"
-      />
-    
+     
+      
     </div>
   <div className="text-right text-sm">
     <div className="text-gray-700 font-medium">Countdown</div>
@@ -1826,56 +1797,8 @@ return (
    
   </div>*/}
 
-  {/* === MAIN INVITATIONS (multiple) === 
-  <div className="section-header mt-6">
-    <h3 className="section-title">RSVP #2 Main Invite</h3>
-    <button onClick={saveMainInvites} className="action-button">
-      Save Main Invites
-    </button>
-  </div>*/}
 
-  {/* Upload Main Invite image 
-  <div className="mb-4">
-    <label className="block text-sm font-medium text-gray-700">
-      Main Invite Image Upload:
-    </label>
-    <input type="file" onChange={(e) => setMainInviteImage(e.target.files[0])} />
-    {mainInviteImageURL && (
-      <div className="flex items-center gap-3 mt-2">
-        <img
-          src={mainInviteImageURL}
-          alt="Main Invite"
-          className="w-24 h-16 object-cover rounded border"
-        />
-        <a
-          href={mainInviteImageURL}
-          target="_blank"
-          rel="noreferrer"
-          className="text-blue-600 underline"
-        >
-          View Full Image
-        </a>
-      </div>
-    )}
-  </div>*/}
 
-  {/* === Main Invite Rows === 
-  
-
-  {/* === Column Totals (computed directly like Trade Database) === 
-  <div className="grid grid-cols-[1.5fr_repeat(4,1fr)_auto] gap-3 items-center mt-5 p-3 bg-gray-200 rounded-lg font-semibold text-slate-900">
-    <div>Column Totals →</div>
-    <div>{mainInvites.reduce((sum, t) => sum + (Number(t.to) || 0), 0)}</div>
-  
-    </div>
-  </div>
-
-  <button
-    onClick={addMainInvite}
-    className="px-4 py-2 bg-green-600 text-white rounded mt-2"
-  >
-    + Add Main Invite
-  </button>*/}
 
   {/* === Floating Grand Total (Save Date + Main Invite) === 
   <div className="fixed right-5 top-1/3 bg-yellow-200 border border-yellow-400 rounded-lg shadow-lg p-3 text-sm">
