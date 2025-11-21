@@ -103,7 +103,7 @@ const ProjectPage = () => {
     <div className="flex min-h-screen">
       
       {/* ⭐ LEFT SIDEBAR (GREEN) */}
-      <div className="w-64 bg-green-700 p-4 flex flex-col items-center">
+      <div className="w-64 bg-[#7FB200] p-4 flex flex-col items-center">
         <div className="w-full">
           {/* Logo at the top of the sidebar */}
           <img

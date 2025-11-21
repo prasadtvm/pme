@@ -401,13 +401,13 @@ const saveAVSetup = async () => {
           <aside className=" hidden md:flex
               w-[291px]
               flex-shrink-0
-              bg-[#70AD47]
+              bg-[#7FB200]
               text-white
               p-6              
               md:sticky md:top-[165px]
               md:h-[calc(100vh-165px)]
               overflow-y-auto
-              " style={{  backgroundColor: "#70AD47",zIndex: 50, minHeight: "100vh", fontWeight: 700, fontSize: "15.5px",top:0, }}>
+              " style={{  backgroundColor: "#7FB200",zIndex: 50, minHeight: "100vh", fontWeight: 700, fontSize: "15.5px",top:0, }}>
            {/*pl-[15px] pr-4 py-6 text-white text-[15px] font-semibold space-y-4*/}
             {/* MAIN WRAPPER (REQUIRED FOR PROPER LAYOUT) */}
   <div className="flex flex-col h-full w-full">
