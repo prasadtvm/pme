@@ -326,6 +326,7 @@ const saveAVSetup = async () => {
   if (creating) {
     // Minimal create UI
     return (
+     
       <div className="p-6">
         <h2>Create Project</h2>
         <form onSubmit={async (e) => {
@@ -334,6 +335,8 @@ const saveAVSetup = async () => {
             const formData = new FormData();
             formData.append("name", details.roadshowName || "Untitled Project");
             formData.append("event_date", details.event_date || new Date().toISOString().slice(0, 10));
+             formData.append('project_handiled_by', details.project_handiled_by); // ⭐ ADDED
+             console.log('prpedfd',details.project_handiled_by);
             if (details.image_file instanceof File) formData.append("image_file", details.image_file);
             const res = await projectAPI.create(formData, { headers: { "Content-Type": "multipart/form-data" } });
             navigate(`/project/${res.data.id}`);
@@ -447,52 +450,53 @@ const saveAVSetup = async () => {
           <div className="flex-1 overflow-x-hidden">
           {/* MAIN CONTENT flex-1 px-0 {/*   Patterned yellow header — responsive width (keeps full page width, but we match height) */}
           <main className="px-0" >
-       
-          
+                
 
        
-                    <div
-  className="w-full border-b border-gray-300"
-  style={{
-    backgroundImage: `url(${patternBg})`,
-    backgroundRepeat: "repeat",
-    backgroundSize: "auto",
-    minHeight: "241px",
-    display: "flex",
-    alignItems: "center",
-  }}
->
-  <div className="flex-1 px-10">
-    <h1 className="font-extrabold text-4xl uppercase tracking-tight mb-6 text-left">
-      {project?.name || details?.roadshowName || "Untitled Project"}
-    </h1>
-<div className="pt-20"></div>
-    {/* THIS IS THE FIXED ALIGNMENT BLOCK */}
-    <div className="flex justify-between text-lg font-bold w-[40%]">
-      <div className="uppercase">{details.project_handiled_by || "N/A"}</div>
-      <div className="whitespace-nowrap">
-        {details.event_date
-          ? new Date(details.event_date).toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "long",
-              year: "numeric",
-            }).toUpperCase()
-          : ""}
-      </div>
-    </div>
-  </div>
+            <div
+            className="w-full border-b border-gray-300"
+            style={{
+              backgroundImage: `url(${patternBg})`,
+              backgroundRepeat: "repeat",
+              backgroundSize: "auto",
+              minHeight: "241px",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+         <div className="flex-1 px-10">
+              <h1 className="font-extrabold text-4xl uppercase tracking-tight mb-6 text-left">
+                {project?.name || details?.roadshowName || "Untitled Project"}
+              </h1>
+          <div className="pt-20"></div>
+             {/* THIS IS THE FIXED ALIGNMENT BLOCK */}
+              <div className="flex justify-between text-lg font-bold w-[40%]">
+                <div className="uppercase">{details.project_handiled_by || "N/A"}</div>
+                <div className="whitespace-nowrap">
+                  {details.event_date
+                    ? new Date(details.event_date).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                      }).toUpperCase()
+                    : ""}
+                </div>
+              </div>
+            </div>
 
-  {/* Right Image */}
-  <div style={{ width: 400, padding: "8px 0" }}>
-    <div style={{ height: 241, borderLeft: "1px solid #e5e7eb", overflow: "hidden" }}>
-      {details.image_file ? (
-        <img src={details.image_file} alt="project" className="w-full h-full object-cover" />
-      ) : (
-        <div className="h-full flex items-center justify-center text-gray-600">No image</div>
-      )}
-    </div>
-  </div>
-</div>
+         
+
+            {/* Right Image */}
+            <div style={{ width: 400, padding: "8px 0" }}>
+              <div style={{ height: 241, borderLeft: "1px solid #e5e7eb", overflow: "hidden" }}>
+                {details.image_file ? (
+                  <img src={details.image_file} alt="project" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="h-full flex items-center justify-center text-gray-600">No image</div>
+                )}
+              </div>
+            </div>
+          </div>
 
 
 
@@ -539,52 +543,7 @@ const saveAVSetup = async () => {
               </div>
             )}
 
-           
-
-            {/* YELLOW STRIP INFORMATION BAR */}
-{/* FLOATING BOTTOM STRIP 
-<div
-  className="
-    fixed 
-    bottom-0 
-    left-0 
-    w-full 
-    bg-[#F9E39A] 
-    shadow-lg 
-    py-2 
-    px-6 
-    flex 
-    flex-wrap 
-    items-center 
-    gap-x-6 
-    text-sm 
-    font-semibold 
-    z-[999]
-  "
->
-  <span className="text-black">Countdown</span>
-  <span className="text-red-600">{workingDaysLeft}</span>
-  <span className="text-black">Working days</span>
-
-  <span className="text-red-600 ml-4">Confirmations</span>
-
-  <span className="text-black">T.O</span>
-  <span className="text-red-600">{totals.to}</span>
-
-  <span className="text-black">T.A</span>
-  <span className="text-red-600">{totals.ta}</span>
-
-  <span className="text-black">T.C</span>
-  <span className="text-red-600">{totals.tc}</span>
-
-  <span className="text-black">Med/Infl</span>
-  <span className="text-red-600">{totals.media}</span>
-
-  <span className="text-black font-bold ml-4">Total</span>
-  <span className="text-red-600 font-bold">{totals.grandTotal}</span>
-</div>*/}
-
-
+         
             {/* ===================== */}
             {/* ASSOCIATES SECTION  px-10 pt-8 pb-6  */}
             {/* ===================== */}
@@ -618,35 +577,35 @@ const saveAVSetup = async () => {
                 {associates.map((associate, index) => (
                   <div key={index} className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_60px] gap-3 mb-3 p-3 bg-gray-50 rounded items-center">
                      <input
-        type="text"
-        placeholder="Name"
-        value={associate.name}
-        onChange={(e) =>
-          handleAssociateChange(index, "name", e.target.value)
-        }
-        className="px-3 py-2 border border-gray-300 rounded-md"
-      />
+                    type="text"
+                    placeholder="Name"
+                    value={associate.name}
+                    onChange={(e) =>
+                      handleAssociateChange(index, "name", e.target.value)
+                    }
+                    className="px-3 py-2 border border-gray-300 rounded-md"
+                  />
 
-      <input
-        type="text"
-        placeholder="City"
-        value={associate.city}
-        onChange={(e) =>
-          handleAssociateChange(index, "city", e.target.value)
-        }
-        className="px-3 py-2 border border-gray-300 rounded-md"
-      />
+                  <input
+                    type="text"
+                    placeholder="City"
+                    value={associate.city}
+                    onChange={(e) =>
+                      handleAssociateChange(index, "city", e.target.value)
+                    }
+                    className="px-3 py-2 border border-gray-300 rounded-md"
+                  />
 
-      <div className="flex justify-center items-center h-full">
-        <input
-          type="checkbox"
-          checked={associate.selected}
-          onChange={(e) =>
-            handleAssociateChange(index, "selected", e.target.checked)
-          }
-          className="w-3.5 h-3.5 accent-green-600"
-        />
-      </div>
+                  <div className="flex justify-center items-center h-full">
+                    <input
+                      type="checkbox"
+                      checked={associate.selected}
+                      onChange={(e) =>
+                        handleAssociateChange(index, "selected", e.target.checked)
+                      }
+                      className="w-3.5 h-3.5 accent-green-600"
+                    />
+                  </div>
 
                     <div className="flex justify-end">
                       {associates.length > 1 && (
@@ -1116,167 +1075,167 @@ const saveAVSetup = async () => {
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="font-extrabold uppercase text-2xl tracking-wide">HOTEL AV SETUP</h2>
                   <button
-      onClick={saveAVSetup}
-      disabled={saving === "av"}
-      className={`px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 ${
-        saving === "av" ? "opacity-50 cursor-not-allowed" : ""
-      }`}
-    >
-      {saving === "av" ? "Saving..." : "Save AV Setup"}
-                  </button>
+                onClick={saveAVSetup}
+                disabled={saving === "av"}
+                className={`px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 ${
+                  saving === "av" ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+              {saving === "av" ? "Saving..." : "Save AV Setup"}
+                          </button>
                 </div>
 
                  
  
 
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-    {/* LEFT: TEXT INPUTS */}
-    <div className="space-y-4">
-      <div>
-        <label className="block mb-1 font-medium">Backdrop (Specs)</label>
-        <input
-          type="text"
-          value={avSetup.backdrop || ""}
-          onChange={(e) => setAvSetup({ ...avSetup, backdrop: e.target.value })}
-          className="form-input"
-        />
-      </div>
+              {/* LEFT: TEXT INPUTS */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block mb-1 font-medium">Backdrop (Specs)</label>
+                  <input
+                    type="text"
+                    value={avSetup.backdrop || ""}
+                    onChange={(e) => setAvSetup({ ...avSetup, backdrop: e.target.value })}
+                    className="form-input"
+                  />
+                </div>
 
-      <div>
-        <label className="block mb-1 font-medium">Screen (Specs)</label>
-        <input
-          type="text"
-          value={avSetup.screen || ""}
-          onChange={(e) => setAvSetup({ ...avSetup, screen: e.target.value })}
-          className="form-input"
-        />
-      </div>
+                <div>
+                  <label className="block mb-1 font-medium">Screen (Specs)</label>
+                  <input
+                    type="text"
+                    value={avSetup.screen || ""}
+                    onChange={(e) => setAvSetup({ ...avSetup, screen: e.target.value })}
+                    className="form-input"
+                  />
+                </div>
 
-      <div>
-        <label className="block mb-1 font-medium">Mic (Nos)</label>
-        <input
-          type="number"
-          value={avSetup.mic || ""}
-          onChange={(e) => setAvSetup({ ...avSetup, mic: e.target.value })}
-          className="form-input"
-        />
-      </div>
+                <div>
+                  <label className="block mb-1 font-medium">Mic (Nos)</label>
+                  <input
+                    type="number"
+                    value={avSetup.mic || ""}
+                    onChange={(e) => setAvSetup({ ...avSetup, mic: e.target.value })}
+                    className="form-input"
+                  />
+                </div>
 
-      <div>
-        <label className="block mb-1 font-medium">Type (System)</label>
-        <input
-          type="text"
-          value={avSetup.type || ""}
-          onChange={(e) => setAvSetup({ ...avSetup, type: e.target.value })}
-          className="form-input"
-        />
-      </div>
+                <div>
+                  <label className="block mb-1 font-medium">Type (System)</label>
+                  <input
+                    type="text"
+                    value={avSetup.type || ""}
+                    onChange={(e) => setAvSetup({ ...avSetup, type: e.target.value })}
+                    className="form-input"
+                  />
+                </div>
 
-      {/* CHECKBOXES */}
-      <div className="flex gap-6 mt-3">
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={avSetup.projector || false}
-            onChange={(e) =>
-              setAvSetup({ ...avSetup, projector: e.target.checked })
-            }
-            className="w-3.5 h-3.5 accent-green-600"
-          />
-          Projector
-        </label>
+                {/* CHECKBOXES */}
+                <div className="flex gap-6 mt-3">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={avSetup.projector || false}
+                      onChange={(e) =>
+                        setAvSetup({ ...avSetup, projector: e.target.checked })
+                      }
+                      className="w-3.5 h-3.5 accent-green-600"
+                    />
+                    Projector
+                  </label>
 
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={avSetup.podium || false}
-            onChange={(e) =>
-              setAvSetup({ ...avSetup, podium: e.target.checked })
-            }
-            className="w-3.5 h-3.5 accent-green-600"
-          />
-          Podium
-        </label>
-      </div>
-    </div>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={avSetup.podium || false}
+                      onChange={(e) =>
+                        setAvSetup({ ...avSetup, podium: e.target.checked })
+                      }
+                      className="w-3.5 h-3.5 accent-green-600"
+                    />
+                    Podium
+                  </label>
+                </div>
+              </div>
 
-    {/* RIGHT: UPLOADS */}
-    <div className="space-y-4">
+              {/* RIGHT: UPLOADS */}
+              <div className="space-y-4">
 
-      {/* BACKDROP IMAGE */}
-      <div>
-        <label className="block mb-1 font-medium">Backdrop Image</label>
-        <input
-          type="file"
-          accept=".jpg,.jpeg,.png"
-          onChange={(e) =>
-            setAvSetup({ ...avSetup, backdrop_image: e.target.files[0] })
-          }
-          className="form-input"
-        />
+                {/* BACKDROP IMAGE */}
+                <div>
+                  <label className="block mb-1 font-medium">Backdrop Image</label>
+                  <input
+                    type="file"
+                    accept=".jpg,.jpeg,.png"
+                    onChange={(e) =>
+                      setAvSetup({ ...avSetup, backdrop_image: e.target.files[0] })
+                    }
+                    className="form-input"
+                  />
 
-        {avSetup.backdrop_image && (
-          <img
-            src={
-              avSetup.backdrop_image instanceof File
-                ? URL.createObjectURL(avSetup.backdrop_image)
-                : avSetup.backdrop_image
-            }
-            className="h-24 mt-2 rounded shadow"
-          />
-        )}
-      </div>
+                  {avSetup.backdrop_image && (
+                    <img
+                      src={
+                        avSetup.backdrop_image instanceof File
+                          ? URL.createObjectURL(avSetup.backdrop_image)
+                          : avSetup.backdrop_image
+                      }
+                      className="h-24 mt-2 rounded shadow"
+                    />
+                  )}
+                </div>
 
-      {/* SCREEN IMAGE */}
-      <div>
-        <label className="block mb-1 font-medium">Screen Image</label>
-        <input
-          type="file"
-          accept=".jpg,.jpeg,.png"
-          onChange={(e) =>
-            setAvSetup({ ...avSetup, screen_image: e.target.files[0] })
-          }
-          className="form-input"
-        />
+                {/* SCREEN IMAGE */}
+                <div>
+                  <label className="block mb-1 font-medium">Screen Image</label>
+                  <input
+                    type="file"
+                    accept=".jpg,.jpeg,.png"
+                    onChange={(e) =>
+                      setAvSetup({ ...avSetup, screen_image: e.target.files[0] })
+                    }
+                    className="form-input"
+                  />
 
-        {avSetup.screen_image && (
-          <img
-            src={
-              avSetup.screen_image instanceof File
-                ? URL.createObjectURL(avSetup.screen_image)
-                : avSetup.screen_image
-            }
-            className="h-24 mt-2 rounded shadow"
-          />
-        )}
-      </div>
+                  {avSetup.screen_image && (
+                    <img
+                      src={
+                        avSetup.screen_image instanceof File
+                          ? URL.createObjectURL(avSetup.screen_image)
+                          : avSetup.screen_image
+                      }
+                      className="h-24 mt-2 rounded shadow"
+                    />
+                  )}
+                </div>
 
-      {/* STAGE IMAGE */}
-      <div>
-        <label className="block mb-1 font-medium">Stage Image</label>
-        <input
-          type="file"
-          accept=".jpg,.jpeg,.png"
-          onChange={(e) =>
-            setAvSetup({ ...avSetup, stage_image: e.target.files[0] })
-          }
-          className="form-input"
-        />
+                {/* STAGE IMAGE */}
+                <div>
+                  <label className="block mb-1 font-medium">Stage Image</label>
+                  <input
+                    type="file"
+                    accept=".jpg,.jpeg,.png"
+                    onChange={(e) =>
+                      setAvSetup({ ...avSetup, stage_image: e.target.files[0] })
+                    }
+                    className="form-input"
+                  />
 
-        {avSetup.stage_image && (
-          <img
-            src={
-              avSetup.stage_image instanceof File
-                ? URL.createObjectURL(avSetup.stage_image)
-                : avSetup.stage_image
-            }
-            className="h-24 mt-2 rounded shadow"
-          />
-        )}
-      </div>
-    </div>
-  </div>
+                  {avSetup.stage_image && (
+                    <img
+                      src={
+                        avSetup.stage_image instanceof File
+                          ? URL.createObjectURL(avSetup.stage_image)
+                          : avSetup.stage_image
+                      }
+                      className="h-24 mt-2 rounded shadow"
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
              
             </section>
 
@@ -1333,104 +1292,104 @@ const saveAVSetup = async () => {
 
            
 
+                        {/* ========================= */}
+            {/* EMBASSY / CONSULATE       */}
             {/* ========================= */}
-{/* EMBASSY / CONSULATE       */}
-{/* ========================= */}
-<section id="embassy" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
+            <section id="embassy" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
 
-  <div className="flex justify-between items-center mb-4">
-     <h2 className="font-extrabold uppercase text-2xl tracking-wide">EMBASSY / CONSULATE</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="font-extrabold uppercase text-2xl tracking-wide">EMBASSY / CONSULATE</h2>
 
-    <button
-      onClick={saveEmbassy}
-      disabled={saving === "embassy"}
-      className={`px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 ${
-        saving === "embassy" ? "opacity-50 cursor-not-allowed" : ""
-      }`}
-    >
-      {saving === "embassy" ? "Saving…" : "Save Embassy Info"}
-    </button>
-  </div>
+                <button
+                  onClick={saveEmbassy}
+                  disabled={saving === "embassy"}
+                  className={`px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 ${
+                    saving === "embassy" ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {saving === "embassy" ? "Saving…" : "Save Embassy Info"}
+                </button>
+              </div>
 
-  {/* CHIEF GUEST */}
-  <h3 className="text-lg font-bold mb-3">Chief Guest Details</h3>
+              {/* CHIEF GUEST */}
+              <h3 className="text-lg font-bold mb-3">Chief Guest Details</h3>
 
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 rounded p-4 mb-6">
-    <input
-      type="text"
-      placeholder="Name"
-      value={embassy.cheif_guest}
-      onChange={(e) =>
-        setEmbassy({ ...embassy, cheif_guest: e.target.value })
-      }
-      className="form-input"
-    />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 rounded p-4 mb-6">
+                <input
+                  type="text"
+                  placeholder="Name"
+                  value={embassy.cheif_guest}
+                  onChange={(e) =>
+                    setEmbassy({ ...embassy, cheif_guest: e.target.value })
+                  }
+                  className="form-input"
+                />
 
-    <input
-      type="text"
-      placeholder="Designation"
-      value={embassy.cheif_guest_designation}
-      onChange={(e) =>
-        setEmbassy({ ...embassy, cheif_guest_designation: e.target.value })
-      }
-      className="form-input"
-    />
+                <input
+                  type="text"
+                  placeholder="Designation"
+                  value={embassy.cheif_guest_designation}
+                  onChange={(e) =>
+                    setEmbassy({ ...embassy, cheif_guest_designation: e.target.value })
+                  }
+                  className="form-input"
+                />
 
-    <input
-      type="text"
-      placeholder="Phone"
-      value={embassy.cheif_guest_phone}
-      onChange={(e) =>
-        setEmbassy({ ...embassy, cheif_guest_phone: e.target.value })
-      }
-      className="form-input"
-    />
-  </div>
+                <input
+                  type="text"
+                  placeholder="Phone"
+                  value={embassy.cheif_guest_phone}
+                  onChange={(e) =>
+                    setEmbassy({ ...embassy, cheif_guest_phone: e.target.value })
+                  }
+                  className="form-input"
+                />
+              </div>
 
-  {/* ACCOMMODATION */}
-  <h3 className="text-lg font-bold mb-3">Accommodation Details</h3>
+              {/* ACCOMMODATION */}
+              <h3 className="text-lg font-bold mb-3">Accommodation Details</h3>
 
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 rounded p-4">
-    <input
-      type="text"
-      placeholder="Contact Name"
-      value={embassy.accommodation_contact}
-      onChange={(e) =>
-        setEmbassy({
-          ...embassy,
-          accommodation_contact: e.target.value,
-        })
-      }
-      className="form-input"
-    />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 rounded p-4">
+                <input
+                  type="text"
+                  placeholder="Contact Name"
+                  value={embassy.accommodation_contact}
+                  onChange={(e) =>
+                    setEmbassy({
+                      ...embassy,
+                      accommodation_contact: e.target.value,
+                    })
+                  }
+                  className="form-input"
+                />
 
-    <input
-      type="text"
-      placeholder="Address"
-      value={embassy.accommodation_address}
-      onChange={(e) =>
-        setEmbassy({
-          ...embassy,
-          accommodation_address: e.target.value,
-        })
-      }
-      className="form-input"
-    />
+                <input
+                  type="text"
+                  placeholder="Address"
+                  value={embassy.accommodation_address}
+                  onChange={(e) =>
+                    setEmbassy({
+                      ...embassy,
+                      accommodation_address: e.target.value,
+                    })
+                  }
+                  className="form-input"
+                />
 
-    <input
-      type="text"
-      placeholder="Phone"
-      value={embassy.accommodation_phone}
-      onChange={(e) =>
-        setEmbassy({
-          ...embassy,
-          accommodation_phone: e.target.value,
-        })
-      }
-      className="form-input"
-    />
-  </div>
-</section>
+                <input
+                  type="text"
+                  placeholder="Phone"
+                  value={embassy.accommodation_phone}
+                  onChange={(e) =>
+                    setEmbassy({
+                      ...embassy,
+                      accommodation_phone: e.target.value,
+                    })
+                  }
+                  className="form-input"
+                />
+              </div>
+            </section>
 
             {/* CLIENT, STARK, CHECKLIST, MENU, REMARKS sections (kept consistent & safe) */}
             <section id="client" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
@@ -1507,42 +1466,42 @@ const saveAVSetup = async () => {
 
             <section id="checklist" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
 
-  <div className="flex justify-between items-center mb-4 ">
-    <h2 className="font-extrabold uppercase text-2xl tracking-wide">CHECKLIST</h2>
+              <div className="flex justify-between items-center mb-4 ">
+                <h2 className="font-extrabold uppercase text-2xl tracking-wide">CHECKLIST</h2>
 
-    <button
-      onClick={saveChecklists}
-      disabled={saving === "checklists"}
-      className={`px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 ${
-        saving === "checklists" ? "opacity-50 cursor-not-allowed" : ""
-      }`}
-    >
-      {saving === "checklists" ? "Saving…" : "Save Checklists"}
-    </button>
-  </div>
+                <button
+                  onClick={saveChecklists}
+                  disabled={saving === "checklists"}
+                  className={`px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 ${
+                    saving === "checklists" ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {saving === "checklists" ? "Saving…" : "Save Checklists"}
+                </button>
+              </div>
 
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-     {checklists.map((item, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded">
-                  <input type="text" placeholder="Checklist Item Name" value={item.name} onChange={(e) => handleChecklistChange(index, 'name', e.target.value)} className="flex-grow p-2 border border-gray-300 rounded-md mr-3" />
-                  <div className="flex items-center gap-4">
-                    <label htmlFor={`checklist-${index}`} className="text-gray-700 font-medium">Completed</label>
-                    <input id={`checklist-${index}`} type="checkbox" checked={item.selected} onChange={(e) => handleChecklistChange(index, 'selected', e.target.checked)} className="w-3.5 h-3.5 accent-green-600" />
-                    {checklists.length > defaultChecklists.length && <button type="button" onClick={() => handleRemovechecklist(index)} className="text-red-600">Remove</button>}
-                  </div>
-                </div>
-              ))}
-   
-  </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {checklists.map((item, index) => (
+                            <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                              <input type="text" placeholder="Checklist Item Name" value={item.name} onChange={(e) => handleChecklistChange(index, 'name', e.target.value)} className="flex-grow p-2 border border-gray-300 rounded-md mr-3" />
+                              <div className="flex items-center gap-4">
+                                <label htmlFor={`checklist-${index}`} className="text-gray-700 font-medium">Completed</label>
+                                <input id={`checklist-${index}`} type="checkbox" checked={item.selected} onChange={(e) => handleChecklistChange(index, 'selected', e.target.checked)} className="w-3.5 h-3.5 accent-green-600" />
+                                {checklists.length > defaultChecklists.length && <button type="button" onClick={() => handleRemovechecklist(index)} className="text-red-600">Remove</button>}
+                              </div>
+                            </div>
+                          ))}
+              
+              </div>
 
-  <button
-    onClick={handleAddChecklist}
-    className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 
-             focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-  >
-    Add Checklist
-  </button>
-</section>
+              <button
+                onClick={handleAddChecklist}
+                className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 
+                        focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+              >
+                Add Checklist
+              </button>
+            </section>
 
             {/* MENU UPLOAD px-10 pt-6 pb-6*/}
             <section id="menu" className="hidden mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
@@ -1592,34 +1551,34 @@ const saveAVSetup = async () => {
             </div>
 
             {/* ==== FLOATING BOTTOM STRIP ====style={{ marginLeft: "300px", marginRight:"5px" }} */}
-<div className="fixed bottom-0  z-[9999] bg-[#F7E79E] border-t border-yellow-600 shadow-md left-[315px] 
-    right-[22px]"  >
-  <div className="flex items-center justify-start gap-10 px-5 py-2 text-sm font-semibold">
+            <div className="fixed bottom-0  z-[9999] bg-[#F7E79E] border-t border-yellow-600 shadow-md left-[315px] 
+                right-[22px]"  >
+              <div className="flex items-center justify-start gap-10 px-5 py-2 text-sm font-semibold">
 
-    <span className="text-black w-[10%]">Countdown</span>
-    <span className="text-red-600 w-[5%]">{workingDaysLeft}</span>
+                <span className="text-black w-[10%]">Countdown</span>
+                <span className="text-red-600 w-[5%]">{workingDaysLeft}</span>
 
-    <span className="text-black w-[15%]">Working days</span>
+                <span className="text-black w-[15%]">Working days</span>
 
-    <span className="text-red-600 w-[10%]">Confirmations</span>
+                <span className="text-red-600 w-[10%]">Confirmations</span>
 
-    <span className="text-black w-[10%]">T.O</span>
-    <span className="text-red-600 w-[10%]">{totals.to}</span>
+                <span className="text-black w-[10%]">T.O</span>
+                <span className="text-red-600 w-[10%]">{totals.to}</span>
 
-    <span className="text-black w-[10%]">T.A</span>
-    <span className="text-red-600 w-[10%]">{totals.ta}</span>
+                <span className="text-black w-[10%]">T.A</span>
+                <span className="text-red-600 w-[10%]">{totals.ta}</span>
 
-    <span className="text-black w-[10%]">T.C</span>
-    <span className="text-red-600 w-[10%]">{totals.tc}</span>
+                <span className="text-black w-[10%]">T.C</span>
+                <span className="text-red-600 w-[10%]">{totals.tc}</span>
 
-    <span className="text-black w-[10%]">Med/Infl</span>
-    <span className="text-red-600 w-[10%]">{totals.media}</span>
+                <span className="text-black w-[10%]">Med/Infl</span>
+                <span className="text-red-600 w-[10%]">{totals.media}</span>
 
-    <span className="text-black font-bold w-[10%]">Total</span>
-    <span className="text-red-600 font-bold w-[10%]">{totals.grandTotal}</span>
+                <span className="text-black font-bold w-[10%]">Total</span>
+                <span className="text-red-600 font-bold w-[10%]">{totals.grandTotal}</span>
 
-  </div>
-</div>
+              </div>
+            </div>
 
           </main>
           </div>

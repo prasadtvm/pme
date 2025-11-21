@@ -57,6 +57,7 @@ const ProjectPage = () => {
       if (projectData.image_file instanceof File) {
         formData.append('image_file', projectData.image_file);
       }
+console.log('propje page',JSON.stringify(formData));
 
       const projectResponse = await projectAPI.create(formData);
       const createdProject = projectResponse.data;

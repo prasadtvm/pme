@@ -70,6 +70,8 @@ const Project = {
   // Create new project
   create: async (projectData) => {
    // const { name, description, year, created_by } = projectData;
+
+    console.log('projectmodel testr21112025',JSON.stringify(projectData));
    const { name, image_file, event_date, created_by } = projectData;
   // console.log('Inserting project:', { name, image_file, event_date, created_by });
     const result = await pool.query(
@@ -80,8 +82,8 @@ const Project = {
 
   // Insert matching project_details row
   await pool.query(
-    'INSERT INTO project_details (project_id, roadshow_name, event_date,project_handiled_by) VALUES ($1, $2, $3)',
-    [project.id, project.name, project.event_date,project.project_handiled_by]
+    'INSERT INTO project_details (project_id, roadshow_name, event_date,project_handiled_by) VALUES ($1, $2, $3,$4)',
+    [project.id, project.name, project.event_date,projectData.project_handiled_by]
   );
 
   return project;
@@ -883,7 +885,7 @@ console.log('pronmodel',projectId,JSON.stringify( roadshowData), userId);
               budget = $3,project_handiled_by=$4,
              updated_at = CURRENT_TIMESTAMP 
          WHERE project_id = $5 RETURNING *`,
-        [roadshow_name,  event_date,  budget,project_handiled_by, projectId]
+        [roadshow_name,  event_date,  budget, project_handiled_by, projectId]
       );  
      // console.log("✅ Updated project_details:", result.rows[0]);
      // console.log("🟣 Updating projects table...");
@@ -902,7 +904,7 @@ console.log('pronmodel',projectId,JSON.stringify( roadshowData), userId);
       // Insert new
       const result = await pool.query(
         `INSERT INTO project_details (project_id, roadshow_name,   event_date, budget,project_handiled_by) 
-         VALUES ($1, $2, $3, $4) RETURNING *`,
+         VALUES ($1, $2, $3, $4, $5) RETURNING *`,
         [projectId, roadshow_name,   event_date,  budget, project_handiled_by]
       );
 

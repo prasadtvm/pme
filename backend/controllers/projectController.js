@@ -49,7 +49,7 @@ const projectController = {
       console.log("🟢 Incoming create project request");
       console.log("➡️  req.body:", req.body);
       console.log("➡️  req.file:", req.file);  
-      const { name,  event_date } = req.body;
+      const { name,  event_date,  project_handiled_by } = req.body;
       const userId = req.user.id;
       // file comes from multer
     
