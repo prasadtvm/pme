@@ -269,7 +269,7 @@ const saveAVSetup = async () => {
          setAvSetup(d.av_setup || {});
         setHotels(d.hotels || []);
         //setChecklists(d.checklist && d.checklist.length ? d.checklist : []);
-        // ----- CHECKLIST LOAD FIX -----
+        // ----- CHECKLIST LOAD FIX -dd----
       let loadedChecklist =
         d.checklist || d.checklists || d.check_list || d.check_list_items || [];
 
