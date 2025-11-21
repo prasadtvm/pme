@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { projectAPI, projectSectionsAPI } from "../services/api.jsx";
-import logo from "../assets/images/company_logo.png";
+import logo from "../assets/images/company_logo.jpg";
 import patternBg from "../assets/images/pattern.png"; // put your repeating pattern at this path
 import "../styles/tailwind.css";
 
@@ -1520,7 +1520,7 @@ const saveAVSetup = async () => {
             </section>
 
             {/* REMARKS px-10 pt-6 pb-6 mt-6*/}
-            <section id="remarks" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <section id="remarks" className="bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
               {/*<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"> </div>*/}
                 <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide text-left">VIEWER REMARKS</h2>
                 {remarks.length ? remarks.map(r => (

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { projectAPI } from '../services/api.jsx';
 import { useNavigate } from 'react-router-dom';
 import '../styles/tailwind.css';
-import logo from "../assets/images/company_logo.png";
+import logo from "../assets/images/company_logo.jpg";
 
 const ViewProject = () => {
   const [projects, setProjects] = useState([]);
