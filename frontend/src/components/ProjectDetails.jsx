@@ -381,7 +381,7 @@ const saveAVSetup = async () => {
                   Projects <span className="text-xl">…</span>
                 </button>
                 <div className="absolute left-0 top-full mt-2 w-64 bg-white border border-gray-200 rounded shadow-lg opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
-                  <ul className="p-2 text-gray-800">
+                  <ul className="p-2 text-gray-800 font-normal">
                     <li className="px-3 py-1 hover:bg-gray-100 cursor-pointer">Hamburg Roadshow 2025</li>
                     <li className="px-3 py-1 hover:bg-gray-100 cursor-pointer">London Roadshow 2025</li>
                     <li className="px-3 py-1 hover:bg-gray-100 cursor-pointer">Munich Roadshow 2024</li>
@@ -422,7 +422,7 @@ const saveAVSetup = async () => {
               <a href="#client" className="hover:opacity-90 text-left text-white text-xl text-left font-sans font-bold uppercase tracking-wide py-2">CLIENT</a>
               <a href="#stark" className="hover:opacity-90 text-left text-white text-xl text-left font-sans font-bold uppercase tracking-wide py-2">STARK</a>
               <a href="#checklist" className="hover:opacity-90 text-left text-white text-xl text-left font-sans font-bold uppercase tracking-wide py-2">CHECKLIST</a>
-              <a href="#menu" className="hover:opacity-90 text-left text-white text-xl text-left font-sans font-bold uppercase tracking-wide py-2">MENU (IMAGE UPLOAD)</a>
+              <a href="#menu" className="hover:opacity-90 text-left text-white text-xl text-left font-sans font-bold uppercase tracking-wide py-2">MENU</a>
               <a href="#remarks" className="hover:opacity-90 text-left text-white text-xl text-left font-sans font-bold uppercase tracking-wide py-2">REMARKS</a>
               <a href="#print" className="hover:opacity-90 text-left text-white text-xl text-left font-sans font-bold uppercase tracking-wide py-2">PRINT</a>
             </nav>
@@ -443,45 +443,56 @@ const saveAVSetup = async () => {
             </div>
           </aside>
           <div className="flex-1 overflow-x-hidden">
-          {/* MAIN CONTENT flex-1 px-0*/}
+          {/* MAIN CONTENT flex-1 px-0 {/*   Patterned yellow header — responsive width (keeps full page width, but we match height) */}
           <main className="px-0" >
-            {/* Patterned yellow header — responsive width (keeps full page width, but we match height) */}
-            <div
-              className="w-full border-b border-gray-300"
-              style={{
-                backgroundImage: `url(${patternBg})`,
-                backgroundRepeat: "repeat",
-                backgroundSize: "auto",
-                minHeight: "241px", // match mock height
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <div className="flex-1 px-10">
-                <h1 className="font-extrabold  font-sans font-extrabold text-4xl uppercase tracking-tight mb-6 text-left">
-                  {project?.name || details?.roadshowName || "Untitled Project"}
-                </h1>
-                <div className="pt-10"></div>
-                <div className="flex items-center gap-16 font-sans text-lg font-bold">
-                  <div className="uppercase">{details.project_handiled_by || "N/A"}</div>
-                  <div>
-                    {details.event_date ? new Date(details.event_date).toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" }).toUpperCase() : ""}
-                  </div>
-                </div>
-              </div>
+       
+          
 
-              {/* Image at right inside same header area  className="w-[370px] pr-2 pt-2 pb-2*/}
-              <div style={{ width: 400, padding: "8px 0" }}>
-                {/* className="h-[241px] border-l border-gray-300 overflow-hidden rounded-none" */}
-                <div style={{ height: 241, borderLeft: "1px solid #e5e7eb", overflow: "hidden" }}>
-                  {details.image_file ? (
-                    <img src={details.image_file} alt="project" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="h-full flex items-center justify-center text-gray-600">No image</div>
-                  )}
-                </div>
-              </div>
-            </div>
+       
+                    <div
+  className="w-full border-b border-gray-300"
+  style={{
+    backgroundImage: `url(${patternBg})`,
+    backgroundRepeat: "repeat",
+    backgroundSize: "auto",
+    minHeight: "241px",
+    display: "flex",
+    alignItems: "center",
+  }}
+>
+  <div className="flex-1 px-10">
+    <h1 className="font-extrabold font-sans text-4xl uppercase tracking-tight mb-6 text-left">
+      {project?.name || details?.roadshowName || "Untitled Project"}
+    </h1>
+<div className="pt-20"></div>
+    {/* THIS IS THE FIXED ALIGNMENT BLOCK */}
+    <div className="flex justify-between font-sans text-lg font-bold w-[50%]">
+      <div className="uppercase">{details.project_handiled_by || "N/A"}</div>
+      <div className="whitespace-nowrap">
+        {details.event_date
+          ? new Date(details.event_date).toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "long",
+              year: "numeric",
+            }).toUpperCase()
+          : ""}
+      </div>
+    </div>
+  </div>
+
+  {/* Right Image */}
+  <div style={{ width: 400, padding: "8px 0" }}>
+    <div style={{ height: 241, borderLeft: "1px solid #e5e7eb", overflow: "hidden" }}>
+      {details.image_file ? (
+        <img src={details.image_file} alt="project" className="w-full h-full object-cover" />
+      ) : (
+        <div className="h-full flex items-center justify-center text-gray-600">No image</div>
+      )}
+    </div>
+  </div>
+</div>
+
+
 
             {/* BUDGET BOX - OUTSIDE YELLOW PATTERN */}
             <div className="px-10 py-4 bg-white border-b border-gray-200 flex justify-end items-center gap-4">
@@ -534,18 +545,17 @@ const saveAVSetup = async () => {
                     <div className="rounded-full bg-white border p-1 text-gray-700">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H5a3 3 0 00-3 3v6a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3h-.02V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zM7 9a1 1 0 00-1 1v3a1 1 0 001 1h6a1 1 0 001-1v-3a1 1 0 00-1-1H7z" clipRule="evenodd" /></svg>
                     </div>
-                    <div className="text-sm font-semibold">Countdown: <span className="font-bold text-red-600">{workingDaysLeft} working days</span></div>
+                    <div className="text-sm font-semibold">COUNTDOWN- <span className="font-bold text-red-600">{workingDaysLeft} working days</span></div>
                   </div>
 
-                  <div className="mt-2 pt-2 border-t border-yellow-200">
-                    <div className="text-sm font-semibold text-gray-700 mb-2">Confirmations</div>
+                  <div className="mt-2 pt-2 border-t border-yellow-200">                    
                     <div className="text-sm">
-                      <div className="flex justify-between"><div>Tour Operator:</div><div className="font-medium">{totals.to}</div></div>
-                      <div className="flex justify-between"><div>Travel Agent:</div><div className="font-medium">{totals.ta}</div></div>
-                      <div className="flex justify-between"><div>Travel Counsellors:</div><div className="font-medium">{totals.tc}</div></div>
-                      <div className="flex justify-between"><div>Media / Influence:</div><div className="font-medium">{totals.media}</div></div>
+                      <div className="flex justify-between"><div className="w-1/2 text-right pr-4">TO-</div><div className="pl-4 w-1/2 font-medium text-left">{totals.to}</div></div>
+                      <div className="flex justify-between"><div className="w-1/2 text-right pr-4">TA-</div><div className="pl-4 w-1/2 font-medium text-left">{totals.ta}</div></div>
+                      <div className="flex justify-between"><div className="w-1/2 text-right pr-4">TC-</div><div className="pl-4 w-1/2 font-medium text-left">{totals.tc}</div></div>
+                      <div className="flex justify-between"><div className="w-1/2 text-right pr-4">ME/INF-</div><div className="pl-4 w-1/2 font-medium text-left">{totals.media}</div></div>
                     </div>
-                    <div className="mt-3 pt-2 border-t border-yellow-200 text-center font-bold text-green-700">Total: {totals.grandTotal}</div>
+                    <div className="mt-3 pt-2 border-t border-yellow-200 text-center font-bold text-green-700">Total {totals.grandTotal}</div>
                   </div>
                 </div>
               </div>
@@ -553,7 +563,7 @@ const saveAVSetup = async () => {
             {/* ===================== */}
             {/* ASSOCIATES SECTION  px-10 pt-8 pb-6  */}
             {/* ===================== */}
-            <section id="associate" className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6" s>
+            <section id="associate" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
                {/*<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"></div>*/}
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">ASSOCIATES</h2>
@@ -573,7 +583,7 @@ const saveAVSetup = async () => {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_60px] gap-3 mb-3 p-3 bg-gray-100 rounded font-semibold">
+                <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_60px] gap-3 mb-3 p-3 bg-gray-100  font-semibold">
                   <div>Associate Name</div>
                   <div>City</div>
                   <div className="text-center">Selected</div>
@@ -629,13 +639,13 @@ const saveAVSetup = async () => {
 
                 <div className="text-center">
                   <button onClick={() => setAssociates([...associates, { name: "", city: "", selected: false }])} className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 
-             focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add New Associate</button>
+             focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add Associate</button>
                 </div>
               
             </section>
 
             {/* VENUE Section px-10 pt-6 pb-6 */}
-            <section id="venue" className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <section id="venue" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
                {/*<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"></div>*/}
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-[28px] font-extrabold">VENUE</h2>
@@ -776,16 +786,16 @@ const saveAVSetup = async () => {
 
                 <div className="text-center">
                   <button onClick={() => setVenues([...venues, { name: "", currency: "INR", rate: "", rateInput: "", budget: "", budgetInput: "", selected: false, venue_rental: false, av: false, food: false, bar: false }])} className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 
-             focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add New Venue</button>
+             focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add Venue</button>
                 </div>
               
             </section>
 
             {/* DATABASE / TRADE section */}
-            <section id="database" className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">{/*px-10 pt-6 pb-6*/}
+            <section id="database" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">{/*px-10 pt-6 pb-6*/}
               {/*<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"></div>*/}
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">TRADE DATABASE</h2>
+                  <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">DATABASE</h2>
                   <button onClick={async () => {
                     setSaving("trade");
                     try {
@@ -898,7 +908,7 @@ const saveAVSetup = async () => {
             </section>
 
             {/* RSVP / Save The Date & Main Invites px-10 pt-6 pb-6*/}
-            <section id="rsvp" className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <section id="rsvp" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
              {/*  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"> </div>*/}
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">RSVP</h2>
@@ -1043,13 +1053,13 @@ const saveAVSetup = async () => {
 
                   <div className="text-center mt-3">
                     <button onClick={() => setMainInvites([...mainInvites, { main_invite_date: "", main_invite_to_nos: 0, main_invite_ta_nos: 0, main_invite_travel_counsellors_nos: 0, main_invite_influencers_nos: 0 }])} className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 
-             focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add New Main Invitation Date</button>
+             focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add Main Invite</button>
                   </div>
                 </div>
              
             </section>
             {/* AV Section px-10 pt-6 pb-6*/}
-            <section id="av" className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <section id="av" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
              {/*  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"> </div>*/}
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">HOTEL AV SETUP</h2>
@@ -1219,7 +1229,7 @@ const saveAVSetup = async () => {
             </section>
 
             {/* AV SUPPLIER (hotels) px-10 pt-6 pb-6*/}
-            <section id="av_supplier" className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <section id="av_supplier" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
               {/* <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"> </div>*/}
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">AV SUPPLIER</h2>
@@ -1264,7 +1274,7 @@ const saveAVSetup = async () => {
 
                 <div className="text-center">
                   <button onClick={() => setHotels([...hotels, { sponsor: "", item: "", currency: "INR", amount: "" }])} className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 
-             focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add New Supplier</button>
+             focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add AV Supplier</button>
                 </div>
              
             </section>
@@ -1274,7 +1284,7 @@ const saveAVSetup = async () => {
             {/* ========================= */}
 {/* EMBASSY / CONSULATE       */}
 {/* ========================= */}
-<section id="embassy" className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+<section id="embassy" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
 
   <div className="flex justify-between items-center mb-4">
      <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">EMBASSY / CONSULATE</h2>
@@ -1371,7 +1381,7 @@ const saveAVSetup = async () => {
 </section>
 
             {/* CLIENT, STARK, CHECKLIST, MENU, REMARKS sections (kept consistent & safe) */}
-            <section id="client" className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <section id="client" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
             {/*   <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"> </div>*/}
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-[28px] font-extrabold">CLIENT</h2>
@@ -1400,13 +1410,13 @@ const saveAVSetup = async () => {
 
                 <div className="text-center">
                   <button onClick={() => setClients([...clients, { name: "", designation: "", contact: "", hotel: "" }])} className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 
-             focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add New Client</button>
+             focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add Client</button>
                 </div>
              
             </section>
 
             {/* STARK px-10 pt-6 pb-6*/}
-            <section id="stark" className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <section id="stark" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
              {/* <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"></div>*/}
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">STARK</h2>
@@ -1433,7 +1443,7 @@ const saveAVSetup = async () => {
 
                  <div className="text-center">
                   <button onClick={() => setStarks([...starks, { name: "", hotel: "" }])}  className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 
-             focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add New Stark</button>
+             focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add Stark</button>
                 </div>
 
                 
@@ -1443,7 +1453,7 @@ const saveAVSetup = async () => {
             {/* CHECKLIST  section-container mt-8
            */}
 
-            <section id="checklist" className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <section id="checklist" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
 
   <div className="flex justify-between items-center mb-4 ">
     <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">CHECKLIST</h2>
@@ -1478,15 +1488,15 @@ const saveAVSetup = async () => {
     className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 
              focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
   >
-    Add Custom Checklist
+    Add Checklist
   </button>
 </section>
 
             {/* MENU UPLOAD px-10 pt-6 pb-6*/}
-            <section id="menu" className=" mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <section id="menu" className=" mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
               {/*<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"> </div>*/}
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">MENU (IMAGE UPLOAD)</h2>
+                  <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">MENU</h2>
                   <button onClick={async () => {
                     if (!menuFile) { alert("Select file"); return; }
                     setSaving("menu");
@@ -1512,7 +1522,7 @@ const saveAVSetup = async () => {
             {/* REMARKS px-10 pt-6 pb-6 mt-6*/}
             <section id="remarks" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               {/*<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"> </div>*/}
-                <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">VIEWER REMARKS</h2>
+                <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide text-left">VIEWER REMARKS</h2>
                 {remarks.length ? remarks.map(r => (
                   <div key={r.id} className="flex justify-between items-center bg-gray-50 border border-gray-200 rounded-md p-3 mb-2">
                     <div><strong className="font-medium">{r.username || "Viewer"}:</strong> <span className="text-gray-700">{r.remarktext}</span></div>
