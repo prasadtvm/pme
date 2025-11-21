@@ -62,6 +62,9 @@ const ProjectDetails = () => {
   const [remarks, setRemarks] = useState([]);
   const [workingDaysLeft, setWorkingDaysLeft] = useState(0);
 
+  const [menuProjects, setMenuProjects] = useState([]);
+
+
   const UPLOAD_BACK_URL = `${import.meta.env.VITE_UPLOAD_BACK_URL?.replace(/\/$/, '') || "http://localhost:5000"}`;
 
   // Helpers - number parsing + formatting
@@ -211,6 +214,20 @@ const saveAVSetup = async () => {
           setSaving('');
         }
       };
+
+      
+useEffect(() => {
+  loadMenuProjects();
+}, []);
+
+const loadMenuProjects = async () => {
+  try {
+    const res = await projectAPI.getAll();
+    setMenuProjects(res.data || []);
+  } catch (e) {
+    console.error("Dropdown project load error:", e);
+  }
+};
     
   // fetch project details
   useEffect(() => {
@@ -387,9 +404,24 @@ const saveAVSetup = async () => {
                 </button>
                 <div className="absolute left-0 top-full mt-2 w-64 bg-white border border-gray-200 rounded shadow-lg opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
                   <ul className="p-2 text-gray-800 font-normal">
-                    <li className="px-3 py-1 hover:bg-gray-100 cursor-pointer">Hamburg Roadshow 2025</li>
-                    <li className="px-3 py-1 hover:bg-gray-100 cursor-pointer">London Roadshow 2025</li>
-                    <li className="px-3 py-1 hover:bg-gray-100 cursor-pointer">Munich Roadshow 2024</li>
+  {menuProjects.length === 0 && (
+    <li className="px-3 py-2 text-gray-500 text-left">No projects</li>
+  )}
+
+  {menuProjects.map((p) => (
+    <li
+      key={p.id}
+      onClick={() => navigate(`/project/${p.id}`)}
+      className="px-3 py-1 hover:bg-gray-100 cursor-pointer text-left"
+    >
+      {p.name}
+    </li>
+  ))}
+</ul>
+                  <ul className="hidden p-2 text-gray-800 font-normal">
+                    <li className="px-3 py-1 hover:bg-gray-100 cursor-pointer text-left">Hamburg Roadshow 2025</li>
+                    <li className="px-3 py-1 hover:bg-gray-100 cursor-pointer text-left">London Roadshow 2025</li>
+                    <li className="px-3 py-1 hover:bg-gray-100 cursor-pointer text-left">Munich Roadshow 2024</li>
                   </ul>
                 </div>
               </div>
