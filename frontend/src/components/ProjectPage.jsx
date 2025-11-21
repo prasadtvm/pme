@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { projectAPI } from '../services/api.jsx';
 import '../styles/tailwind.css';
-import companyLogo from '../assets/images/company_logo.jpg';
+import companyLogo from '../assets/images/company_logo.png';
 
 const ProjectPage = () => {
   const [projects, setProjects] = useState([]);
@@ -109,7 +109,7 @@ const ProjectPage = () => {
           <img
             src={companyLogo}
             alt="Company Logo"
-            className="w-20 max-w-[100px] object-contain mb-8"
+            className="w-20 max-w-[100px] object-contain mb-8 rounded-lg bg-white p-1"
           />
           
           {/* "Road show List" button/link with grey background */}

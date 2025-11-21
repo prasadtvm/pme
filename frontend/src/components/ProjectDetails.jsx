@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { projectAPI, projectSectionsAPI } from "../services/api.jsx";
-import logo from "../assets/images/company_logo.jpg";
+import logo from "../assets/images/company_logo.png";
 import patternBg from "../assets/images/pattern.png"; // put your repeating pattern at this path
 import "../styles/tailwind.css";
 
@@ -34,6 +34,7 @@ const ProjectDetails = () => {
     { trade_name: "Associate", travel_operator: "", travel_agent: "", travel_counsellor: "", media_influencers: "" },
   ]);
   const [rsvp, setRsvp] = useState([]);
+   const [invitationFile, setInvitationFile] = useState(null);
   const [mainInvites, setMainInvites] = useState([]);
   const [saveDate, setSaveDate] = useState({
     save_the_date: "",
@@ -254,6 +255,7 @@ const saveAVSetup = async () => {
         })));
         setTradeDatabase(d.trade_database && d.trade_database.length ? d.trade_database : tradeDatabase);
         setRsvp(d.rsvp || []);
+        setInvitationFile(d.rsvp?.[0]?.invitation_design_file_path || '');
         setSaveDate(d.rsvp && d.rsvp[0] ? {
           save_the_date: d.rsvp[0].save_the_date || "",
           save_the_date_to_nos: d.rsvp[0].save_the_date_to_nos || 0,
@@ -373,7 +375,7 @@ const saveAVSetup = async () => {
               <img src={logo} alt="STARK" className="h-[85px] object-contain mt-[10px]" />
             </div>
 
-            <nav className="flex items-center gap-8 font-sans font-bold text-xl text-gray-800 ml-[180px] mt-[42px]">
+            <nav className="flex items-center gap-8 text-xl text-gray-800 ml-[180px] mt-[42px]">
               <button onClick={() => navigate("/projects")} className="hover:opacity-80">Dashboard</button>
 
               <div className="relative group">
@@ -412,24 +414,24 @@ const saveAVSetup = async () => {
             {/* MAIN WRAPPER (REQUIRED FOR PROPER LAYOUT) */}
   <div className="flex flex-col h-full w-full">
             <nav className="flex flex-col pl-[15px] pr-4 py-6 space-y-2">
-              <a href="#associate" className="hover:opacity-90 text-white text-xl text-left font-sans font-bold uppercase tracking-wide py-2">ASSOCIATE</a>
-              <a href="#venue" className="hover:opacity-90 text-left text-white text-xl text-left font-sans font-bold uppercase tracking-wide py-2">VENUE</a>
-              <a href="#database" className="hover:opacity-90 text-left text-white text-xl text-left font-sans font-bold uppercase tracking-wide py-2">DATABASE</a>
-              <a href="#rsvp" className="hover:opacity-90 text-left text-white text-xl text-left font-sans font-bold uppercase tracking-wide py-2">RSVP</a>
-              <a href="#av" className="hover:opacity-90 text-left text-white text-xl text-left font-sans font-bold uppercase tracking-wide py-2">HOTEL AV</a>
-              <a href="#av_supplier" className="hover:opacity-90 text-left ftext-white text-xl text-left font-sans font-bold uppercase tracking-wide py-2">AV SUPPLIER</a>
-              <a href="#embassy" className="hover:opacity-90 text-left text-white text-xl text-left font-sans font-bold uppercase tracking-wide py-2">EMBASSY / CONSULATE</a>
-              <a href="#client" className="hover:opacity-90 text-left text-white text-xl text-left font-sans font-bold uppercase tracking-wide py-2">CLIENT</a>
-              <a href="#stark" className="hover:opacity-90 text-left text-white text-xl text-left font-sans font-bold uppercase tracking-wide py-2">STARK</a>
-              <a href="#checklist" className="hover:opacity-90 text-left text-white text-xl text-left font-sans font-bold uppercase tracking-wide py-2">CHECKLIST</a>
-              <a href="#menu" className="hover:opacity-90 text-left text-white text-xl text-left font-sans font-bold uppercase tracking-wide py-2">MENU</a>
-              <a href="#remarks" className="hover:opacity-90 text-left text-white text-xl text-left font-sans font-bold uppercase tracking-wide py-2">REMARKS</a>
-              <a href="#print" className="hover:opacity-90 text-left text-white text-xl text-left font-sans font-bold uppercase tracking-wide py-2">PRINT</a>
+              <a href="#associate" className="hover:opacity-90 text-white text-xl text-left font-bold uppercase tracking-wide py-2">ASSOCIATE</a>
+              <a href="#venue" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">VENUE</a>
+              <a href="#database" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">DATABASE</a>
+              <a href="#rsvp" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">RSVP</a>
+              <a href="#av" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">HOTEL AV</a>
+              <a href="#av_supplier" className="hover:opacity-90 text-left ftext-white text-xl text-left  font-bold uppercase tracking-wide py-2">AV SUPPLIER</a>
+              <a href="#embassy" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">EMBASSY / CONSULATE</a>
+              <a href="#client" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">CLIENT</a>
+              <a href="#stark" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">STARK</a>
+              <a href="#checklist" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">CHECKLIST</a>
+              <a href="#menu" className="hidden hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">MENU</a>
+              <a href="#remarks" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">REMARKS</a>
+              <a href="#print" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">PRINT</a>
             </nav>
 
             <div className="mt-auto w-full pr-4 pl-[15px]">
               <div className="mt-5">
-              <div className="text-white opacity-90 font-medium mb-2font-sans text-left uppercase">Completion Progress</div>
+              <div className="text-white opacity-90 font-medium mb-2 text-left uppercase">Completion Progress</div>
               <div className="w-full bg-white/30 rounded h-3 overflow-hidden">
                 <div className="h-3 bg-green-600 transition-all" style={{ width: `${progress}%` }} />
               </div>
@@ -461,12 +463,12 @@ const saveAVSetup = async () => {
   }}
 >
   <div className="flex-1 px-10">
-    <h1 className="font-extrabold font-sans text-4xl uppercase tracking-tight mb-6 text-left">
+    <h1 className="font-extrabold text-4xl uppercase tracking-tight mb-6 text-left">
       {project?.name || details?.roadshowName || "Untitled Project"}
     </h1>
 <div className="pt-20"></div>
     {/* THIS IS THE FIXED ALIGNMENT BLOCK */}
-    <div className="flex justify-between font-sans text-lg font-bold w-[50%]">
+    <div className="flex justify-between text-lg font-bold w-[40%]">
       <div className="uppercase">{details.project_handiled_by || "N/A"}</div>
       <div className="whitespace-nowrap">
         {details.event_date
@@ -496,7 +498,7 @@ const saveAVSetup = async () => {
 
             {/* BUDGET BOX - OUTSIDE YELLOW PATTERN */}
             <div className="px-10 py-4 bg-white border-b border-gray-200 flex justify-end items-center gap-4">
-              <span className="text-lg font-sans font-extrabold tracking-wide">BUDGET</span>
+              <span className="text-lg font-extrabold tracking-wide">BUDGET</span>
               <input
                 id="budget"
                 type="text"
@@ -537,7 +539,7 @@ const saveAVSetup = async () => {
               </div>
             )}
 
-            {/* Floating Totals (right) */}
+            {/* Floating Totals (right)
             <aside className="hidden xl:block w-[300px]">
               <div className="fixed right-6 top-[180px] z-50">
                 <div className="w-[280px] rounded-lg shadow-xl border border-yellow-300 bg-yellow-50 p-4">
@@ -559,14 +561,60 @@ const saveAVSetup = async () => {
                   </div>
                 </div>
               </div>
-            </aside>
+            </aside> */}
+
+
+            {/* YELLOW STRIP INFORMATION BAR */}
+{/* FLOATING BOTTOM STRIP 
+<div
+  className="
+    fixed 
+    bottom-0 
+    left-0 
+    w-full 
+    bg-[#F9E39A] 
+    shadow-lg 
+    py-2 
+    px-6 
+    flex 
+    flex-wrap 
+    items-center 
+    gap-x-6 
+    text-sm 
+    font-semibold 
+    z-[999]
+  "
+>
+  <span className="text-black">Countdown</span>
+  <span className="text-red-600">{workingDaysLeft}</span>
+  <span className="text-black">Working days</span>
+
+  <span className="text-red-600 ml-4">Confirmations</span>
+
+  <span className="text-black">T.O</span>
+  <span className="text-red-600">{totals.to}</span>
+
+  <span className="text-black">T.A</span>
+  <span className="text-red-600">{totals.ta}</span>
+
+  <span className="text-black">T.C</span>
+  <span className="text-red-600">{totals.tc}</span>
+
+  <span className="text-black">Med/Infl</span>
+  <span className="text-red-600">{totals.media}</span>
+
+  <span className="text-black font-bold ml-4">Total</span>
+  <span className="text-red-600 font-bold">{totals.grandTotal}</span>
+</div>*/}
+
+
             {/* ===================== */}
             {/* ASSOCIATES SECTION  px-10 pt-8 pb-6  */}
             {/* ===================== */}
             <section id="associate" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
                {/*<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"></div>*/}
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">ASSOCIATES</h2>
+                  <h2 className="font-extrabold uppercase text-2xl tracking-wide">ASSOCIATES</h2>
                   <button onClick={async () => {
                     setSaving("associates");
                     try {
@@ -795,7 +843,7 @@ const saveAVSetup = async () => {
             <section id="database" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">{/*px-10 pt-6 pb-6*/}
               {/*<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"></div>*/}
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">DATABASE</h2>
+                  <h2 className="font-extrabold uppercase text-2xl tracking-wide">DATABASE</h2>
                   <button onClick={async () => {
                     setSaving("trade");
                     try {
@@ -911,7 +959,7 @@ const saveAVSetup = async () => {
             <section id="rsvp" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
              {/*  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"> </div>*/}
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">RSVP</h2>
+                  <h2 className="font-extrabold uppercase text-2xl tracking-wide">RSVP</h2>
                   <div className="flex items-center gap-3">
                     <button onClick={async () => {
                       setSaving("rsvp");
@@ -930,13 +978,37 @@ const saveAVSetup = async () => {
 
                 <div className="bg-white shadow-sm rounded-lg p-4 border border-blue-50 mb-4">
                   <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-sans font-extrabold uppercase text-2xl tracking-wide">RSVP #1— SAVE THE DATE</h3>
+                    <h3 className="font-extrabold uppercase text-2xl tracking-wide">RSVP #1— SAVE THE DATE</h3>
                     <div className="text-right">
                       <div className="text-sm font-medium">Countdown</div>
                       <div className="inline-block rounded px-3 py-1 border border-yellow-400 bg-yellow-50 font-bold text-lg">{workingDaysLeft}</div>
                       <div className="text-xs text-gray-500">working days left</div>
                     </div>
                   </div>
+
+                  <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-700">
+        Save The Date Image Upload:
+      </label>
+      <input type="file" onChange={(e) => setSaveTheDateImage(e.target.files[0])} />
+      {invitationFile && (
+        <div className="flex items-center gap-3 mt-2">
+          <img
+            src={invitationFile}
+            alt="Save The Date"
+            className="w-24 h-16 object-cover rounded border"
+          />
+          <a
+            href={invitationFile}
+            target="_blank"
+            rel="noreferrer"
+            className="text-blue-600 underline"
+          >
+            View Full Image
+          </a>
+        </div>
+      )}
+    </div>
                      <div className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(5,1fr)] gap-4 items-end mb-4 bg-gray-100 p-2 rounded font-semibold text-sm">
       <div>Date</div>
       <div className="text-right">Tour Operator (Nos)</div>
@@ -960,7 +1032,7 @@ const saveAVSetup = async () => {
                 {/* Main Invites */}
                 <div className="bg-white rounded-lg p-4 border border-purple-100 shadow-sm">
                   <div className="flex justify-between items-center mb-3 overflow-hidden w-full">
-                    <h3 className="font-sans font-extrabold uppercase text-2xl tracking-wide">RSVP #2 — MAIN INVITE</h3>
+                    <h3 className="font-extrabold uppercase text-2xl tracking-wide">RSVP #2 — MAIN INVITE</h3>
                     <button onClick={async () => {
                       setSaving("main invites");
                       try {
@@ -1062,7 +1134,7 @@ const saveAVSetup = async () => {
             <section id="av" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
              {/*  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"> </div>*/}
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">HOTEL AV SETUP</h2>
+                  <h2 className="font-extrabold uppercase text-2xl tracking-wide">HOTEL AV SETUP</h2>
                   <button
       onClick={saveAVSetup}
       disabled={saving === "av"}
@@ -1232,7 +1304,7 @@ const saveAVSetup = async () => {
             <section id="av_supplier" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
               {/* <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"> </div>*/}
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">AV SUPPLIER</h2>
+                  <h2 className="font-extrabold uppercase text-2xl tracking-wide">AV SUPPLIER</h2>
                   <button onClick={async () => {
                     setSaving("hotels");
                     try {
@@ -1287,7 +1359,7 @@ const saveAVSetup = async () => {
 <section id="embassy" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
 
   <div className="flex justify-between items-center mb-4">
-     <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">EMBASSY / CONSULATE</h2>
+     <h2 className="font-extrabold uppercase text-2xl tracking-wide">EMBASSY / CONSULATE</h2>
 
     <button
       onClick={saveEmbassy}
@@ -1419,7 +1491,7 @@ const saveAVSetup = async () => {
             <section id="stark" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
              {/* <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"></div>*/}
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">STARK</h2>
+                  <h2 className="font-extrabold uppercase text-2xl tracking-wide">STARK</h2>
                   <button onClick={async () => {
                     setSaving("starks");
                     try { await projectSectionsAPI.updateStarks(id, starks); showMessage("Starks saved"); } catch (e) { console.error(e); alert("Failed"); } finally { setSaving(""); }
@@ -1456,7 +1528,7 @@ const saveAVSetup = async () => {
             <section id="checklist" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
 
   <div className="flex justify-between items-center mb-4 ">
-    <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">CHECKLIST</h2>
+    <h2 className="font-extrabold uppercase text-2xl tracking-wide">CHECKLIST</h2>
 
     <button
       onClick={saveChecklists}
@@ -1493,10 +1565,10 @@ const saveAVSetup = async () => {
 </section>
 
             {/* MENU UPLOAD px-10 pt-6 pb-6*/}
-            <section id="menu" className=" mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
+            <section id="menu" className="hidden mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
               {/*<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"> </div>*/}
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide">MENU</h2>
+                  <h2 className="font-extrabold uppercase text-2xl tracking-wide">MENU</h2>
                   <button onClick={async () => {
                     if (!menuFile) { alert("Select file"); return; }
                     setSaving("menu");
@@ -1522,7 +1594,7 @@ const saveAVSetup = async () => {
             {/* REMARKS px-10 pt-6 pb-6 mt-6*/}
             <section id="remarks" className="bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
               {/*<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"> </div>*/}
-                <h2 className="font-sans font-extrabold uppercase text-2xl tracking-wide text-left">VIEWER REMARKS</h2>
+                <h2 className="font-extrabold uppercase text-2xl tracking-wide text-left">REMARKS</h2>
                 {remarks.length ? remarks.map(r => (
                   <div key={r.id} className="flex justify-between items-center bg-gray-50 border border-gray-200 rounded-md p-3 mb-2">
                     <div><strong className="font-medium">{r.username || "Viewer"}:</strong> <span className="text-gray-700">{r.remarktext}</span></div>
@@ -1538,6 +1610,37 @@ const saveAVSetup = async () => {
             <div id="print" className="flex justify-center mt-8 mb-10 px-10">
               <button onClick={() => window.print()} className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow-lg hover:bg-blue-700 transition duration-200 print:hidden">Print Project Details</button>
             </div>
+
+            {/* ==== FLOATING BOTTOM STRIP ====style={{ marginLeft: "300px", marginRight:"5px" }} */}
+<div className="fixed bottom-0  z-[9999] bg-[#F7E79E] border-t border-yellow-600 shadow-md left-[315px] 
+    right-[22px]"  >
+  <div className="flex items-center justify-start gap-10 px-5 py-2 text-sm font-semibold">
+
+    <span className="text-black w-[10%]">Countdown</span>
+    <span className="text-red-600 w-[5%]">{workingDaysLeft}</span>
+
+    <span className="text-black w-[15%]">Working days</span>
+
+    <span className="text-red-600 w-[10%]">Confirmations</span>
+
+    <span className="text-black w-[10%]">T.O</span>
+    <span className="text-red-600 w-[10%]">{totals.to}</span>
+
+    <span className="text-black w-[10%]">T.A</span>
+    <span className="text-red-600 w-[10%]">{totals.ta}</span>
+
+    <span className="text-black w-[10%]">T.C</span>
+    <span className="text-red-600 w-[10%]">{totals.tc}</span>
+
+    <span className="text-black w-[10%]">Med/Infl</span>
+    <span className="text-red-600 w-[10%]">{totals.media}</span>
+
+    <span className="text-black font-bold w-[10%]">Total</span>
+    <span className="text-red-600 font-bold w-[10%]">{totals.grandTotal}</span>
+
+  </div>
+</div>
+
           </main>
           </div>
         </div>
