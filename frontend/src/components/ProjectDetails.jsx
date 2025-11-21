@@ -539,30 +539,7 @@ const saveAVSetup = async () => {
               </div>
             )}
 
-            {/* Floating Totals (right)
-            <aside className="hidden xl:block w-[300px]">
-              <div className="fixed right-6 top-[180px] z-50">
-                <div className="w-[280px] rounded-lg shadow-xl border border-yellow-300 bg-yellow-50 p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="rounded-full bg-white border p-1 text-gray-700">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H5a3 3 0 00-3 3v6a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3h-.02V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zM7 9a1 1 0 00-1 1v3a1 1 0 001 1h6a1 1 0 001-1v-3a1 1 0 00-1-1H7z" clipRule="evenodd" /></svg>
-                    </div>
-                    <div className="text-sm font-semibold">COUNTDOWN- <span className="font-bold text-red-600">{workingDaysLeft} working days</span></div>
-                  </div>
-
-                  <div className="mt-2 pt-2 border-t border-yellow-200">                    
-                    <div className="text-sm">
-                      <div className="flex justify-between"><div className="w-1/2 text-right pr-4">TO-</div><div className="pl-4 w-1/2 font-medium text-left">{totals.to}</div></div>
-                      <div className="flex justify-between"><div className="w-1/2 text-right pr-4">TA-</div><div className="pl-4 w-1/2 font-medium text-left">{totals.ta}</div></div>
-                      <div className="flex justify-between"><div className="w-1/2 text-right pr-4">TC-</div><div className="pl-4 w-1/2 font-medium text-left">{totals.tc}</div></div>
-                      <div className="flex justify-between"><div className="w-1/2 text-right pr-4">ME/INF-</div><div className="pl-4 w-1/2 font-medium text-left">{totals.media}</div></div>
-                    </div>
-                    <div className="mt-3 pt-2 border-t border-yellow-200 text-center font-bold text-green-700">Total {totals.grandTotal}</div>
-                  </div>
-                </div>
-              </div>
-            </aside> */}
-
+           
 
             {/* YELLOW STRIP INFORMATION BAR */}
 {/* FLOATING BOTTOM STRIP 
@@ -986,29 +963,32 @@ const saveAVSetup = async () => {
                     </div>
                   </div>
 
-                  <div className="mb-4">
-      <label className="block text-sm font-medium text-gray-700">
-        Save The Date Image Upload:
-      </label>
-      <input type="file" onChange={(e) => setSaveTheDateImage(e.target.files[0])} />
-      {invitationFile && (
-        <div className="flex items-center gap-3 mt-2">
-          <img
-            src={invitationFile}
-            alt="Save The Date"
-            className="w-24 h-16 object-cover rounded border"
-          />
-          <a
-            href={invitationFile}
-            target="_blank"
-            rel="noreferrer"
-            className="text-blue-600 underline"
-          >
-            View Full Image
-          </a>
-        </div>
-      )}
-    </div>
+                
+
+ <div className="mb-3">
+    <label className="block text-sm font-medium">Save The Date Image:</label>
+    <input
+      type="file"
+      onChange={(e) => setSaveTheDateImage(e.target.files[0])}
+      className="form-input"
+    />
+
+    {invitationFile && (
+      <div className="flex items-center gap-3 mt-2">
+        <img
+          src={
+            invitationFile instanceof File
+              ? URL.createObjectURL(invitationFile)
+              : invitationFile
+          }
+          alt="Save The Date"
+          className="w-24 h-16 object-cover rounded border"
+        />
+      </div>
+    )}
+  </div>
+
+
                      <div className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(5,1fr)] gap-4 items-end mb-4 bg-gray-100 p-2 rounded font-semibold text-sm">
       <div>Date</div>
       <div className="text-right">Tour Operator (Nos)</div>
