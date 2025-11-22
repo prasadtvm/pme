@@ -409,10 +409,9 @@ const loadMenuProjects = async () => {
         <div className="mt-10"></div>
         <header className="px-8 min-h-[115px] border-b border-gray-200 flex items-center">
           <div className="flex items-center gap-10 w-full">
-            <div className="flex items-center"  style={{ height: "100px" }}>
-              <img src={logo} alt="STARK" className="h-[85px] object-contain mt-[10px]" />
+            <div className="flex items-center h-[80px]">{/*style={{ height: "100px" }}*/}
+              <img src={logo} alt="STARK" className="h-full object-contain" />{/* mt-[10px]*/}
             </div>
-
             <nav className="flex items-center gap-8 text-xl text-gray-800 ml-[180px] mt-[42px]">
               <button onClick={() => navigate("/projects")} className="hover:opacity-80">Dashboard</button>
 
@@ -430,17 +429,18 @@ const loadMenuProjects = async () => {
     <li
       key={p.id}
       onClick={() => navigate(`/project/${p.id}`)}
-      className="px-3 py-1 hover:bg-gray-100 cursor-pointer text-left"
+      className="px-3 py-1 hover:bg-gray-100 cursor-pointer text-left      
+        text-sm              /* 👈 smaller font */
+        truncate             /* 👈 hides overflow text */
+        max-w-[200px]        /* 👈 limit width */
+        whitespace-nowrap    /* 👈 single line only */
+      "
     >
       {p.name}
     </li>
   ))}
 </ul>
-                  <ul className="hidden p-2 text-gray-800 font-normal">
-                    <li className="px-3 py-1 hover:bg-gray-100 cursor-pointer text-left">Hamburg Roadshow 2025</li>
-                    <li className="px-3 py-1 hover:bg-gray-100 cursor-pointer text-left">London Roadshow 2025</li>
-                    <li className="px-3 py-1 hover:bg-gray-100 cursor-pointer text-left">Munich Roadshow 2024</li>
-                  </ul>
+                 
                 </div>
               </div>
             </nav>
@@ -514,15 +514,16 @@ const loadMenuProjects = async () => {
               alignItems: "center",
             }}
           >
-         <div className="flex-1 px-10">
-              <h1 className="font-extrabold text-4xl uppercase tracking-tight mb-6 text-left">
+         <div className="flex flex-col justify-start px-10" style={{ width: "calc(100% - 400px)" }}>
+              <h1 className="font-extrabold text-4xl uppercase tracking-tight text-left leading-[1.1]">
                 {project?.name || details?.roadshowName || "Untitled Project"}
               </h1>
           <div className="pt-20"></div>
              {/* THIS IS THE FIXED ALIGNMENT BLOCK */}
-              <div className="flex justify-between text-lg font-bold w-[40%]">
-                <div className="uppercase">{details.project_handiled_by || "N/A"}</div>
-                <div className="whitespace-nowrap">
+             <div style={{ width: "calc(100% - 40%)" }}>
+              <div className="flex justify-between text-lg font-bold w-full pr-10" >
+                <div className="uppercase truncate max-w-[20%]">{details.project_handiled_by || "N/A"}</div>
+                <div className="whitespace-nowrap text-right">
                   {details.event_date
                     ? new Date(details.event_date).toLocaleDateString("en-GB", {
                         day: "2-digit",
@@ -531,6 +532,7 @@ const loadMenuProjects = async () => {
                       }).toUpperCase()
                     : ""}
                 </div>
+              </div>
               </div>
             </div>
 
@@ -1605,12 +1607,12 @@ const loadMenuProjects = async () => {
                 right-[22px]"  >
               <div className="flex items-center justify-start gap-10 px-5 py-2 text-sm font-semibold">
 
-                <span className="text-black w-[10%]">Countdown</span>
+                <span className="text-white w-[10%]">Countdown</span>
                 <span className="text-red-600 w-[5%]">{workingDaysLeft}</span>
 
-                <span className="text-black w-[15%]">Working days</span>
+                <span className="text-red-600 w-[15%]">Working days</span>
 
-                <span className="text-red-600 w-[10%]">Confirmations</span>
+                <span className="text-white w-[10%]">Confirmations</span>
 
                 <span className="text-black w-[10%]">T.O</span>
                 <span className="text-red-600 w-[10%]">{totals.to}</span>
@@ -1621,7 +1623,7 @@ const loadMenuProjects = async () => {
                 <span className="text-black w-[10%]">T.C</span>
                 <span className="text-red-600 w-[10%]">{totals.tc}</span>
 
-                <span className="text-black w-[10%]">Med/Infl</span>
+                <span className="text-black w-[10%]">Med/Influ</span>
                 <span className="text-red-600 w-[10%]">{totals.media}</span>
 
                 <span className="text-black font-bold w-[10%]">Total</span>
