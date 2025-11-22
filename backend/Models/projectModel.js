@@ -82,7 +82,7 @@ const Project = {
 
   // Insert matching project_details row
   await pool.query(
-    'INSERT INTO project_details (project_id, roadshow_name, event_date,project_handiled_by) VALUES ($1, $2, $3,$4)',
+    'INSERT INTO project_details (project_id, roadshow_name, event_date, project_handiled_by) VALUES ($1, $2, $3,$4)',
     [project.id, project.name, project.event_date,projectData.project_handiled_by]
   );
 

@@ -30,10 +30,16 @@ const ProjectDetails = () => {
   const [progress, setProgress] = useState(0);
   const [associates, setAssociates] = useState([{ name: "", city: "", selected: false }]);
   const [venues, setVenues] = useState([{ name: "", currency: "INR", rate: "", rateInput: "", budget: "", budgetInput: "", selected: false, venue_rental: false, av: false, food: false, bar: false }]);
-  const [tradeDatabase, setTradeDatabase] = useState([
-    { trade_name: "Associate", travel_operator: "", travel_agent: "", travel_counsellor: "", media_influencers: "" },
-  ]);
-  const [rsvp, setRsvp] = useState([]);
+   const defaultTrades = [
+  { trade_name: 'Associate', travel_operator: '', travel_agent: '', travel_counsellor: '', media_influencers: '' },
+  { trade_name: 'Stark', travel_operator: '', travel_agent: '', travel_counsellor: '', media_influencers: '' },
+  { trade_name: 'Consulate / embassy', travel_operator: '', travel_agent: '', travel_counsellor: '', media_influencers: '' },
+  { trade_name: 'Kerala trade', travel_operator: '', travel_agent: '', travel_counsellor: '', media_influencers: '' },
+  { trade_name: 'KTM', travel_operator: '', travel_agent: '', travel_counsellor: '', media_influencers: '' },
+  { trade_name: 'Others', travel_operator: '', travel_agent: '', travel_counsellor: '', media_influencers: '' },
+];
+  const [tradeDatabase, setTradeDatabase] = useState(defaultTrades);
+      const [rsvp, setRsvp] = useState([]);
    const [invitationFile, setInvitationFile] = useState(null);
   const [mainInvites, setMainInvites] = useState([]);
   const [saveDate, setSaveDate] = useState({
@@ -270,7 +276,15 @@ const loadMenuProjects = async () => {
           food: v.food || false,
           bar: v.bar || false,
         })));
-        setTradeDatabase(d.trade_database && d.trade_database.length ? d.trade_database : tradeDatabase);
+        let loadedTradeDatabase =
+        d.trade_database || d.trade_database || d.trade_database || d.trade_database || [];
+
+      if (Array.isArray(loadedTradeDatabase) && loadedTradeDatabase.length > 0) {
+        setTradeDatabase(loadedTradeDatabase);
+      } else {
+        setTradeDatabase(defaultTrades);
+      }
+       // setTradeDatabase(d.trade_database && d.trade_database.length ? d.trade_database : tradeDatabase);
         setRsvp(d.rsvp || []);
         setInvitationFile(d.rsvp?.[0]?.invitation_design_file_path || '');
         setSaveDate(d.rsvp && d.rsvp[0] ? {
