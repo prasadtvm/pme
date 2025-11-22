@@ -167,7 +167,7 @@ const [selectedYear, setSelectedYear] = useState("all");
         <div className="w-full mt-8 flex px-10 gap-6">
 
           {/* LEFT MENU */}
-          <div className="w-291 bg-[#7FB200] text-white p-5 rounded-lg flex-shrink-0 h-screen sticky top-0">
+          <div className="w-251 bg-[#7FB200] text-white p-5 rounded-lg flex-shrink-0 h-screen sticky top-0">
             <nav className="flex flex-col space-y-2 text-sm font-medium text-white pt-5 pl-1 pr-5">
               
               <a className='hover:font-bold hover:text-white  text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#associate">ASSOCIATES</a>
