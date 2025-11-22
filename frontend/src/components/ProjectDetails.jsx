@@ -1606,29 +1606,29 @@ const loadMenuProjects = async () => {
             <div className="fixed bottom-0  z-[9999] bg-[#F7E79E] border-t border-yellow-600 shadow-md left-[315px] 
                 right-[22px]"  >
               <div className="flex items-center justify-start gap-10 px-5 py-2 text-sm font-semibold">
+                  <span className="w-[10%] "></span>   
 
-                <span className="text-white w-[10%]">Countdown</span>
-                <span className="text-red-600 w-[5%]">{workingDaysLeft}</span>
+                <span className="text-white w-[5%] text-right">Countdown</span>
+                <span className="text-red-600 w-[5%] text-left">{workingDaysLeft}</span>
+                <span className="text-red-600 w-[10%] text-left">Working days</span>
+                   <span className="w-[5%] "></span>   
+                <span className="text-white w-[5%] text-right">Confirmations</span>
 
-                <span className="text-red-600 w-[15%]">Working days</span>
+                <span className="text-black w-[5%] text-right">T.O</span>
+                <span className="text-red-600 w-[5%] text-left">{totals.to}</span>
 
-                <span className="text-white w-[10%]">Confirmations</span>
+                <span className="text-black w-[5%] text-right">T.A</span>
+                <span className="text-red-600 w-[5%] text-left">{totals.ta}</span>
 
-                <span className="text-black w-[10%]">T.O</span>
-                <span className="text-red-600 w-[10%]">{totals.to}</span>
+                <span className="text-black w-[5%] text-right">T.C</span>
+                <span className="text-red-600 w-[5%] text-left">{totals.tc}</span>
 
-                <span className="text-black w-[10%]">T.A</span>
-                <span className="text-red-600 w-[10%]">{totals.ta}</span>
+                <span className="text-black w-[5%] text-right">Med/Influ</span>
+                <span className="text-red-600 w-[5%] text-left">{totals.media}</span>
 
-                <span className="text-black w-[10%]">T.C</span>
-                <span className="text-red-600 w-[10%]">{totals.tc}</span>
-
-                <span className="text-black w-[10%]">Med/Influ</span>
-                <span className="text-red-600 w-[10%]">{totals.media}</span>
-
-                <span className="text-black font-bold w-[10%]">Total</span>
-                <span className="text-red-600 font-bold w-[10%]">{totals.grandTotal}</span>
-
+                <span className="text-black font-bold w-[5%] text-right">Total</span>
+                <span className="text-red-600 font-bold w-[5%] text-left">{totals.grandTotal}</span>
+                <span className="w-[10%] "></span>
               </div>
             </div>
 
