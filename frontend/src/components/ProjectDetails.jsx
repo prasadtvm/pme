@@ -1357,7 +1357,7 @@ const loadMenuProjects = async () => {
                     saving === "embassy" ? "opacity-50 cursor-not-allowed" : ""
                   }`}
                 >
-                  {saving === "embassy" ? "Saving…" : "Save Embassy Info"}
+                  {saving === "embassy" ? "Saving…" : "Save Embassy"}
                 </button>
               </div>
 
@@ -1449,7 +1449,7 @@ const loadMenuProjects = async () => {
                   <button onClick={async () => {
                     setSaving("clients");
                     try { await projectSectionsAPI.updateClients(id, clients); showMessage("Clients saved"); } catch (e) { console.error(e); alert("Failed"); } finally { setSaving(""); }
-                  }} className={`px-4 py-2 rounded text-white ${saving === "clients" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>Save clients</button>
+                  }} className={`px-4 py-2 rounded text-white ${saving === "clients" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>Save Clients</button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr_auto] gap-3 items-center mb-3 p-3 bg-gray-100 rounded font-semibold">
