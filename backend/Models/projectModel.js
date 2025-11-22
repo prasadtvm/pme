@@ -416,8 +416,8 @@ const cleanNumeric = (value) => {
     // Insert new hotels
     for (const hotel of hotels) {
       await pool.query(
-        'INSERT INTO hotels (project_id,sponsor, name,  selected, item, currency, amount) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-        [projectId, hotel.sponsor, hotel.name,  hotel.selected || false,hotel.item, hotel.currency,  hotel.amount]
+        'INSERT INTO hotels (project_id,sponsor, selected, item, currency, amount) VALUES ($1, $2, $3, $4, $5, $6)',
+        [projectId, hotel.sponsor, hotel.selected || false,hotel.item, hotel.currency,  hotel.amount]
       );      
     }
 

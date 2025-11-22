@@ -123,6 +123,10 @@ const ProjectDetails = () => {
     setAssociates(associates.filter((_, i) => i !== index));
   };
 
+
+    const handleVenueChange = (index, field, value) => {
+    setVenues(venues.map((v, i) => (i === index ? { ...v, [field]: value } : v)));
+  };
   // Trade handlers
   const handleAddTrade = () => {
     setTradeDatabase([...tradeDatabase, { trade_name: '', travel_operator: '' ,travel_agent:'',travel_counsellor:'',media_influencers:'' }]);
@@ -745,7 +749,7 @@ const loadMenuProjects = async () => {
           type="checkbox"
           checked={venues.venue_rental}
           onChange={(e) =>
-            handleVenueChange(index, "venue_rental", e.target.checked)
+            handleVenueChange(i, "venue_rental", e.target.checked)
           }
           className="w-3.5 h-3.5 accent-green-600"
         />
@@ -757,7 +761,7 @@ const loadMenuProjects = async () => {
           type="checkbox"
           checked={venues.av}
           onChange={(e) =>
-            handleVenueChange(index, "av", e.target.checked)
+            handleVenueChange(i, "av", e.target.checked)
           }
           className="w-3.5 h-3.5 accent-green-600"
         />
@@ -769,7 +773,7 @@ const loadMenuProjects = async () => {
           type="checkbox"
           checked={venues.food}
           onChange={(e) =>
-            handleVenueChange(index, "food", e.target.checked)
+            handleVenueChange(i, "food", e.target.checked)
           }
           className="w-3.5 h-3.5 accent-green-600"
         />
@@ -781,7 +785,7 @@ const loadMenuProjects = async () => {
           type="checkbox"
           checked={venues.bar}
           onChange={(e) =>
-            handleVenueChange(index, "bar", e.target.checked)
+            handleVenueChange(i, "bar", e.target.checked)
           }
           className="w-3.5 h-3.5 accent-green-600"
         />
@@ -793,7 +797,7 @@ const loadMenuProjects = async () => {
           type="checkbox"
           checked={venues.selected}
           onChange={(e) =>
-            handleVenueChange(index, "selected", e.target.checked)
+            handleVenueChange(i, "selected", e.target.checked)
           }
           className="w-3.5 h-3.5"
         />
