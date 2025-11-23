@@ -69,7 +69,40 @@ const ProjectDetails = () => {
   const [workingDaysLeft, setWorkingDaysLeft] = useState(0);
 
   const [menuProjects, setMenuProjects] = useState([]);
+const [showPrintModal, setShowPrintModal] = useState(false);
 
+// function to open modal and optionally prepare any HTML
+const openPrintModal = () => {
+  setShowPrintModal(true);
+};
+
+// function to print only the modal area
+const handlePrint = () => {
+  const printArea = document.getElementById('printArea');
+  if (!printArea) return window.print();
+  const newWin = window.open('', '_blank', 'width=900,height=700');
+  newWin.document.write(`
+    <html>
+      <head>
+        <title>Print Preview</title>
+        <style>
+          /* minimal reset + Calibri */
+          @font-face {
+            font-family: 'Calibri';
+            src: url('../assets/fonts/calibri.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+          }
+          body { font-family: 'Calibri', sans-serif; margin: 16px; color: #111; }
+        </style>
+      </head>
+      <body>${printArea.innerHTML}</body>
+    </html>
+  `);
+  newWin.document.close();
+  newWin.focus();
+  setTimeout(() => { newWin.print(); newWin.close(); }, 500);
+};
 
   const UPLOAD_BACK_URL = `${import.meta.env.VITE_UPLOAD_BACK_URL?.replace(/\/$/, '') || "http://localhost:5000"}`;
 
@@ -1597,9 +1630,10 @@ const loadMenuProjects = async () => {
              
             </section>
 
-            {/* Print */}
+            {/* Print   className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow-lg hover:bg-blue-700 transition duration-200 print:hidden*/}
             <div id="print" className="flex justify-center mt-8 mb-10 px-10">
-              <button onClick={() => window.print()} className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow-lg hover:bg-blue-700 transition duration-200 print:hidden">Print Project Details</button>
+              <button onClick={() => setShowPrintModal(true)} 
+  className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow-lg hover:bg-blue-700 transition duration-200">Print Project Details</button>
             </div>
 
             {/* ==== FLOATING BOTTOM STRIP ====style={{ marginLeft: "300px", marginRight:"5px" }} */}
@@ -1636,6 +1670,138 @@ const loadMenuProjects = async () => {
           </div>
         </div>
       </div>
+
+      {showPrintModal && (
+  <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[99999] p-4">
+
+    {/* WHITE PRINT BOX */}
+    <div id="printArea" className="bg-white w-[1000px] max-h-[90vh] overflow-y-auto p-10 rounded shadow-xl text-black">
+
+      {/* CLOSE BUTTON */}
+      <div className="flex justify-end mb-4">
+        <button onClick={() => setShowPrintModal(false)} className="text-red-600 font-bold text-xl">&times;</button>
+      </div>
+
+      {/* PROJECT TITLE */}
+      <h1 className="text-3xl font-bold uppercase text-left mb-6">
+        {project?.name}
+      </h1>
+
+      {/* HANDLED BY + EVENT DATE */}
+      <div className="flex justify-between mb-6 text-lg font-semibold">
+        <div>Project Handled By: {details.project_handiled_by}</div>
+        <div>
+          {details.event_date
+            ? new Date(details.event_date).toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              })
+            : "-"}
+        </div>
+      </div>
+
+      {/* CONFIRMATIONS TABLE */}
+      <h2 className="text-xl font-bold mb-3">Confirmations</h2>
+      <table className="w-full border text-left mb-8">
+        <thead>
+          <tr className="bg-gray-200 font-semibold">
+            <th className="p-2">Tour Operators</th>
+            <th className="p-2">Travel Agents</th>
+            <th className="p-2">Travel Counsellors</th>
+            <th className="p-2">Media / Influencers</th>
+            <th className="p-2">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td className="p-2">{totals.to}</td>
+            <td className="p-2">{totals.ta}</td>
+            <td className="p-2">{totals.tc}</td>
+            <td className="p-2">{totals.media}</td>
+            <td className="p-2 font-bold">{totals.grandTotal}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      {/* DATABASE TABLE */}
+      <h2 className="text-xl font-bold mb-3">Database</h2>
+      <table className="w-full border text-left mb-8">
+        <thead>
+          <tr className="bg-gray-200 font-semibold">
+            <th className="p-2">Source</th>
+            <th className="p-2">TO</th>
+            <th className="p-2">TA</th>
+            <th className="p-2">TC</th>
+            <th className="p-2">Media</th>
+            <th className="p-2">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tradeDatabase.map((t, i) => {
+            const dbTotal =
+              (Number(t.travel_operator) || 0) +
+              (Number(t.travel_agent) || 0) +
+              (Number(t.travel_counsellor) || 0) +
+              (Number(t.media_influencers) || 0);
+
+            return (
+              <tr key={i}>
+                <td className="p-2">{t.trade_name}</td>
+                <td className="p-2">{t.travel_operator}</td>
+                <td className="p-2">{t.travel_agent}</td>
+                <td className="p-2">{t.travel_counsellor}</td>
+                <td className="p-2">{t.media_influencers}</td>
+                <td className="p-2 font-semibold">{dbTotal}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+
+      {/* VENUES */}
+      <h2 className="text-xl font-bold mb-3">Venue</h2>
+      <table className="w-full border text-left mb-8">
+        <thead>
+          <tr className="bg-gray-200 font-semibold">
+            <th className="p-2">Name</th>
+            <th className="p-2">Rate</th>
+            <th className="p-2">Budget</th>
+            <th className="p-2">Currency</th>
+            <th className="p-2">Selected</th>
+          </tr>
+        </thead>
+        <tbody>
+          {venues.map((v, i) => (
+            <tr key={i}>
+              <td className="p-2">{v.name}</td>
+              <td className="p-2">{v.rate}</td>
+              <td className="p-2">{v.budget}</td>
+              <td className="p-2">{v.currency}</td>
+              <td className="p-2">{v.selected ? "✔" : ""}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* COUNTDOWN */}
+      <div className="text-xl font-bold mt-6">
+        Countdown: {workingDaysLeft} Working Days
+      </div>
+
+      {/* PRINT BUTTON */}
+      <div className="mt-6 flex justify-center">
+        <button 
+          onClick={() => window.print()} 
+          className="px-6 py-3 bg-green-600 text-white font-semibold rounded hover:bg-green-700"
+        >
+          Print
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
