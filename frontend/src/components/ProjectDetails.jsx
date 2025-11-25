@@ -869,7 +869,7 @@ const loadMenuProjects = async () => {
                     setSaving("trade");
                     try {
                       await projectSectionsAPI.updateTradeDatabase(id, tradeDatabase);
-                      showMessage("Trade database saved!");
+                      showMessage("Database saved!");
                     } catch (e) {
                       console.error(e); alert("Failed to save");
                     } finally { setSaving(""); }
@@ -1010,7 +1010,7 @@ const loadMenuProjects = async () => {
                 
 
  <div className="mb-3">
-    <label className="block text-sm font-medium">Save The Date Image:</label>
+    <label className="block text-sm font-medium">Save The Date Invite Design:</label>
     <input
       type="file"
       onChange={(e) => setSaveTheDateImage(e.target.files[0])}
@@ -1073,7 +1073,7 @@ const loadMenuProjects = async () => {
 
                    {/* IMAGE UPLOAD */}
   <div className="mb-3">
-    <label className="block text-sm font-medium">Main Invite Image:</label>
+    <label className="block text-sm font-medium">Main Invite design:</label>
     <input
       type="file"
       onChange={(e) => setMainInviteImage(e.target.files[0])}
@@ -1094,8 +1094,8 @@ const loadMenuProjects = async () => {
       </div>
     )}
   </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-[320px_200px_200px_200px_200px_170px_minmax(100px,1fr)] gap-2 items-center bg-gray-100 p-2 rounded font-semibold">
+{/*320px_200px_200px_200px_200px_170px_minmax(100px,1fr)*/}
+                  <div className="grid grid-cols-1 md:grid-cols-[320px_200px_200px_200px_200px_170px_minmax(90px,1fr)] gap-2 items-center bg-gray-100 p-2 rounded font-semibold">
                     <div>Date</div>
                     <div>Tour Operator (Nos)</div>
                     <div>Travel Agent (Nos)</div>
@@ -1110,7 +1110,8 @@ const loadMenuProjects = async () => {
                     return (
                       <div key={idx} className="bg-gray-50 p-3 rounded-md mb-3">
                         <h3 className="font-semibold text-left mb-2">RSVP #{idx + 2} – Main Invite</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-[320px_200px_200px_200px_200px_170px_minmax(100px,1fr)] gap-2 items-center">
+                        {/*320px_200px_200px_200px_200px_170px_minmax(100px,1fr*/}
+                        <div className="grid grid-cols-1 md:grid-cols-[320px_200px_200px_200px_200px_170px_minmax(90px,1fr)] gap-2 items-center">
                           <input type="date" className="form-input" value={inv.main_invite_date || ""} onChange={(e) => {
                             const arr = [...mainInvites]; arr[idx].main_invite_date = e.target.value; setMainInvites(arr);
                           }} />
@@ -1138,7 +1139,7 @@ const loadMenuProjects = async () => {
                     );
                   })}
 
-                  <div className="grid grid-cols-1 md:grid-cols-[320px_210px_210px_210px_210px_170px] gap-2 items-center mt-4 p-3 bg-gray-100 rounded font-semibold">
+                  <div className="grid grid-cols-1 md:grid-cols-[320px_200px_200px_200px_200px_170px] gap-2 items-center mt-4 p-3 bg-gray-100 rounded font-semibold">
                     <div>Total →</div>
                     <div>{mainInvites.reduce((s, t) => s + (Number(t.main_invite_to_nos) || 0), 0)}</div>
                     <div>{mainInvites.reduce((s, t) => s + (Number(t.main_invite_ta_nos) || 0), 0)}</div>
@@ -1450,7 +1451,7 @@ const loadMenuProjects = async () => {
 
                 <input
                   type="text"
-                  placeholder="Address"
+                  placeholder="Designation"
                   value={embassy.accommodation_address}
                   onChange={(e) =>
                     setEmbassy({
@@ -1463,7 +1464,7 @@ const loadMenuProjects = async () => {
 
                 <input
                   type="text"
-                  placeholder="Phone"
+                  placeholder="Phone address"
                   value={embassy.accommodation_phone}
                   onChange={(e) =>
                     setEmbassy({
@@ -1683,16 +1684,25 @@ const loadMenuProjects = async () => {
       </div>
 
       {/* PROJECT TITLE */}
-      <h1 className="text-3xl font-bold uppercase text-left mb-6">
+      <h1 className="text-3xl font-bold uppercase text-center mb-6">
         {project?.name}
       </h1>
+       <div className="font-semibold">
+          {details.event_date
+            ? new Date(details.event_date).toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              })
+            : "-"}
+        </div>
 
       {/* HANDLED BY + EVENT DATE */}
       <div className="flex justify-between mb-6 text-lg font-semibold">
-        <div>Project Handled By: {details.project_handiled_by}</div>
+        <div> {details.project_handiled_by}</div>
         <div>
           {details.event_date
-            ? new Date(details.event_date).toLocaleDateString("en-GB", {
+            ? new Date(saveDate.save_the_date).toLocaleDateString("en-GB", {
                 day: "2-digit",
                 month: "long",
                 year: "numeric",
@@ -1761,28 +1771,96 @@ const loadMenuProjects = async () => {
 
       {/* VENUES */}
       <h2 className="text-xl font-bold mb-3">Venue</h2>
-      <table className="w-full border text-left mb-8">
-        <thead>
-          <tr className="bg-gray-200 font-semibold">
-            <th className="p-2">Name</th>
-            <th className="p-2">Rate</th>
-            <th className="p-2">Budget</th>
-            <th className="p-2">Currency</th>
-            <th className="p-2">Selected</th>
-          </tr>
-        </thead>
-        <tbody>
-          {venues.map((v, i) => (
-            <tr key={i}>
-              <td className="p-2">{v.name}</td>
-              <td className="p-2">{v.rate}</td>
-              <td className="p-2">{v.budget}</td>
-              <td className="p-2">{v.currency}</td>
-              <td className="p-2">{v.selected ? "✔" : ""}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+         <div  className="grid grid-cols-[2fr_2fr_repeat(4,1fr)] p-2 border-b bg-gray-200 font-semibold text-sm items-center">
+            <div className="p-2">Name</div>
+            <div className="truncate">Rate - Budget - Currency</div>
+            <div className="p-2">Venue Rental</div>
+              <div className="p-2">Av</div>
+            <div className="p-2">Food</div>
+             <div className="p-2">Bar</div>         
+          </div>
+      
+          {Array.isArray(venues) && venues.length > 0 ? (
+          venues
+    .filter(v => v.selected)   // only selected
+    .map((v, i) => (
+      <div
+        key={i}
+        className="grid grid-cols-[2fr_2fr_repeat(4,1fr)] p-2 border-b bg-white text-sm items-center"
+      >
+        <div className="truncate">{v.name || '-'}</div>
+        <div className="truncate">
+          {`${v.rateInput || v.rate || "-"} — ${v.budgetInput || v.budget || "-"} ${v.currency || "INR"}`}
+        </div>        
+        <div className="text-center">{v.venue_rental ? '✔' : '✗'}</div>
+        <div className="text-center">{v.av ? '✔' : '✗'}</div>
+        <div className="text-center">{v.food ? '✔' : '✗'}</div>
+        <div className="text-center">{v.bar ? '✔' : '✗'}</div>
+      </div>
+    ))
+) : (
+  <div className="p-3 bg-white text-sm">No venues</div>
+)}
+
+ {/* ===== CHIEF GUEST ===== */}
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold mb-3">Chief Guest</h3>
+
+          {details.chief_guest ? (
+            <div className="text-sm leading-6">
+              <div><b>{details.chief_guest.name}</b></div>
+              <div>Designation: {details.chief_guest.designation}</div>
+              <div>Contact: {details.chief_guest.contact}</div>
+            </div>
+          ) : (
+            <div className="text-sm text-gray-500">No chief guest added</div>
+          )}
+        </div>
+
+        {/* ===== ACCOMMODATION CONTACT ===== */}
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold mb-3">Accommodation Contact</h3>
+
+          {details.accommodation_contact ? (
+            <div className="text-sm leading-6">
+              <div><b>{details.accommodation_contact.name}</b></div>
+              <div>Designation: {details.accommodation_contact.designation}</div>
+              <div>Contact: {details.accommodation_contact.contact}</div>
+            </div>
+          ) : (
+            <div className="text-sm text-gray-500">No contact added</div>
+          )}
+        </div>
+
+        {/* ===== CLIENT ACCOMMODATION ===== */}
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold mb-3">Client Accommodation</h3>
+
+          {clients.length === 0 ? (
+            <div className="text-sm text-gray-500">No client accommodation</div>
+          ) : (
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="px-3 py-2 text-left">Name</th>
+                  <th className="px-3 py-2 text-left">Designation</th>
+                  <th className="px-3 py-2 text-left">Contact</th>
+                  <th className="px-3 py-2 text-left">Hotel</th>
+                </tr>
+              </thead>
+              <tbody>
+                {clients.map((c, i) => (
+                  <tr key={i} className="border-b">
+                    <td className="px-3 py-2 text-left">{c.name}</td>
+                    <td className="px-3 py-2 text-left">{c.designation}</td>
+                    <td className="px-3 py-2 text-left">{c.contact}</td>
+                    <td className="px-3 py-2 text-left">{c.hotel}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
 
       {/* COUNTDOWN */}
       <div className="text-xl font-bold mt-6">
