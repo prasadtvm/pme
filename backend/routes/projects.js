@@ -34,6 +34,7 @@ router.put('/:id/hotels', projectController.updateHotels);
 router.put('/:id/embassy', projectController.updateEmbassy);
 router.put('/:id/clients', projectController.updateClients);
 router.put('/:id/starks', projectController.updateStarks);
+router.put("/:id/consignment",  projectController.updateConsignment);
 router.put('/:id/checklists', projectController.updateChecklists);
 router.post('/:id/menu', upload.uploadMenuFile, projectController.uploadMenu);
 //remark resolve by admin

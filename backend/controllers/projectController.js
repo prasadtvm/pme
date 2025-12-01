@@ -155,6 +155,7 @@ const projectController = {
       const embassy = await Project.getEmbassy(projectId, user);
       const clients = await Project.getClients(projectId, user);
       const starks = await Project.getStarks(projectId, user);
+      const consignment = await Project.getConsignment(projectId, user);
       const checklist = await Project.getChecklists(projectId, user);
       const menuFile =  await Project.getMenu(projectId, user);
 console.log('projectcontroller getprojectdetails');
@@ -170,10 +171,12 @@ console.log('projectcontroller getprojectdetails');
         embassy,
         clients,
         starks,
+        consignment,
         checklist,
         menuFile
       });
       //console.log('projectcontroller getprojectdetails menufile',JSON.stringify(menuFile));
+      
     } catch (error) {
       console.error('Error fetching project details:', error);
       res.status(500).json({ error: 'Internal server error' });
@@ -524,6 +527,25 @@ updateRSVP: async (req, res) => {
     }
   },
 
+
+  updateConsignment: async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const { consignment } = req.body;
+
+    const updated = await Project.updateConsignment(id, consignment, userId);
+
+    res.json({
+      message: "Consignment updated successfully",
+      data: updated
+    });
+  } catch (error) {
+    console.error("Error updating consignment:", error);
+    res.status(500).json({ error: error.message });
+  }
+},
+
   // Update Checklists only
   updateChecklists: async (req, res) => {
     try {
@@ -607,7 +629,7 @@ updateRSVP: async (req, res) => {
   getDetails: async (req, res) => {
     const { id } = req.params;
     try {
-      const [detailsRes, associatesRes, venuesRes, tradeRes, rsvpRes, hotelRes, avRes, embassyRes, clientRes, checklistRes, menuRes] = await Promise.all([
+      const [detailsRes, associatesRes, venuesRes, tradeRes, rsvpRes, hotelRes, avRes, embassyRes, clientRes, checklistRes, menuRes,consignmentRes] = await Promise.all([
         pool.query('SELECT * FROM project_details WHERE project_id = $1', [id]),
         pool.query('SELECT * FROM associates WHERE project_id = $1', [id]),
         pool.query('SELECT * FROM venues WHERE project_id = $1', [id]),
@@ -617,6 +639,7 @@ updateRSVP: async (req, res) => {
         pool.query('SELECT * FROM av_setup WHERE project_id = $1', [id]),
         pool.query('SELECT * FROM embassy WHERE project_id = $1', [id]),
         pool.query('SELECT * FROM client WHERE project_id = $1', [id]),
+        pool.query('SELECT * FROM consignment WHERE project_id = $1', [id]),
         pool.query('SELECT * FROM checklist WHERE project_id = $1', [id]),
         pool.query('SELECT * FROM menu_files WHERE project_id = $1', [id]),
       ]);
@@ -632,6 +655,7 @@ updateRSVP: async (req, res) => {
       d.clients = clientRes.rows || {};
       d.checklist = checklistRes.rows[0] || {};
       d.menuFile = menuRes.rows[0] || {};
+      d.consignment = consignmentRes.rows[0] || {};
 
       res.json(d);
     } catch (err) {

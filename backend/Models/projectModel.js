@@ -762,6 +762,113 @@ updateStark: async (projectId, starks, user) => {
       return {};
     }
   },
+
+  updateConsignment: async (projectId, consignment, userId) => {
+  // 1. Check if project exists & user has access
+  const project = await pool.query(
+    'SELECT id FROM projects WHERE id = $1 AND created_by = $2',
+    [projectId, userId]
+  );
+
+  if (project.rows.length === 0) {
+    throw new Error('Project not found or access denied');
+  }
+
+  // 2. Check if consignment exists
+  const existing = await pool.query(
+    'SELECT id FROM consignment WHERE project_id = $1',
+    [projectId]
+  );
+
+  // Fields to save
+  const {
+    c1_status,
+    c1_date,
+    c2_status,
+    c2_date,
+    c3_status,
+    c3_date
+  } = consignment;
+console.log('updatecondiga',projectId,'--', JSON.stringify(consignment) )
+  if (existing.rows.length > 0) {
+    // --------------------------
+    // UPDATE
+    // --------------------------
+    const result = await pool.query(
+      `UPDATE consignment SET
+         c1_status = $1,
+         c1_date = $2,
+         c2_status = $3,
+         c2_date = $4,
+         c3_status = $5,
+         c3_date = $6,
+         updated_at = CURRENT_TIMESTAMP
+       WHERE project_id = $7
+       RETURNING *`,
+      [
+        c1_status,
+        c1_date,
+        c2_status,
+        c2_date,
+        c3_status,
+        c3_date,
+        projectId
+      ]
+    );
+
+    return result.rows[0];
+  } 
+  else {
+    // --------------------------
+    // INSERT
+    // --------------------------
+    const result = await pool.query(
+      `INSERT INTO consignment
+        (project_id, c1_status, c1_date, c2_status, c2_date, c3_status, c3_date)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING *`,
+      [
+        projectId,
+        c1_status,
+        c1_date,
+        c2_status,
+        c2_date,
+        c3_status,
+        c3_date
+      ]
+    );
+
+    return result.rows[0];
+  }
+},
+  getConsignment: async (projectId, user) => {
+    console.log('getconsgdf',projectId,user.id);
+    try {
+       let result;
+  if(user.role==='1'){
+        result = await pool.query(
+        `SELECT c.* FROM consignment c 
+         JOIN projects p ON c.project_id = p.id 
+         WHERE c.project_id = $1 AND c.created_by = $2`,
+        [projectId, user.id]
+      );
+    }
+    else{
+       result = await pool.query(
+        `SELECT c.* FROM consignment c 
+         JOIN projects p ON c.project_id = p.id 
+         WHERE c.project_id = $1`,
+        [projectId]
+      );
+    }
+      return result.rows;
+    } catch (error) {
+      // If table doesn't exist yet, return empty object
+      console.log('Consignment table might not exist yet, returning empty object');
+      return {};
+    }
+  },
+
   //Menu
   getMenu: async (projectId, user) => {
     console.log('getmenu',projectId,user.id);
