@@ -4,6 +4,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { projectAPI, projectSectionsAPI } from "../services/api.jsx";
 import logo from "../assets/images/company_logo.png";
 import patternBg from "../assets/images/pattern.png"; // put your repeating pattern at this path
+import logout from "../assets/images/logout-xxl.png";
+
 import "../styles/tailwind.css";
 
 /*
@@ -52,7 +54,7 @@ const ProjectDetails = () => {
   const [mainInviteImage, setMainInviteImage] = useState(null);
   const [saveTheDateImage, setSaveTheDateImage] = useState(null);
   const [avSetup, setAvSetup] = useState({ backdrop: '', screen: '', mic: '', type:'', projector: false, podium: false, backdrop_image:null,screen_image:null,stage_image:null });
-  const [hotels, setHotels] = useState([{ sponsor: "", name: "", selected: false, item: "", currency: "INR", amount: "" }]);
+  const [hotels, setHotels] = useState([{ sponsor: "",  selected: false, item: "", currency: "INR", amount: "" }]);
    const defaultChecklists = [
     { name: 'Visiting Card', selected: false },
     { name: 'Mementos', selected: false },
@@ -70,6 +72,13 @@ const ProjectDetails = () => {
 
   const [menuProjects, setMenuProjects] = useState([]);
 const [showPrintModal, setShowPrintModal] = useState(false);
+
+const titleRef = useRef(null);
+const [titleWidth, setTitleWidth] = useState("auto");
+
+const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+const [consignment, setConsignment] = useState([]);
 
 // function to open modal and optionally prepare any HTML
 const openPrintModal = () => {
@@ -245,9 +254,11 @@ const saveAVSetup = async () => {
         setSaving('');
       }
     };
+
      const saveChecklists = async () => {
         try {
           setSaving('checklists');
+          console.log('savechecklist',id,'-',JSON.stringify(checklists));
           await projectSectionsAPI.updateChecklists(id, checklists);
           showMessage('Checklists saved successfully!');
         } catch (e) {
@@ -350,6 +361,16 @@ const loadMenuProjects = async () => {
         setEmbassy(d.embassy || {});
         setClients(d.clients || []);
         setStarks(d.starks || []);
+        //setConsignment(d.consignment||[]);
+        //console.log("Loaded consignment from frontend:",JSON.stringify(d.consignment) );
+        setConsignment({
+  c1_status: d.consignment?.[0]?.c1_status || "",
+  c1_date: d.consignment?.[0]?.c1_date?.substring(0, 10) || "",
+  c2_status: d.consignment?.[0]?.c2_status || "",
+  c2_date: d.consignment?.[0]?.c2_date?.substring(0, 10) || "",
+  c3_status: d.consignment?.[0]?.c3_status || "",
+  c3_date: d.consignment?.[0]?.c3_date?.substring(0, 10) || "",
+});
         setMenuFile({
           fileName: d.menuFile?.[0]?.filename || "",
           filePath: d.menuFile?.[0]?.file_path || "",
@@ -379,6 +400,21 @@ const loadMenuProjects = async () => {
     }
   }, [details.event_date]);
 
+  
+const saveConsignment = async () => {
+  try {
+    setSaving("consignment");
+    console.log('saveconsig',id,'--',JSON.stringify(consignment));
+    await projectSectionsAPI.updateConsignment(id, consignment);
+
+    showMessage("Consignment saved successfully!");
+  } catch (err) {
+    console.error(err);
+    alert("Failed to save consignment");
+  } finally {
+    setSaving("");
+  }
+};
 
   // message helper
   const showMessage = (t) => {
@@ -485,8 +521,14 @@ const loadMenuProjects = async () => {
         {/* MAIN LAYOUT  md:overflow-visible*/}
         <div className="flex items-start gap-0" >
           {/* SIDEBAR */}
- 
-          <aside className=" hidden md:flex
+ <aside
+  className={`hidden md:flex flex-col transition-all duration-300 ease-in-out
+    ${sidebarCollapsed ? "w-[60px]" : "w-[291px]"} 
+    flex-shrink-0 bg-[#7FB200] text-white p-6 md:sticky md:top-[165px] md:h-[calc(100vh-165px)] overflow-y-auto`}
+  style={{ zIndex: 50, minHeight: "100vh", fontWeight: 700, fontSize: "15.5px", top: 0 }}
+>
+
+          {/*<aside className=" hidden md:flex
               w-[291px]
               flex-shrink-0
               bg-[#7FB200]
@@ -496,11 +538,14 @@ const loadMenuProjects = async () => {
               md:h-[calc(100vh-165px)]
               overflow-y-auto
               " style={{  backgroundColor: "#7FB200",zIndex: 50, minHeight: "100vh", fontWeight: 700, fontSize: "15.5px",top:0, }}>
-           {/*pl-[15px] pr-4 py-6 text-white text-[15px] font-semibold space-y-4*/}
+           *pl-[15px] pr-4 py-6 text-white text-[15px] font-semibold space-y-4*/}
             {/* MAIN WRAPPER (REQUIRED FOR PROPER LAYOUT) */}
-  <div className="flex flex-col h-full w-full">
-            <nav className="flex flex-col pl-[15px] pr-4 py-6 space-y-2">
-              <a href="#associate" className="hover:opacity-90 text-white text-xl text-left font-bold uppercase tracking-wide py-2">ASSOCIATE</a>
+  <div className="flex flex-col h-full w-full"> 
+
+    {!sidebarCollapsed && (
+  <>
+    <nav className="flex flex-col pl-[15px] pr-4 py-6 space-y-2">
+      <a href="#associate" className="hover:opacity-90 text-white text-xl text-left font-bold uppercase tracking-wide py-2">ASSOCIATE</a>
               <a href="#venue" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">VENUE</a>
               <a href="#database" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">DATABASE</a>
               <a href="#rsvp" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">RSVP</a>
@@ -509,13 +554,16 @@ const loadMenuProjects = async () => {
               <a href="#embassy" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">EMBASSY / CONSULATE</a>
               <a href="#client" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">CLIENT</a>
               <a href="#stark" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">STARK</a>
+               <a href="#consignment" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">consignment</a>
               <a href="#checklist" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">CHECKLIST</a>
               <a href="#menu" className="hidden hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">MENU</a>
               <a href="#remarks" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">REMARKS</a>
               <a href="#print" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">PRINT</a>
-            </nav>
+    </nav>
 
-            <div className="mt-auto w-full pr-4 pl-[15px]">
+    <div className="mt-auto w-full">
+      {/* Progress bar */}
+      <div className="pr-4 pl-[15px]">
               <div className="mt-5">
               <div className="text-white opacity-90 font-medium mb-2 text-left uppercase">Completion Progress</div>
               <div className="w-full bg-white/30 rounded h-3 overflow-hidden">
@@ -524,39 +572,117 @@ const loadMenuProjects = async () => {
               <div className="text-xs mt-2 mb-2 text-left uppercase">{progress}% Completed</div>
               </div>
             </div>
-            <div className="pl-[15px]">
-            <button onClick={() => { localStorage.removeItem("authToken"); window.location.href = "/login"; }} className="mt-auto bg-red-600 hover:bg-red-700 py-2 w-full rounded text-white font-semibold">
-              Logout
-            </button></div>
+    </div>
+  </>
+)}
+           
+
+<div className={`w-full flex hidden flex-col ${sidebarCollapsed ? 'mt-auto' : ''}`}>
+   {/* LOGOUT BUTTON SECTION - Ensure it takes full width with correct padding */}
+    <div className={`w-full ${sidebarCollapsed ? 'px-[8px]' : 'pr-4 pl-[15px]'} ${!sidebarCollapsed ? 'mt-4' : ''}`}>
+  <button 
+    onClick={() => { localStorage.removeItem("authToken"); window.location.href = "/login"; }} 
+    className="bg-red-600 hover:bg-red-700 py-2 w-full rounded text-white font-semibold flex items-center justify-center"
+  >
+    {sidebarCollapsed ? (
+      // When collapsed, show only an icon (e.g., a simple 'L' or a dedicated Logout icon)
+      //<span className="text-xl"</span> Using a door emoji as a placeholder for a logout icon
+      //<ArrowLeftOnBoxIcon className="h-6 w-6" />
+      
+       <>{/*style={{ height: "100px" }}*/}
+              <img src={logout} alt="Logout" className="w-6 h-6 object-contain" />{/* mt-[10px]*/}
+            </>
+    ) : (
+      // When expanded, show the full text
+      "Logout"
+    )}
+  </button>
+</div>
+{/* COLLAPSE BUTTON SECTION - Add padding consistency */}
+    <div className={`w-full ${sidebarCollapsed ? 'px-[8px]' : 'pr-4 pl-[15px]'}`}>
+            <button
+  onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+  className="mt-4 text-white text-xl font-bold hover:opacity-90"
+>
+  {sidebarCollapsed ? "[+]" : "[-]"}
+</button>
+</div>
+</div>
+<div className="mt-auto w-full flex flex-col">
+  <div className={`w-full ${sidebarCollapsed ? 'px-2' : 'pr-4 pl-[15px]'} ${!sidebarCollapsed ? 'mt-4' : ''}`}>
+    <button 
+      onClick={() => {
+        localStorage.removeItem("authToken");
+        window.location.href = "/login";
+      }} 
+      className="bg-red-600 hover:bg-red-700 py-2 w-full rounded text-white font-semibold flex items-center justify-center"
+    >
+      {sidebarCollapsed ? (
+       <span className="bg-red-600 hover:bg-red-700 py-2 w-full rounded text-white font-semibold flex items-center justify-center">Logout</span>
+      ) : (
+        "Logout"
+      )}
+    </button>
+  </div>
+
+  {/* Collapse toggle */}
+  <div className={`w-full ${sidebarCollapsed ? 'px-2' : 'pr-4 pl-[15px]'}`}>
+    <button
+      onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+      className="mt-4 text-white text-xl font-bold hover:opacity-90"
+    >
+      {sidebarCollapsed ? "[+]" : "[-]"}
+    </button>
+  </div>
+</div>
+
+
             </div>
           </aside>
           <div className="flex-1 overflow-x-hidden">
           {/* MAIN CONTENT flex-1 px-0 {/*   Patterned yellow header — responsive width (keeps full page width, but we match height) */}
           <main className="px-0" >
                 
-
+  {/* display: "flex",
+              alignItems: "center",*/}
        
             <div
-            className="w-full border-b border-gray-300"
+            className="w-full border-b border-gray-300 flex flex-col md:flex-row pt-2 pb-2"
             style={{
               backgroundImage: `url(${patternBg})`,
               backgroundRepeat: "repeat",
               backgroundSize: "auto",
-              minHeight: "241px",
-              display: "flex",
-              alignItems: "center",
+              minHeight: "241px",           
             }}
           >
-         <div className="flex flex-col justify-start px-10" style={{ width: "calc(100% - 400px)" }}>
-              <h1 className="font-extrabold text-4xl uppercase tracking-tight text-left leading-[1.1]">
+           {/*   style={{ width: "calc(100% - 400px)" }}*/}
+         <div className="flex flex-col justify-center px-8 flex-1 min-w-0 py-6" >
+              <div style={{display:"none", width: "calc(100% - 40%)" }}>
+                <div style={{backgroundColor:"#ff0000"}}><h1 className="font-extrabold text-4xl uppercase tracking-tight text-left leading-[1.1]">{project?.name || details?.roadshowName || "Untitled Project"}</h1></div>
+                 <div className="pt-20"></div>
+                 <div className="flex justify-between text-lg font-bold w-full pr-10" >
+                  
+                   <div className="uppercase truncate">{details.project_handiled_by || "N/A"}</div>
+                  <div  style={{backgroundColor:"#4d3a3aff"}}className="whitespace-nowrap text-right"> {details.event_date
+                    ? new Date(details.event_date).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                      }).toUpperCase()
+                    : ""}</div>
+              </div>
+              </div>
+           
+              <h1  className="font-extrabold text-xl sm:text-2xl md:text-4xl uppercase tracking-tight text-left leading-[1.1] break-normal">
                 {project?.name || details?.roadshowName || "Untitled Project"}
               </h1>
-          <div className="pt-20"></div>
+              
+          <div   className="pt-20"></div>
              {/* THIS IS THE FIXED ALIGNMENT BLOCK */}
-             <div style={{ width: "calc(100% - 40%)" }}>
-              <div className="flex justify-between text-lg font-bold w-full pr-10" >
-                <div className="uppercase truncate max-w-[20%]">{details.project_handiled_by || "N/A"}</div>
-                <div className="whitespace-nowrap text-right">
+             
+              <div className="flex justify-start md:items-center  items-start gap-4 text-xl font-bold flex-wrap" >
+                <div className="uppercase text-left">{details.project_handiled_by || "N/A"}</div>
+                <div className="whitespace-nowrap text-right md:ml-auto md:pr-20">
                   {details.event_date
                     ? new Date(details.event_date).toLocaleDateString("en-GB", {
                         day: "2-digit",
@@ -566,14 +692,14 @@ const loadMenuProjects = async () => {
                     : ""}
                 </div>
               </div>
-              </div>
+             
             </div>
 
          
 
-            {/* Right Image */}
-            <div style={{ width: 400, padding: "8px 0" }}>
-              <div style={{ height: 241, borderLeft: "1px solid #e5e7eb", overflow: "hidden" }}>
+            {/* Right Image style={{ width: 400, padding: "8px 0" height: 241, overflow: "hidden"}}*/}
+            <div className="md:w-[400px] w-full mt-4 md:mt-0">
+              <div className="h-[200px] md:h-[241px] border-l md:border-l border-gray-300 overflow-hidden" style={{  borderLeft: "1px solid #e5e7eb" }}>
                 {details.image_file ? (
                   <img src={details.image_file} alt="project" className="w-full h-full object-cover" />
                 ) : (
@@ -581,6 +707,7 @@ const loadMenuProjects = async () => {
                 )}
               </div>
             </div>
+            
           </div>
 
 
@@ -651,16 +778,17 @@ const loadMenuProjects = async () => {
                     {saving === "associates" ? "Saving..." : "Save Associates"}
                   </button>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_60px] gap-3 mb-3 p-3 bg-gray-100  font-semibold">
-                  <div>Associate Name</div>
-                  <div>City</div>
-                  <div className="text-center">Selected</div>
-                  <div></div>
+ {/* 🔥 FIXED FOR MOBILE & DESKTOP - Added horizontal scroll container */}
+  <div className="overflow-x-auto">
+                <div className="grid grid-cols-[2fr_1fr_70px_70px] gap-2 mb-3 p-2 bg-gray-100  font-semibold min-w-[600px]">
+                  <div className="text-left pl-2">Associate Name</div>
+                  <div className="text-left">City</div>
+                  <div className="text-center px-0">Selected</div>
+                  <div className="w-10"></div>
                 </div>
 
                 {associates.map((associate, index) => (
-                  <div key={index} className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_60px] gap-3 mb-3 p-3 bg-gray-50 rounded items-center">
+                  <div key={index} className="grid grid-cols-[2fr_1fr_70px_70px] gap-2 mb-3 p-2 bg-gray-50 rounded items-center min-w-[600px]">
                      <input
                     type="text"
                     placeholder="Name"
@@ -681,18 +809,18 @@ const loadMenuProjects = async () => {
                     className="px-3 py-2 border border-gray-300 rounded-md"
                   />
 
-                  <div className="flex justify-center items-center h-full">
+                  <div className="flex justify-center items-center px-0">
                     <input
                       type="checkbox"
                       checked={associate.selected}
                       onChange={(e) =>
                         handleAssociateChange(index, "selected", e.target.checked)
                       }
-                      className="w-3.5 h-3.5 accent-green-600"
+                      className="w-3.5 h-3.5 accent-green-600 "
                     />
                   </div>
 
-                    <div className="flex justify-end">
+                    <div className="flex justify-end w-10">
                       {associates.length > 1 && (
                         <button onClick={() => setAssociates(associates.filter((_, i) => i !== index))} className="text-red-600 p-1">
                           {/* trash icon */}
@@ -705,7 +833,7 @@ const loadMenuProjects = async () => {
                     </div>
                   </div>
                 ))}
-
+</div>
                 <div className="text-center">
                   <button onClick={() => setAssociates([...associates, { name: "", city: "", selected: false }])} className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 
              focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add Associate</button>
@@ -713,152 +841,227 @@ const loadMenuProjects = async () => {
               
             </section>
 
-            {/* VENUE Section px-10 pt-6 pb-6 */}
-            <section id="venue" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
-               {/*<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"></div>*/}
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-[28px] font-extrabold">VENUE</h2>
-                  <button onClick={async () => {
-                    setSaving("venues");
-                    try {
-                      await projectSectionsAPI.updateVenues(id, venues);
-                      showMessage("Venues saved successfully!");
-                    } catch (e) {
-                      console.error(e);
-                      alert("Failed to save venues");
-                    } finally {
-                      setSaving("");
-                    }
-                  }} disabled={saving === "venues"} className={`px-4 py-2 rounded text-white ${saving === "venues" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>
-                    {saving === "venues" ? "Saving..." : "Save Venues"}
-                  </button>
-                </div>
+           
 
-                <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr_2fr_1fr_1fr_1fr_1fr_auto] gap-3 items-center mb-3 p-3 bg-gray-100 rounded font-semibold">
-                  <div>Venue Name</div>
-                  <div>Currency</div>
-                  <div className="text-right">Rate</div>
-                  <div className="text-right">Budget</div>
-                  <div className="text-center">Venue Rental</div>
-                  <div className="text-center">AV</div>
-                  <div className="text-center">Food</div>
-                  <div className="text-center">Bar</div>   
-                  <div className="text-center">Selected</div>
-                  <div></div>
-                </div>
+  <section id="venue" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
 
-                {venues.map((v, i) => (
-                  <div key={i} className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr_2fr_1fr_1fr_1fr_1fr_auto] gap-3 items-center mb-3 p-3 bg-gray-50 rounded">
-                    <input type="text" value={v.name} onChange={(e) => {
-                      const arr = [...venues]; arr[i].name = e.target.value; setVenues(arr);
-                    }} className="px-3 py-2 border rounded" placeholder="Venue Name" />
+  <div className="flex justify-between items-center mb-4">
+    <h2 className="text-[28px] font-extrabold">VENUE</h2>
+    <button
+      onClick={async () => {
+        setSaving("venues");
+        try {
+          await projectSectionsAPI.updateVenues(id, venues);
+          showMessage("Venues saved successfully!");
+        } catch (e) {
+          console.error(e);
+          alert("Failed to save venues");
+        } finally {
+          setSaving("");
+        }
+      }}
+      disabled={saving === "venues"}
+      className={`px-4 py-2 rounded text-white ${
+        saving === "venues" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
+      }`}
+    >
+      {saving === "venues" ? "Saving..." : "Save Venues"}
+    </button>
+  </div>
 
-                    <select value={v.currency} onChange={(e) => {
-                      const arr = [...venues]; arr[i].currency = e.target.value; setVenues(arr);
-                    }} className="px-3 py-2 border rounded bg-white">
-                      <option value="INR">INR (₹)</option>
-                      <option value="USD">USD ($)</option>
-                      <option value="EUR">EUR (€)</option>
-                      <option value="GBP">GBP (£)</option>
-                    </select>
+  {/* 🔥 FIX FOR MOBILE — horizontal scroll */}
+  <div className="overflow-x-auto">
+    
 
-                    <input type="text" value={v.rateInput} onChange={(e) => {
-                      const arr = [...venues]; arr[i].rateInput = e.target.value; setVenues(arr);
-                    }} onBlur={(e) => {
-                      const raw = parseNumberInput(e.target.value, v.currency);
-                      const fmt = formatNumberOutput(raw, v.currency);
-                      const arr = [...venues]; arr[i].rate = raw; arr[i].rateInput = fmt; setVenues(arr);
-                    }} className="px-3 py-2 border rounded text-right" placeholder="Rate" />
+      {/* HEADER ROW [minmax(200px,2fr)_minmax(100px,1fr)_minmax(100px,1fr)_minmax(100px,1fr)_minmax(100px,1fr)_minmax(100px,1fr)_minmax(100px,1fr)_minmax(100px,1fr)_minmax(100px,1fr))_auto] */}
+      <div className="grid grid-cols-10
+        gap-0 items-center mb-3 p-2 bg-gray-100 rounded font-semibold min-w-[1000px]">
 
-                    <input type="text" value={v.budgetInput} onChange={(e) => {
-                      const arr = [...venues]; arr[i].budgetInput = e.target.value; setVenues(arr);
-                    }} onBlur={(e) => {
-                      const raw = parseNumberInput(e.target.value, v.currency);
-                      const fmt = formatNumberOutput(raw, v.currency);
-                      const arr = [...venues]; arr[i].budget = raw; arr[i].budgetInput = fmt; setVenues(arr);
-                    }} className="px-3 py-2 border rounded text-right" placeholder="Budget" />
+        <div className="p-2 text-left">Venue Name</div>
+        <div className="p-2 text-left">Currency</div>
+        <div className="p-2 text-right">Rate</div>
+        <div className="p-2 text-right">Budget</div>
+        <div className="p-2 text-center">Venue Rental</div>
+        <div className="p-2 text-center">AV</div>
+        <div className="p-2 text-center">Food</div>
+        <div className="p-2 text-center">Bar</div>
+        <div className="p-2 text-center">Selected</div>
+        <div className="p-2 w-10">&nbsp; </div>
 
-                   {/* RENTAL */}
-      <div className="flex justify-center items-center h-full">
-        <input
-          type="checkbox"
-          checked={venues.venue_rental}
-          onChange={(e) =>
-            handleVenueChange(i, "venue_rental", e.target.checked)
-          }
-          className="w-3.5 h-3.5 accent-green-600"
-        />
       </div>
 
-                    {/* AV */}
-      <div className="flex justify-center items-center h-full">
-        <input
-          type="checkbox"
-          checked={venues.av}
-          onChange={(e) =>
-            handleVenueChange(i, "av", e.target.checked)
-          }
-          className="w-3.5 h-3.5 accent-green-600"
-        />
-      </div>
+      {/* VENUE ROWS [minmax(200px,2fr)_minmax(100px,1fr)_minmax(100px,1fr)_minmax(100px,1fr)_minmax(100px,1fr)_minmax(100px,1fr)_minmax(100px,1fr)_minmax(100px,1fr)_minmax(100px,1fr))_auto]*/}
+      {venues.map((v, i) => (
+        <div
+          key={i}
+          className="grid grid-cols-10
+          gap-0 items-center mb-3 p-2 bg-gray-50 rounded min-w-[1000px]"
+        >
 
-      {/* FOOD */}
-      <div className="flex justify-center items-center h-full">
-        <input
-          type="checkbox"
-          checked={venues.food}
-          onChange={(e) =>
-            handleVenueChange(i, "food", e.target.checked)
-          }
-          className="w-3.5 h-3.5 accent-green-600"
-        />
-      </div>
+          <input
+            type="text"
+            value={v.name}
+            onChange={(e) => {
+              const arr = [...venues];
+              arr[i].name = e.target.value;
+              setVenues(arr);
+            }}
+            className="px-3 py-2 border rounded"
+            placeholder="Venue Name"
+          />
 
-      {/* BAR */}
-      <div className="flex justify-center items-center h-full">
-        <input
-          type="checkbox"
-          checked={venues.bar}
-          onChange={(e) =>
-            handleVenueChange(i, "bar", e.target.checked)
-          }
-          className="w-3.5 h-3.5 accent-green-600"
-        />
-      </div>
-
-                   {/* SELECTED */}
-      <div className="flex justify-center items-center h-full">
-        <input
-          type="checkbox"
-          checked={venues.selected}
-          onChange={(e) =>
-            handleVenueChange(i, "selected", e.target.checked)
-          }
-          className="w-3.5 h-3.5"
-        />
-      </div>
-
-                    <div className="flex justify-end">
-                      {venues.length > 1 && <button onClick={() => setVenues(venues.filter((_, j) => j !== i))} className="text-red-600">
-                         <svg
-            className="w-5 h-5"
-            fill="currentColor"
-            viewBox="0 0 24 24"
+          <select
+            value={v.currency}
+            onChange={(e) => {
+              const arr = [...venues];
+              arr[i].currency = e.target.value;
+              setVenues(arr);
+            }}
+            className="px-3 py-2 border rounded bg-white"
           >
-            <path d="M9 3V4H4V6H5V19C5 20.1 5.9 21 7 21H17C18.1 21 19 20.1 19 19V6H20V4H15V3H9ZM7 6H17V19H7V6Z" />
-            <path d="M9 8H11V17H9V8ZM13 8H15V17H13V8Z" />
-          </svg>
-                        </button>}
-                    </div>
-                  </div>
-                ))}
+            <option value="INR">INR (₹)</option>
+            <option value="USD">USD ($)</option>
+            <option value="EUR">EUR (€)</option>
+            <option value="GBP">GBP (£)</option>
+          </select>
 
-                <div className="text-center">
-                  <button onClick={() => setVenues([...venues, { name: "", currency: "INR", rate: "", rateInput: "", budget: "", budgetInput: "", selected: false, venue_rental: false, av: false, food: false, bar: false }])} className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 
-             focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add Venue</button>
-                </div>
-              
-            </section>
+          <input
+            type="text"
+            value={v.rateInput}
+            onChange={(e) => {
+              const arr = [...venues];
+              arr[i].rateInput = e.target.value;
+              setVenues(arr);
+            }}
+            onBlur={(e) => {
+              const raw = parseNumberInput(e.target.value, v.currency);
+              const fmt = formatNumberOutput(raw, v.currency);
+              const arr = [...venues];
+              arr[i].rate = raw;
+              arr[i].rateInput = fmt;
+              setVenues(arr);
+            }}
+            className="px-3 py-2 border rounded text-right"
+            placeholder="Rate"
+          />
+
+          <input
+            type="text"
+            value={v.budgetInput}
+            onChange={(e) => {
+              const arr = [...venues];
+              arr[i].budgetInput = e.target.value;
+              setVenues(arr);
+            }}
+            onBlur={(e) => {
+              const raw = parseNumberInput(e.target.value, v.currency);
+              const fmt = formatNumberOutput(raw, v.currency);
+              const arr = [...venues];
+              arr[i].budget = raw;
+              arr[i].budgetInput = fmt;
+              setVenues(arr);
+            }}
+            className="px-3 py-2 border rounded text-right"
+            placeholder="Budget"
+          />
+
+          {/* RENTAL */}
+          <div className="flex justify-center items-center">
+            <input
+              type="checkbox"
+              checked={v.venue_rental}
+              onChange={(e) => handleVenueChange(i, "venue_rental", e.target.checked)}
+              className="w-3.5 h-3.5 accent-green-600"
+            />
+          </div>
+
+          {/* AV */}
+          <div className="flex justify-center items-center">
+            <input
+              type="checkbox"
+              checked={v.av}
+              onChange={(e) => handleVenueChange(i, "av", e.target.checked)}
+              className="w-3.5 h-3.5 accent-green-600"
+            />
+          </div>
+
+          {/* FOOD */}
+          <div className="flex justify-center items-center">
+            <input
+              type="checkbox"
+              checked={v.food}
+              onChange={(e) => handleVenueChange(i, "food", e.target.checked)}
+              className="w-3.5 h-3.5 accent-green-600"
+            />
+          </div>
+
+          {/* BAR */}
+          <div className="flex justify-center items-center">
+            <input
+              type="checkbox"
+              checked={v.bar}
+              onChange={(e) => handleVenueChange(i, "bar", e.target.checked)}
+              className="w-3.5 h-3.5 accent-green-600"
+            />
+          </div>
+
+          {/* SELECTED */}
+          <div className="flex justify-center items-center">
+            <input
+              type="checkbox"
+              checked={v.selected}
+              onChange={(e) => handleVenueChange(i, "selected", e.target.checked)}
+              className="w-3.5 h-3.5"
+            />
+          </div>
+
+          <div className="flex justify-end bg-gray-50 w-10">
+            {venues.length > 1 && (
+              <button
+                onClick={() =>
+                  setVenues(venues.filter((_, j) => j !== i))
+                }
+                className="text-red-600"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M9 3V4H4V6H5V19C5 20.1 5.9 21 7 21H17C18.1 21 19 20.1 19 19V6H20V4H15V3H9ZM7 6H17V19H7V6Z" />
+                  <path d="M9 8H11V17H9V8ZM13 8H15V17H13V8Z" />
+                </svg>
+              </button>
+            )}
+          </div>
+        </div>
+      ))}
+    
+  </div>
+
+  <div className="text-center">
+    <button
+      onClick={() =>
+        setVenues([
+          ...venues,
+          {
+            name: "",
+            currency: "INR",
+            rate: "",
+            rateInput: "",
+            budget: "",
+            budgetInput: "",
+            selected: false,
+            venue_rental: false,
+            av: false,
+            food: false,
+            bar: false,
+          },
+        ])
+      }
+      className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 "
+    >
+      Add Venue
+    </button>
+  </div>
+</section>
+
 
             {/* DATABASE / TRADE section */}
             <section id="database" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">{/*px-10 pt-6 pb-6*/}
@@ -877,8 +1080,9 @@ const loadMenuProjects = async () => {
                     {saving === "trade" ? "Saving..." : "Save Database"}
                   </button>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-[2fr_repeat(5,1fr)_auto] gap-3 items-center mb-3 p-3 bg-gray-100 rounded font-semibold">
+                <div className="w-full overflow-x-auto">
+                  <div className="min-w-[900px]">
+                <div className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(5,1fr)_auto] gap-3 items-center mb-3 p-3 bg-gray-100 rounded font-semibold]">
                   <div>Category</div>
                   <div className="text-center">Tour Operator</div>
                   <div className="text-center">Travel Agent</div>
@@ -886,12 +1090,12 @@ const loadMenuProjects = async () => {
                   <div className="text-center">Media / Influencer</div>
                   <div className="text-center">Total</div>
                   <div></div>
-                </div>
+                 </div>
 
                 {tradeDatabase.map((trade, index) => {
                   const categoryTotal = (Number(trade.travel_operator) || 0) + (Number(trade.travel_agent) || 0) + (Number(trade.travel_counsellor) || 0) + (Number(trade.media_influencers) || 0);
                   return (
-                    <div key={index} className="grid grid-cols-1 md:grid-cols-[2fr_repeat(5,1fr)_auto] gap-3 items-center mb-3 p-3 bg-gray-50 rounded">
+                    <div key={index} className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(5,1fr)_auto] gap-3 items-center mb-3 p-3 bg-gray-50 rounded">
                          <input
           type="text"
           placeholder="Category Name"
@@ -955,7 +1159,7 @@ const loadMenuProjects = async () => {
                   );
                 })}
 
-                <div className="grid grid-cols-1 md:grid-cols-[2fr_repeat(5,1fr)_auto] gap-3 items-center mt-5 p-3 bg-gray-100 rounded font-semibold">
+                <div className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(5,1fr)_auto] gap-3 items-center mt-5 p-3 bg-gray-100 rounded font-semibold">
                   <div>Total →</div>
                   <div className="text-right">{tradeDatabase.reduce((s, t) => s + (Number(t.travel_operator) || 0), 0)}</div>
                   <div className="text-right">{tradeDatabase.reduce((s, t) => s + (Number(t.travel_agent) || 0), 0)}</div>
@@ -964,6 +1168,8 @@ const loadMenuProjects = async () => {
                   <div className="text-center">{tradeDatabase.reduce((s, t) => s + (Number(t.travel_operator) || 0) + (Number(t.travel_agent) || 0) + (Number(t.travel_counsellor) || 0) + (Number(t.media_influencers) || 0), 0)}</div>
                   <div></div>
                 </div>
+                 </div>
+                 </div>
                  {/* Add Button */}
   <button
     type="button"
@@ -1031,16 +1237,16 @@ const loadMenuProjects = async () => {
       </div>
     )}
   </div>
+<div className="w-full overflow-x-auto">
 
-
-                     <div className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(5,1fr)] gap-4 items-end mb-4 bg-gray-100 p-2 rounded font-semibold text-sm">
-      <div>Date</div>
-      <div className="text-right">Tour Operator (Nos)</div>
-      <div className="text-right">Travel Agent (Nos)</div>
-      <div className="text-right">Travel Counsellors (Nos)</div>
-      <div className="text-right">Media / Influence (Nos)</div>
-      <div className="text-center">Total</div>
-    </div>
+                     <div className="min-w-[800px] grid grid-cols-1 md:grid-cols-[1.5fr_repeat(5,1fr)] gap-4 items-end mb-4 bg-gray-100 p-2 rounded font-semibold text-sm">
+                    <div>Date</div>
+                    <div className="text-right">Tour Operator (Nos)</div>
+                    <div className="text-right">Travel Agent (Nos)</div>
+                    <div className="text-right">Travel Counsellors (Nos)</div>
+                    <div className="text-right">Media / Influence (Nos)</div>
+                    <div className="text-center">Total</div>
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(5,1fr)] gap-3 items-end mb-4">
                     <input type="date" value={saveDate.save_the_date || ""} onChange={(e) => setSaveDate({ ...saveDate, save_the_date: e.target.value })} className="form-input" />
                     <input type="number" className="form-input text-right" value={saveDate.save_the_date_to_nos || ""} onChange={(e) => setSaveDate({ ...saveDate, save_the_date_to_nos: e.target.value })} placeholder="Tour Operator" />
@@ -1052,7 +1258,7 @@ const loadMenuProjects = async () => {
                     </div>
                   </div>
                 </div>
-
+</div>
                 {/* Main Invites */}
                 <div className="bg-white rounded-lg p-4 border border-purple-100 shadow-sm">
                   <div className="flex justify-between items-center mb-3 overflow-hidden w-full">
@@ -1094,8 +1300,10 @@ const loadMenuProjects = async () => {
       </div>
     )}
   </div>
+  </div>
 {/*320px_200px_200px_200px_200px_170px_minmax(100px,1fr)*/}
-                  <div className="grid grid-cols-1 md:grid-cols-[320px_200px_200px_200px_200px_170px_minmax(90px,1fr)] gap-2 items-center bg-gray-100 p-2 rounded font-semibold">
+                  <div className="w-full overflow-x-auto">
+                  <div className="min-w-[1000px] grid grid-cols-[repeat(6,minmax(120px,1fr))_auto] gap-2 items-center bg-gray-100 p-2 rounded font-semibold">
                     <div>Date</div>
                     <div>Tour Operator (Nos)</div>
                     <div>Travel Agent (Nos)</div>
@@ -1108,38 +1316,43 @@ const loadMenuProjects = async () => {
                   {mainInvites.map((inv, idx) => {
                     const rowTotal = (Number(inv.main_invite_to_nos) || 0) + (Number(inv.main_invite_ta_nos) || 0) + (Number(inv.main_invite_travel_counsellors_nos) || 0) + (Number(inv.main_invite_influencers_nos) || 0);
                     return (
-                      <div key={idx} className="bg-gray-50 p-3 rounded-md mb-3">
+                      <div key={idx} className="rounded-md mb-3">
                         <h3 className="font-semibold text-left mb-2">RSVP #{idx + 2} – Main Invite</h3>
                         {/*320px_200px_200px_200px_200px_170px_minmax(100px,1fr*/}
-                        <div className="grid grid-cols-1 md:grid-cols-[320px_200px_200px_200px_200px_170px_minmax(90px,1fr)] gap-2 items-center">
-                          <input type="date" className="form-input" value={inv.main_invite_date || ""} onChange={(e) => {
-                            const arr = [...mainInvites]; arr[idx].main_invite_date = e.target.value; setMainInvites(arr);
-                          }} />
-                          <input type="number" className="form-input text-right" value={inv.main_invite_to_nos || ""} onChange={(e) => {
-                            const arr = [...mainInvites]; arr[idx].main_invite_to_nos = e.target.value; setMainInvites(arr);
-                          }} />
-                          <input type="number" className="form-input text-right" value={inv.main_invite_ta_nos || ""} onChange={(e) => {
-                            const arr = [...mainInvites]; arr[idx].main_invite_ta_nos = e.target.value; setMainInvites(arr);
-                          }} />
-                          <input type="number" className="form-input text-right" value={inv.main_invite_travel_counsellors_nos || ""} onChange={(e) => {
-                            const arr = [...mainInvites]; arr[idx].main_invite_travel_counsellors_nos = e.target.value; setMainInvites(arr);
-                          }} />
-                          <input type="number" className="form-input text-right" value={inv.main_invite_influencers_nos || ""} onChange={(e) => {
-                            const arr = [...mainInvites]; arr[idx].main_invite_influencers_nos = e.target.value; setMainInvites(arr);
-                          }} />
-                          <div className="text-center font-semibold bg-gray-100 rounded-md py-2">{rowTotal}</div>
-                          <div className="flex justify-end"><button onClick={() => setMainInvites(mainInvites.filter((_, x) => x !== idx))} className="text-red-600">
-                             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M9 3V4H4V6H5V19C5 20.1 5.9 21 7 21H17C18.1 21 19 20.1 19 19V6H20V4H15V3H9ZM7 6H17V19H7V6Z" />
-              <path d="M9 8H11V17H9V8ZM13 8H15V17H13V8Z" />
-            </svg>
-                            </button></div>
+                         <div className="overflow-x-auto bg-gray-50 p-3 rounded-md">
+                          <div className="min-w-[1000px] grid grid-cols-[repeat(6,minmax(120px,1fr))_auto] gap-2 items-center px-3 py-4">
+                            <input type="date" className="form-input" value={inv.main_invite_date || ""} onChange={(e) => {
+                              const arr = [...mainInvites]; arr[idx].main_invite_date = e.target.value; setMainInvites(arr);
+                            }} />
+                            <input type="number" className="form-input text-right" value={inv.main_invite_to_nos || ""} onChange={(e) => {
+                              const arr = [...mainInvites]; arr[idx].main_invite_to_nos = e.target.value; setMainInvites(arr);
+                            }} />
+                            <input type="number" className="form-input text-right" value={inv.main_invite_ta_nos || ""} onChange={(e) => {
+                              const arr = [...mainInvites]; arr[idx].main_invite_ta_nos = e.target.value; setMainInvites(arr);
+                            }} />
+                            <input type="number" className="form-input text-right" value={inv.main_invite_travel_counsellors_nos || ""} onChange={(e) => {
+                              const arr = [...mainInvites]; arr[idx].main_invite_travel_counsellors_nos = e.target.value; setMainInvites(arr);
+                            }} />
+                            <input type="number" className="form-input text-right" value={inv.main_invite_influencers_nos || ""} onChange={(e) => {
+                              const arr = [...mainInvites]; arr[idx].main_invite_influencers_nos = e.target.value; setMainInvites(arr);
+                            }} />
+                            <div className="text-center font-semibold bg-gray-100 rounded-md py-2">{rowTotal}</div>
+                            
+                            
+                            <div className="flex justify-end items-center h-full"><button onClick={() => setMainInvites(mainInvites.filter((_, x) => x !== idx))} className="text-red-600">
+                              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9 3V4H4V6H5V19C5 20.1 5.9 21 7 21H17C18.1 21 19 20.1 19 19V6H20V4H15V3H9ZM7 6H17V19H7V6Z" />
+                                <path d="M9 8H11V17H9V8ZM13 8H15V17H13V8Z" />
+                              </svg>
+                              </button>
+                              </div>
+                          </div>
                         </div>
                       </div>
                     );
                   })}
 
-                  <div className="grid grid-cols-1 md:grid-cols-[320px_200px_200px_200px_200px_170px] gap-2 items-center mt-4 p-3 bg-gray-100 rounded font-semibold">
+                  <div className="min-w-[1000px] grid grid-cols-[repeat(6,minmax(120px,1fr))_auto] gap-2 items-center mt-4 p-3 bg-gray-100 rounded font-semibold">
                     <div>Total →</div>
                     <div>{mainInvites.reduce((s, t) => s + (Number(t.main_invite_to_nos) || 0), 0)}</div>
                     <div>{mainInvites.reduce((s, t) => s + (Number(t.main_invite_ta_nos) || 0), 0)}</div>
@@ -1147,14 +1360,17 @@ const loadMenuProjects = async () => {
                     <div>{mainInvites.reduce((s, t) => s + (Number(t.main_invite_influencers_nos) || 0), 0)}</div>
                     <div className="text-center">{mainInvites.reduce((s, t) => s + (Number(t.main_invite_to_nos) || 0) + (Number(t.main_invite_ta_nos) || 0) + (Number(t.main_invite_travel_counsellors_nos) || 0) + (Number(t.main_invite_influencers_nos) || 0), 0)}</div>
                   </div>
+                  </div>
 
                   <div className="text-center mt-3">
                     <button onClick={() => setMainInvites([...mainInvites, { main_invite_date: "", main_invite_to_nos: 0, main_invite_ta_nos: 0, main_invite_travel_counsellors_nos: 0, main_invite_influencers_nos: 0 }])} className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 
-             focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add Main Invite</button>
+                   focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add Main Invite</button>
                   </div>
-                </div>
+                
              
             </section>
+
+
             {/* AV Section px-10 pt-6 pb-6*/}
             <section id="av" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
              {/*  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"> </div>*/}
@@ -1338,8 +1554,8 @@ const loadMenuProjects = async () => {
                     } catch (e) { console.error(e); alert("Failed"); } finally { setSaving(""); }
                   }} disabled={saving === "hotels"} className={`px-4 py-2 rounded text-white ${saving === "hotels" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>{saving === "hotels" ? "Saving..." : "Save Av Supplier"}</button>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-[2fr_1.5fr_1fr_1fr_1fr_auto] gap-3 items-center mb-3 p-3 bg-gray-100 rounded font-semibold">
+<div className="w-full overflow-x-auto">
+                <div className="grid grid-cols-1 md:grid-cols-[2fr_1.5fr_1fr_1fr_1fr_auto] gap-3 items-center mb-3 p-3 bg-gray-100 rounded font-semibold min-w-[800px]">
                   <div>Supplier</div>
                   <div>Item</div>
                   <div>Currency</div>
@@ -1349,7 +1565,7 @@ const loadMenuProjects = async () => {
                 </div>
 
                 {hotels.map((h, i) => (
-                  <div key={i} className="grid grid-cols-1 md:grid-cols-[2fr_1.5fr_1fr_1fr_1fr_auto] gap-3 items-center mb-3 p-3 bg-gray-50 rounded">
+                  <div key={i} className="grid grid-cols-1 md:grid-cols-[2fr_1.5fr_1fr_1fr_1fr_auto] gap-3 items-center mb-3 p-3 bg-gray-50 rounded min-w-[800px]">
                     <input value={h.sponsor || ""} onChange={(e) => { const arr = [...hotels]; arr[i].sponsor = e.target.value; setHotels(arr); }} className="px-3 py-2 border rounded" placeholder="Supplier Name" />
                     <input value={h.item || ""} onChange={(e) => { const arr = [...hotels]; arr[i].item = e.target.value; setHotels(arr); }} className="px-3 py-2 border rounded" placeholder="Item" />
                     <select value={h.currency || "INR"} onChange={(e) => {
@@ -1368,15 +1584,13 @@ const loadMenuProjects = async () => {
             </svg></button>}</div>
                   </div>
                 ))}
-
+</div>
                 <div className="text-center">
                   <button onClick={() => setHotels([...hotels, { sponsor: "", item: "", currency: "INR", amount: "" }])} className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 
              focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add AV Supplier</button>
                 </div>
              
-            </section>
-
-           
+            </section>          
 
                         {/* ========================= */}
             {/* EMBASSY / CONSULATE       */}
@@ -1487,13 +1701,13 @@ const loadMenuProjects = async () => {
                     try { await projectSectionsAPI.updateClients(id, clients); showMessage("Clients saved"); } catch (e) { console.error(e); alert("Failed"); } finally { setSaving(""); }
                   }} className={`px-4 py-2 rounded text-white ${saving === "clients" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>Save Clients</button>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr_auto] gap-3 items-center mb-3 p-3 bg-gray-100 rounded font-semibold">
-                  <div>Name</div><div>Designation</div><div>Contact</div><div>Hotel</div><div></div>
+<div className="w-full overflow-x-auto">
+                <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr_auto] gap-3 items-center mb-3 p-3 bg-gray-100 rounded font-semibold min-w-[800px]">
+                  <div className="text-center">Name</div><div  className="text-left">Designation</div><div  className="text-center">Contact</div><div  className="text-center">Hotel</div><div></div>
                 </div>
 
                 {Array.isArray(clients) && clients.map((c, i) => (
-                  <div key={i} className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr_auto] gap-3 items-center mb-3 p-3 bg-gray-50 rounded">
+                  <div key={i} className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr_auto] gap-3 items-center mb-3 p-3 bg-gray-50 rounded min-w-[800px]">
                     <input className="px-2 py-2 border rounded" value={c.name || ""} onChange={(e) => { const arr = [...clients]; arr[i].name = e.target.value; setClients(arr); }} />
                     <input className="px-2 py-2 border rounded" value={c.designation || ""} onChange={(e) => { const arr = [...clients]; arr[i].designation = e.target.value; setClients(arr); }} />
                     <input className="px-2 py-2 border rounded" value={c.contact || ""} onChange={(e) => { const arr = [...clients]; arr[i].contact = e.target.value; setClients(arr); }} />
@@ -1504,7 +1718,7 @@ const loadMenuProjects = async () => {
             </svg></button>}</div>
                   </div>
                 ))}
-
+</div>
                 <div className="text-center">
                   <button onClick={() => setClients([...clients, { name: "", designation: "", contact: "", hotel: "" }])} className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 
              focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add Client</button>
@@ -1550,6 +1764,112 @@ const loadMenuProjects = async () => {
             {/* CHECKLIST  section-container mt-8
            */}
 
+           {/* --------------------------------------------------- */}
+{/*   CONTINGENT (3 Fixed Consignments)                 */}
+{/* --------------------------------------------------- */}
+
+<div id="consignment" className="section-container mt-10">
+
+  {/* Header */}
+  <div className="flex justify-between items-center mb-5">
+    <h2 className="text-xl font-semibold text-slate-800">Consignment (Consignment Tracking)</h2>
+
+    <button
+      onClick={saveConsignment}
+      disabled={saving === 'consignment'}
+      className={`action-button ${saving === 'consignment' ? 'opacity-50 cursor-not-allowed' : ''}`}
+    >
+      {saving === 'consignment' ? 'Saving...' : 'Save Consignment'}
+    </button>
+  </div>
+
+  {/* 3 Consignment Boxes */}
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+    {/* CONSIGNMENT 1 */}
+    <div className="border border-gray-300 rounded-lg p-4 bg-gray-50 shadow-sm">
+      <h3 className="font-semibold mb-3 text-slate-700">Consignment 1</h3>
+
+      {/* Dropdown */}
+      <select
+        value={consignment.c1_status}
+        onChange={(e) => setConsignment({ ...consignment, c1_status: e.target.value })}
+        className="w-full mb-4 p-2 border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="">Select Status</option>
+        <option>Kitting list</option>
+        <option>In transit (India)</option>
+        <option>In transit (abroad)</option>
+        <option>Customs cleared</option>
+        <option>Out for delivery</option>
+        <option>Delivered</option>
+      </select>
+
+      {/* Date */}
+      <input
+        type="date"
+        value={consignment.c1_date}
+        onChange={(e) => setConsignment({ ...consignment, c1_date: e.target.value })}
+        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+
+    {/* CONSIGNMENT 2 */}
+    <div className="border border-gray-300 rounded-lg p-4 bg-gray-50 shadow-sm">
+      <h3 className="font-semibold mb-3 text-slate-700">Consignment 2</h3>
+
+      <select
+        value={consignment.c2_status}
+        onChange={(e) => setConsignment({ ...consignment, c2_status: e.target.value })}
+        className="w-full mb-4 p-2 border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="">Select Status</option>
+        <option>Kitting list</option>
+        <option>In transit (India)</option>
+        <option>In transit (abroad)</option>
+        <option>Customs cleared</option>
+        <option>Out for delivery</option>
+        <option>Delivered</option>
+      </select>
+
+      <input
+        type="date"
+        value={consignment.c2_date}
+        onChange={(e) => setConsignment({ ...consignment, c2_date: e.target.value })}
+        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+
+    {/* CONSIGNMENT 3 */}
+    <div className="border border-gray-300 rounded-lg p-4 bg-gray-50 shadow-sm">
+      <h3 className="font-semibold mb-3 text-slate-700">Consignment 3</h3>
+
+      <select
+        value={consignment.c3_status}
+        onChange={(e) => setConsignment({ ...consignment, c3_status: e.target.value })}
+        className="w-full mb-4 p-2 border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="">Select Status</option>
+        <option>Kitting list</option>
+        <option>In transit (India)</option>
+        <option>In transit (abroad)</option>
+        <option>Customs cleared</option>
+        <option>Out for delivery</option>
+        <option>Delivered</option>
+      </select>
+
+      <input
+        type="date"
+        value={consignment.c3_date}
+        onChange={(e) => setConsignment({ ...consignment, c3_date: e.target.value })}
+        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+
+  </div>
+</div>
+
+
             <section id="checklist" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
 
               <div className="flex justify-between items-center mb-4 ">
@@ -1565,8 +1885,8 @@ const loadMenuProjects = async () => {
                   {saving === "checklists" ? "Saving…" : "Save Checklists"}
                 </button>
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div className="w-full overflow-x-auto">
+              <div className="grid gap-4 ">
                 {checklists.map((item, index) => (
                             <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded">
                               <input type="text" placeholder="Checklist Item Name" value={item.name} onChange={(e) => handleChecklistChange(index, 'name', e.target.value)} className="flex-grow p-2 border border-gray-300 rounded-md mr-3" />
@@ -1579,7 +1899,7 @@ const loadMenuProjects = async () => {
                           ))}
               
               </div>
-
+</div>
               <button
                 onClick={handleAddChecklist}
                 className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 
@@ -1638,32 +1958,45 @@ const loadMenuProjects = async () => {
             </div>
 
             {/* ==== FLOATING BOTTOM STRIP ====style={{ marginLeft: "300px", marginRight:"5px" }} */}
-            <div className="fixed bottom-0  z-[9999] bg-[#F7E79E] border-t border-yellow-600 shadow-md left-[315px] 
-                right-[22px]"  >
-              <div className="flex items-center justify-start gap-10 px-5 py-2 text-sm font-semibold">
-                  <span className="w-[10%] "></span>   
+            <div className="fixed bottom-0  z-[9999] bg-[#F7E79E] border-t border-yellow-600 shadow-md w-full px-4"  >
+              <div className="max-w-screen-2xl mx-auto  flex flex-wrap  items-center justify-start gap-x-8 gap-y-1 px-4 py-2 text-sm font-semibold">
+                 
+               <div className="flex gap-1 items-center">
+                <span className="text-white">Countdown</span>
+                <span className="text-red-600">{workingDaysLeft}</span>
+                </div>
+                 <div className="flex gap-1 items-center">
+                <span className="text-red-600">Working days</span>
+                </div>
+                
+                <div className="flex gap-1 items-center">
+                <span className="text-white">Confirmations</span>
+                </div>
+                
+                <div className="flex gap-1 items-center">
+                <span className="text-black">T.O</span>
+                <span className="text-red-600">{totals.to}</span>
+                </div>
 
-                <span className="text-white w-[5%] text-right">Countdown</span>
-                <span className="text-red-600 w-[5%] text-left">{workingDaysLeft}</span>
-                <span className="text-red-600 w-[10%] text-left">Working days</span>
-                   <span className="w-[5%] "></span>   
-                <span className="text-white w-[5%] text-right">Confirmations</span>
+                 <div className="flex gap-1 items-center">
+                <span className="text-black">T.A</span>
+                <span className="text-red-600">{totals.ta}</span>
+                </div>
 
-                <span className="text-black w-[5%] text-right">T.O</span>
-                <span className="text-red-600 w-[5%] text-left">{totals.to}</span>
+                 <div className="flex gap-1 items-center">
+                <span className="text-black">T.C</span>
+                <span className="text-red-600">{totals.tc}</span>
+                </div>
 
-                <span className="text-black w-[5%] text-right">T.A</span>
-                <span className="text-red-600 w-[5%] text-left">{totals.ta}</span>
-
-                <span className="text-black w-[5%] text-right">T.C</span>
-                <span className="text-red-600 w-[5%] text-left">{totals.tc}</span>
-
-                <span className="text-black w-[5%] text-right">Med/Influ</span>
-                <span className="text-red-600 w-[5%] text-left">{totals.media}</span>
-
-                <span className="text-black font-bold w-[5%] text-right">Total</span>
-                <span className="text-red-600 font-bold w-[5%] text-left">{totals.grandTotal}</span>
-                <span className="w-[10%] "></span>
+                 <div className="flex gap-1 items-center">
+                <span className="text-black">Med/Influ</span>
+                <span className="text-red-600">{totals.media}</span>
+                </div>
+                
+                <div className="flex gap-1 items-center">
+                <span className="text-black font-bold">Total</span>
+                <span className="text-red-600 font-bold">{totals.grandTotal}</span>
+                </div>
               </div>
             </div>
 
@@ -1861,6 +2194,53 @@ const loadMenuProjects = async () => {
             </table>
           )}
         </div>
+        {/* ===== stark ===== */}
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold mb-3">Stark Accommodation</h3>
+
+          {starks.length === 0 ? (
+            <div className="text-sm text-gray-500">No stark member</div>
+          ) : (
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="px-3 py-2 text-left">Name</th>
+                
+                  <th className="px-3 py-2 text-left">Hotel</th>
+                </tr>
+              </thead>
+              <tbody>
+                {starks.map((s, i) => (
+                  <tr key={i} className="border-b">
+                    <td className="px-3 py-2 text-left">{s.name}</td>                  
+                    <td className="px-3 py-2 text-left">{s.hotel}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+{/* ===== Consignment ===== */}
+        <div class="mt-6">
+  <h3 class="text-xl font-bold mb-2 text-left">Consignment</h3>
+
+  <div class="text-lg">
+    <div classname="text-left">1: 
+      {consignment.c1_status || ""}
+       {" ["}{consignment.c1_date ? consignment.c1_date : ""}  {"]"}
+    </div>
+
+    <div>2: 
+      {consignment.c2_status || ""}
+       {" ["}{consignment.c2_date ? consignment.c2_date : ""}  {"]"}
+    </div>
+
+    <div>3: 
+      {consignment.c3_status || ""}
+       {" ["}{consignment.c3_date ? consignment.c3_date : ""}  {"]"}
+    </div>
+  </div>
+</div>
 
       {/* COUNTDOWN */}
       <div className="text-xl font-bold mt-6">

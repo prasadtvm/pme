@@ -72,7 +72,7 @@ const [selectedYear, setSelectedYear] = useState("all");
       setDetails(detailsRes.data || {});
      // console.log('eeerfe',JSON.stringify(details.av_setup));
       //console.log('eeerfe',JSON.stringify(details.hotels));
-      console.log('clients',JSON.stringify(details.clients));
+      //console.log('consighmet',JSON.stringify(detailsRes.data.consignment));
       setRemarks(remarksRes.data || []);
       setRemark('');
     } catch (err) {
@@ -179,6 +179,7 @@ const [selectedYear, setSelectedYear] = useState("all");
               <a className='hover:font-bold hover:text-white text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#embassy">EMBASSY/CONSULATE</a>
               <a className='hover:font-bold hover:text-white text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#client">CLIENT</a>
               <a className='hover:font-bold hover:text-white text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#stark">STARK</a>
+              <a className='hover:font-bold hover:text-white text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#consignment">consignment</a>
               <a className='hover:font-bold hover:text-white text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#checklist">CHECKLIST</a>
               <a className='hidden hover:font-bold hover:text-white text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#menu">MENU</a>
               <a className='hover:font-bold hover:text-white text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#remark">REMARK</a>
@@ -636,6 +637,27 @@ const [selectedYear, setSelectedYear] = useState("all");
   )}
 </div>
 
+{/* consignment Section */}
+          <div id="consignment">
+  <h3 className="text-lg font-semibold mb-3 text-left">CONSIGNMENT</h3>
+
+  {details.consignment?.length > 0 ? (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 p-3 bg-gray-50 rounded border border-gray-200">
+      <div><p className='font-semibold'>1: Status</p> {details.consignment[0].c1_status }</div>
+      <div><p className='font-semibold'>Date:</p> {details.consignment[0].c1_date.substring(0, 10)}</div>
+
+      <div><p className='font-semibold'>2: Status</p> {details.consignment[0].c2_status }</div>
+      <div><p className='font-semibold'>Date:</p> {details.consignment[0].c2_date.substring(0, 10)}</div>
+
+      <div><p className='font-semibold'>3: Status</p> {details.consignment[0].c3_status }</div>
+      <div><p className='font-semibold'>Date:</p> {details.consignment[0].c3_date.substring(0, 10)}</div>
+    </div>
+  ) : (
+    <p className="text-gray-500">No Consignment data</p>
+  )}
+</div>
+
+
      {/* checklist Section */}
         <div id="checklist" className="mb-6">
           <h3 className="text-lg font-semibold text-slate-800 mb-3 text-left">CHECKLIST</h3>
@@ -645,6 +667,7 @@ const [selectedYear, setSelectedYear] = useState("all");
             <div>Name</div>
             <div>Compleated</div>           
         </div>
+
 
           {details.checklist?.length ? (
             <div className="grid gap-2">
