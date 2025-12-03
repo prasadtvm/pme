@@ -14,7 +14,7 @@ const api = axios.create({
   },
   timeout: 10000, // 10 second timeout
 });
-
+api.defaults.headers.common['ngrok-skip-browser-warning'] = 'true';
 // Add auth token to requests
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('authToken');

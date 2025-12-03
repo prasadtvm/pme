@@ -12,9 +12,9 @@ const UPLOAD_DIR = process.env.UPLOAD_DIR || 'uploads';
 
 const allowedOrigins = process.env.CLIENT_ORIGIN 
   ? process.env.CLIENT_ORIGIN.split(',') 
-  : ["http://localhost:3000",
-  "https://pme-stark-tvm1.vercel.app",
-  "https://perseveringly-netlike-steve.ngrok-free.dev"];
+  : ["https://pme-stark-tvm1.vercel.app",
+  "https://perseveringly-netlike-steve.ngrok-free.dev",
+"http://localhost:3000"];
 
 console.log('CORS Configuration:');
 console.log('CLIENT_ORIGIN:', allowedOrigins);

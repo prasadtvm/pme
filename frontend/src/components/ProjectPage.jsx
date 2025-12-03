@@ -24,7 +24,7 @@ const ProjectPage = () => {
     try {
       setLoading(true);
       const response = await projectAPI.getAll();
-      console.log('porj',JSON.stringify(response.data))
+  //
       const fetchedProjects = Array.isArray(response.data)
         ? response.data
         : Array.isArray(response.data.data)
