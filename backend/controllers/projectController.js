@@ -605,7 +605,7 @@ updateRSVP: async (req, res) => {
   getAll: async (req, res) => {
     try {
       const result = await pool.query('SELECT id, name, image_file, TO_CHAR(event_date, \'YYYY-MM-DD\') AS event_date, status, created_by, created_at FROM projects ORDER BY id DESC');
-      
+      console.error('getAll fetching projects:',JSON.stringify(result.rows));
       res.json(result.rows);
     } catch (err) {
       console.error('Error fetching projects:', err);
