@@ -24,7 +24,6 @@ const ProjectPage = () => {
     try {
       setLoading(true);
       const response = await projectAPI.getAll();
-  //
       const fetchedProjects = Array.isArray(response.data)
         ? response.data
         : Array.isArray(response.data.data)
