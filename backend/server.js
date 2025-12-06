@@ -10,7 +10,17 @@ const PORT = process.env.WEB_PORT || process.env.PORT || 5000;
 //const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN ||'http://localhost:5173','https://pme-stark-tvm1.vercel.app', 'https://pme-stark-tvm1.vercel.app/' || 'http://localhost:3000';
 const UPLOAD_DIR = process.env.UPLOAD_DIR || 'uploads';
 const productionOrigin = process.env.CLIENT_ORIGIN; // https://pme-stark-tvm1.vercel.app
-const vercelPreviewPattern = /^https:\/\/pme-stark-tvm1-[a-zA-Z0-9-]+\.vercel\.app$/;
+
+// Example: https://pme-stark-tvm1.vercel.app
+
+// Regex allows ALL Vercel preview URLs for this project
+// Matches patterns like:
+// https://pme-stark-tvm1-xxxx.vercel.app
+// https://pme-stark-tvm1-xxxx-prasads-projects.vercel.app
+// https://pme-stark-tvm1-xxxx-prasads-projects-xxxx.vercel.app
+const vercelPreviewPattern =
+  /^https:\/\/pme-stark-tvm1-[a-zA-Z0-9-]+\.vercel\.app$/;
+//const vercelPreviewPattern = /^https:\/\/pme-stark-tvm1-[a-zA-Z0-9-]+\.vercel\.app$/;
 //const allowedOrigins = process.env.CLIENT_ORIGIN 
 //? process.env.CLIENT_ORIGIN.split(',').map(o => o.trim())
  //     : ["http://localhost:3000","https://*pme-stark-tvm1.vercel.app"];
