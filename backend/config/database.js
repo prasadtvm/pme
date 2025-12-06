@@ -8,12 +8,12 @@ require('dotenv').config();
  // password: process.env.DB_PASSWORD || 'password',
  // port: process.env.DB_PORT || 5432,
 //});
-
+const isProduction = process.env.NODE_ENV === "production";
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  ssl: isProduction 
+   ? { rejectUnauthorized: false }   // Render PostgreSQL requires SSL
+    : false                            // Local PostgreSQL does NOT use SSL  
 });
 
 // Test database connection

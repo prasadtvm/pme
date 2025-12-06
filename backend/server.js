@@ -18,8 +18,8 @@ const productionOrigin = process.env.CLIENT_ORIGIN; // https://pme-stark-tvm1.ve
 // https://pme-stark-tvm1-xxxx.vercel.app
 // https://pme-stark-tvm1-xxxx-prasads-projects.vercel.app
 // https://pme-stark-tvm1-xxxx-prasads-projects-xxxx.vercel.app
-const vercelPreviewPattern =
-  /^https:\/\/pme-stark-tvm1-[a-zA-Z0-9-]+\.vercel\.app$/;
+const vercelPreviewPattern =/^https:\/\/pme-stark-tvm1-[a-zA-Z0-9-]+\.vercel\.app$/;
+  
 //const vercelPreviewPattern = /^https:\/\/pme-stark-tvm1-[a-zA-Z0-9-]+\.vercel\.app$/;
 //const allowedOrigins = process.env.CLIENT_ORIGIN 
 //? process.env.CLIENT_ORIGIN.split(',').map(o => o.trim())

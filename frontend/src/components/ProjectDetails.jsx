@@ -545,20 +545,20 @@ const saveConsignment = async () => {
     {!sidebarCollapsed && (
   <>
     <nav className="flex flex-col pl-[15px] pr-4 py-6 space-y-2">
-      <a href="#associate" className="hover:opacity-90 text-white text-xl text-left font-bold uppercase tracking-wide py-2">ASSOCIATE</a>
-              <a href="#venue" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">VENUE</a>
-              <a href="#database" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">DATABASE</a>
-              <a href="#rsvp" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">RSVP</a>
-              <a href="#av" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">HOTEL AV</a>
-              <a href="#av_supplier" className="hover:opacity-90 text-left ftext-white text-xl text-left  font-bold uppercase tracking-wide py-2">AV SUPPLIER</a>
-              <a href="#embassy" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">EMBASSY / CONSULATE</a>
-              <a href="#client" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">CLIENT</a>
-              <a href="#stark" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">STARK</a>
-               <a href="#consignment" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">consignment</a>
-              <a href="#checklist" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">CHECKLIST</a>
-              <a href="#menu" className="hidden hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">MENU</a>
-              <a href="#remarks" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">REMARKS</a>
-              <a href="#print" className="hover:opacity-90 text-left text-white text-xl text-left font-bold uppercase tracking-wide py-2">PRINT</a>
+      <a href="#associate" className="hover:opacity-90 text-white text-lg text-left font-bold uppercase tracking-wide py-2">ASSOCIATE</a>
+              <a href="#venue" className="hover:opacity-90 text-left text-white text-lg text-left font-bold uppercase tracking-wide py-2">VENUE</a>
+              <a href="#database" className="hover:opacity-90 text-left text-white text-lg text-left font-bold uppercase tracking-wide py-2">DATABASE</a>
+              <a href="#rsvp" className="hover:opacity-90 text-left text-white text-lg text-left font-bold uppercase tracking-wide py-2">RSVP</a>
+              <a href="#av" className="hover:opacity-90 text-left text-white text-lg text-left font-bold uppercase tracking-wide py-2">HOTEL AV</a>
+              <a href="#av_supplier" className="hover:opacity-90 text-left ftext-white text-lg text-left  font-bold uppercase tracking-wide py-2">AV SUPPLIER</a>
+              <a href="#embassy" className="hover:opacity-90 text-left text-white text-lg text-left font-bold uppercase tracking-wide py-2">EMBASSY / CONSULATE</a>
+              <a href="#client" className="hover:opacity-90 text-left text-white text-lg text-left font-bold uppercase tracking-wide py-2">CLIENT</a>
+              <a href="#stark" className="hover:opacity-90 text-left text-white text-lg text-left font-bold uppercase tracking-wide py-2">STARK</a>
+               <a href="#consignment" className="hover:opacity-90 text-left text-white text-lg text-left font-bold uppercase tracking-wide py-2">consignment</a>
+              <a href="#checklist" className="hover:opacity-90 text-left text-white text-lg text-left font-bold uppercase tracking-wide py-2">CHECKLIST</a>
+              <a href="#menu" className="hidden hover:opacity-90 text-left text-white text-lg text-left font-bold uppercase tracking-wide py-2">MENU</a>
+              <a href="#remarks" className="hover:opacity-90 text-left text-white text-lg text-left font-bold uppercase tracking-wide py-2">REMARKS</a>
+              <a href="#print" className="hover:opacity-90 text-left text-white text-lg text-left font-bold uppercase tracking-wide py-2">PRINT</a>
     </nav>
 
     <div className="mt-auto w-full">
@@ -763,20 +763,7 @@ const saveConsignment = async () => {
                {/*<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"></div>*/}
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="font-extrabold uppercase text-2xl tracking-wide">ASSOCIATES</h2>
-                  <button onClick={async () => {
-                    setSaving("associates");
-                    try {
-                      await projectSectionsAPI.updateAssociates(id, associates);
-                      showMessage("Associates saved successfully!");
-                    } catch (e) {
-                      console.error(e);
-                      alert("Failed to save associates");
-                    } finally {
-                      setSaving("");
-                    }
-                  }} disabled={saving === "associates"} className={`px-4 py-2 rounded text-white ${saving === "associates" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>
-                    {saving === "associates" ? "Saving..." : "Save Associates"}
-                  </button>
+                 
                 </div>
  {/* 🔥 FIXED FOR MOBILE & DESKTOP - Added horizontal scroll container */}
   <div className="overflow-x-auto">
@@ -838,7 +825,22 @@ const saveConsignment = async () => {
                   <button onClick={() => setAssociates([...associates, { name: "", city: "", selected: false }])} className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 
              focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add Associate</button>
                 </div>
-              
+<div className="text-right">
+                 <button onClick={async () => {
+                    setSaving("associates");
+                    try {
+                      await projectSectionsAPI.updateAssociates(id, associates);
+                      showMessage("Associates saved successfully!");
+                    } catch (e) {
+                      console.error(e);
+                      alert("Failed to save associates");
+                    } finally {
+                      setSaving("");
+                    }
+                  }} disabled={saving === "associates"} className={`px-4 py-2 rounded text-white ${saving === "associates" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>
+                    {saving === "associates" ? "Saving..." : "Save Associates"}
+                  </button>
+              </div>
             </section>
 
            
@@ -847,26 +849,7 @@ const saveConsignment = async () => {
 
   <div className="flex justify-between items-center mb-4">
     <h2 className="text-[28px] font-extrabold">VENUE</h2>
-    <button
-      onClick={async () => {
-        setSaving("venues");
-        try {
-          await projectSectionsAPI.updateVenues(id, venues);
-          showMessage("Venues saved successfully!");
-        } catch (e) {
-          console.error(e);
-          alert("Failed to save venues");
-        } finally {
-          setSaving("");
-        }
-      }}
-      disabled={saving === "venues"}
-      className={`px-4 py-2 rounded text-white ${
-        saving === "venues" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
-      }`}
-    >
-      {saving === "venues" ? "Saving..." : "Save Venues"}
-    </button>
+   
   </div>
 
   {/* 🔥 FIX FOR MOBILE — horizontal scroll */}
@@ -1060,6 +1043,28 @@ const saveConsignment = async () => {
       Add Venue
     </button>
   </div>
+  <div className="text-right">
+     <button
+      onClick={async () => {
+        setSaving("venues");
+        try {
+          await projectSectionsAPI.updateVenues(id, venues);
+          showMessage("Venues saved successfully!");
+        } catch (e) {
+          console.error(e);
+          alert("Failed to save venues");
+        } finally {
+          setSaving("");
+        }
+      }}
+      disabled={saving === "venues"}
+      className={`px-4 py-2 rounded text-white ${
+        saving === "venues" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
+      }`}
+    >
+      {saving === "venues" ? "Saving..." : "Save Venues"}
+    </button>
+  </div>
 </section>
 
 
@@ -1068,17 +1073,7 @@ const saveConsignment = async () => {
               {/*<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"></div>*/}
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="font-extrabold uppercase text-2xl tracking-wide">DATABASE</h2>
-                  <button onClick={async () => {
-                    setSaving("trade");
-                    try {
-                      await projectSectionsAPI.updateTradeDatabase(id, tradeDatabase);
-                      showMessage("Database saved!");
-                    } catch (e) {
-                      console.error(e); alert("Failed to save");
-                    } finally { setSaving(""); }
-                  }} disabled={saving === "trade"} className={`px-4 py-2 rounded text-white ${saving === "trade" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>
-                    {saving === "trade" ? "Saving..." : "Save Database"}
-                  </button>
+                 
                 </div>
                 <div className="w-full overflow-x-auto">
                   <div className="min-w-[900px]">
@@ -1179,6 +1174,20 @@ const saveConsignment = async () => {
   >
     + Add Trade
   </button>
+<div className="text-right">
+   <button onClick={async () => {
+                    setSaving("trade");
+                    try {
+                      await projectSectionsAPI.updateTradeDatabase(id, tradeDatabase);
+                      showMessage("Database saved!");
+                    } catch (e) {
+                      console.error(e); alert("Failed to save");
+                    } finally { setSaving(""); }
+                  }} disabled={saving === "trade"} className={`px-4 py-2 rounded text-white ${saving === "trade" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>
+                    {saving === "trade" ? "Saving..." : "Save Database"}
+                  </button>
+</div>
+
               
             </section>
 
@@ -1188,18 +1197,7 @@ const saveConsignment = async () => {
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="font-extrabold uppercase text-2xl tracking-wide">RSVP</h2>
                   <div className="flex items-center gap-3">
-                    <button onClick={async () => {
-                      setSaving("rsvp");
-                      try {
-                        const formData = new FormData();
-                        formData.append("invitation_design_file", saveTheDateImage || "");
-                        formData.append("rsvp", JSON.stringify(saveDate));
-                        await projectSectionsAPI.updateRSVP(id, formData);
-                        showMessage("RSVP saved");
-                      } catch (e) { console.error(e); alert("Failed to save"); } finally { setSaving(""); }
-                    }} disabled={saving === "rsvp"} className={`px-4 py-2 rounded text-white ${saving === "rsvp" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>
-                      {saving === "rsvp" ? "Saving..." : "Save The Date"}
-                    </button>
+                   
                   </div>
                 </div>
 
@@ -1258,23 +1256,24 @@ const saveConsignment = async () => {
                     </div>
                   </div>
                 </div>
+                <div className="text-right"> <button onClick={async () => {
+                      setSaving("rsvp");
+                      try {
+                        const formData = new FormData();
+                        formData.append("invitation_design_file", saveTheDateImage || "");
+                        formData.append("rsvp", JSON.stringify(saveDate));
+                        await projectSectionsAPI.updateRSVP(id, formData);
+                        showMessage("RSVP saved");
+                      } catch (e) { console.error(e); alert("Failed to save"); } finally { setSaving(""); }
+                    }} disabled={saving === "rsvp"} className={`px-4 py-2 rounded text-white ${saving === "rsvp" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>
+                      {saving === "rsvp" ? "Saving..." : "Save The Date"}
+                    </button></div>
 </div>
                 {/* Main Invites */}
                 <div className="bg-white rounded-lg p-4 border border-purple-100 shadow-sm">
                   <div className="flex justify-between items-center mb-3 overflow-hidden w-full">
                     <h3 className="font-extrabold uppercase text-2xl tracking-wide">RSVP #2 — MAIN INVITE</h3>
-                    <button onClick={async () => {
-                      setSaving("main invites");
-                      try {
-                        const formData = new FormData();
-                        formData.append("main_invite_design_file", mainInviteImage || "");
-                        formData.append("Main_invite", JSON.stringify(mainInvites));
-                        await projectSectionsAPI.updateMainInvite(id, formData);
-                        showMessage("Main invites saved");
-                      } catch (e) { console.error(e); alert("Failed"); } finally { setSaving(""); }
-                    }} disabled={saving === "main invites"} className={`px-4 py-2 rounded text-white ${saving === "main invites" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>
-                      {saving === "main invites" ? "Saving..." : "Save Main Invites"}
-                    </button>
+                    
                   </div>
 
                    {/* IMAGE UPLOAD */}
@@ -1366,8 +1365,19 @@ const saveConsignment = async () => {
                     <button onClick={() => setMainInvites([...mainInvites, { main_invite_date: "", main_invite_to_nos: 0, main_invite_ta_nos: 0, main_invite_travel_counsellors_nos: 0, main_invite_influencers_nos: 0 }])} className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 
                    focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add Main Invite</button>
                   </div>
-                
-             
+                <div className="text-right">
+             <button onClick={async () => {
+                      setSaving("main invites");
+                      try {
+                        const formData = new FormData();
+                        formData.append("main_invite_design_file", mainInviteImage || "");
+                        formData.append("Main_invite", JSON.stringify(mainInvites));
+                        await projectSectionsAPI.updateMainInvite(id, formData);
+                        showMessage("Main invites saved");
+                      } catch (e) { console.error(e); alert("Failed"); } finally { setSaving(""); }
+                    }} disabled={saving === "main invites"} className={`px-4 py-2 rounded text-white ${saving === "main invites" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>
+                      {saving === "main invites" ? "Saving..." : "Save Main Invites"}
+                    </button></div>
             </section>
 
 
@@ -1376,15 +1386,7 @@ const saveConsignment = async () => {
              {/*  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"> </div>*/}
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="font-extrabold uppercase text-2xl tracking-wide">HOTEL AV SETUP</h2>
-                  <button
-                onClick={saveAVSetup}
-                disabled={saving === "av"}
-                className={`px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 ${
-                  saving === "av" ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-              >
-              {saving === "av" ? "Saving..." : "Save AV Setup"}
-                          </button>
+                 
                 </div>
 
                  
@@ -1425,7 +1427,7 @@ const saveConsignment = async () => {
                 </div>
 
                 <div>
-                  <label className="block mb-1 font-medium">Type (System)</label>
+                  <label className="block mb-1 font-medium">Stage</label>
                   <input
                     type="text"
                     value={avSetup.type || ""}
@@ -1538,7 +1540,17 @@ const saveConsignment = async () => {
                 </div>
               </div>
             </div>
-             
+<div className="text-right">
+             <button
+                onClick={saveAVSetup}
+                disabled={saving === "av"}
+                className={`px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 ${
+                  saving === "av" ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+              {saving === "av" ? "Saving..." : "Save AV Setup"}
+                          </button>
+             </div>
             </section>
 
             {/* AV SUPPLIER (hotels) px-10 pt-6 pb-6*/}
@@ -1546,13 +1558,7 @@ const saveConsignment = async () => {
               {/* <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"> </div>*/}
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="font-extrabold uppercase text-2xl tracking-wide">AV SUPPLIER</h2>
-                  <button onClick={async () => {
-                    setSaving("hotels");
-                    try {
-                      await projectSectionsAPI.updateHotels(id, hotels);
-                      showMessage("AV supplier saved");
-                    } catch (e) { console.error(e); alert("Failed"); } finally { setSaving(""); }
-                  }} disabled={saving === "hotels"} className={`px-4 py-2 rounded text-white ${saving === "hotels" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>{saving === "hotels" ? "Saving..." : "Save Av Supplier"}</button>
+                 
                 </div>
 <div className="w-full overflow-x-auto">
                 <div className="grid grid-cols-1 md:grid-cols-[2fr_1.5fr_1fr_1fr_1fr_auto] gap-3 items-center mb-3 p-3 bg-gray-100 rounded font-semibold min-w-[800px]">
@@ -1589,7 +1595,15 @@ const saveConsignment = async () => {
                   <button onClick={() => setHotels([...hotels, { sponsor: "", item: "", currency: "INR", amount: "" }])} className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 
              focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add AV Supplier</button>
                 </div>
-             
+             <div className="text-right">
+               <button onClick={async () => {
+                    setSaving("hotels");
+                    try {
+                      await projectSectionsAPI.updateHotels(id, hotels);
+                      showMessage("AV supplier saved");
+                    } catch (e) { console.error(e); alert("Failed"); } finally { setSaving(""); }
+                  }} disabled={saving === "hotels"} className={`px-4 py-2 rounded text-white ${saving === "hotels" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>{saving === "hotels" ? "Saving..." : "Save Av Supplier"}</button>
+             </div>
             </section>          
 
                         {/* ========================= */}
@@ -1600,15 +1614,7 @@ const saveConsignment = async () => {
               <div className="flex justify-between items-center mb-4">
                 <h2 className="font-extrabold uppercase text-2xl tracking-wide">EMBASSY / CONSULATE</h2>
 
-                <button
-                  onClick={saveEmbassy}
-                  disabled={saving === "embassy"}
-                  className={`px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 ${
-                    saving === "embassy" ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
-                >
-                  {saving === "embassy" ? "Saving…" : "Save Embassy"}
-                </button>
+              
               </div>
 
               {/* CHIEF GUEST */}
@@ -1689,6 +1695,18 @@ const saveConsignment = async () => {
                   className="form-input"
                 />
               </div>
+
+              <div className="text-right">
+                  <button
+                  onClick={saveEmbassy}
+                  disabled={saving === "embassy"}
+                  className={`px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 ${
+                    saving === "embassy" ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {saving === "embassy" ? "Saving…" : "Save Embassy"}
+                </button>
+              </div>
             </section>
 
             {/* CLIENT, STARK, CHECKLIST, MENU, REMARKS sections (kept consistent & safe) */}
@@ -1696,10 +1714,7 @@ const saveConsignment = async () => {
             {/*   <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"> </div>*/}
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-[28px] font-extrabold">CLIENT</h2>
-                  <button onClick={async () => {
-                    setSaving("clients");
-                    try { await projectSectionsAPI.updateClients(id, clients); showMessage("Clients saved"); } catch (e) { console.error(e); alert("Failed"); } finally { setSaving(""); }
-                  }} className={`px-4 py-2 rounded text-white ${saving === "clients" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>Save Clients</button>
+                 
                 </div>
 <div className="w-full overflow-x-auto">
                 <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr_auto] gap-3 items-center mb-3 p-3 bg-gray-100 rounded font-semibold min-w-[800px]">
@@ -1723,18 +1738,19 @@ const saveConsignment = async () => {
                   <button onClick={() => setClients([...clients, { name: "", designation: "", contact: "", hotel: "" }])} className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 
              focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add Client</button>
                 </div>
-             
+<div className="text-right">
+                 <button onClick={async () => {
+                    setSaving("clients");
+                    try { await projectSectionsAPI.updateClients(id, clients); showMessage("Clients saved"); } catch (e) { console.error(e); alert("Failed"); } finally { setSaving(""); }
+                  }} className={`px-4 py-2 rounded text-white ${saving === "clients" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>Save Clients</button>
+             </div>
             </section>
 
             {/* STARK px-10 pt-6 pb-6*/}
             <section id="stark" className="mt-6 bg-white rounded-lg-none shadow-sm border border-gray-200 p-6">
              {/* <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"></div>*/}
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="font-extrabold uppercase text-2xl tracking-wide">STARK</h2>
-                  <button onClick={async () => {
-                    setSaving("starks");
-                    try { await projectSectionsAPI.updateStarks(id, starks); showMessage("Starks saved"); } catch (e) { console.error(e); alert("Failed"); } finally { setSaving(""); }
-                  }} className={`px-4 py-2 rounded text-white ${saving === "starks" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>Save Starks</button>
+                  <h2 className="font-extrabold uppercase text-2xl tracking-wide">STARK</h2>                 
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_auto] gap-3 items-center mb-3 p-3 bg-gray-100 rounded font-semibold">
@@ -1756,9 +1772,12 @@ const saveConsignment = async () => {
                   <button onClick={() => setStarks([...starks, { name: "", hotel: "" }])}  className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 hover:shadow-lg transition duration-200 
              focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Add Stark</button>
                 </div>
-
-                
-              
+<div className="text-right">
+                 <button onClick={async () => {
+                    setSaving("starks");
+                    try { await projectSectionsAPI.updateStarks(id, starks); showMessage("Starks saved"); } catch (e) { console.error(e); alert("Failed"); } finally { setSaving(""); }
+                  }} className={`px-4 py-2 rounded text-white ${saving === "starks" ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"}`}>Save Starks</button>
+              </div>
             </section>
 
             {/* CHECKLIST  section-container mt-8
@@ -1774,13 +1793,7 @@ const saveConsignment = async () => {
   <div className="flex justify-between items-center mb-5">
     <h2 className="text-xl font-semibold text-slate-800">Consignment (Consignment Tracking)</h2>
 
-    <button
-      onClick={saveConsignment}
-      disabled={saving === 'consignment'}
-      className={`action-button ${saving === 'consignment' ? 'opacity-50 cursor-not-allowed' : ''}`}
-    >
-      {saving === 'consignment' ? 'Saving...' : 'Save Consignment'}
-    </button>
+   
   </div>
 
   {/* 3 Consignment Boxes */}
@@ -1867,6 +1880,14 @@ const saveConsignment = async () => {
     </div>
 
   </div>
+  <div className="text-right pt-10">
+   <button
+      onClick={saveConsignment}
+      disabled={saving === 'consignment'}
+      className={`action-button ${saving === 'consignment' ? 'opacity-50 cursor-not-allowed' : ''}`}
+    >
+      {saving === 'consignment' ? 'Saving...' : 'Save Consignment'}
+    </button></div>
 </div>
 
 
@@ -1875,15 +1896,7 @@ const saveConsignment = async () => {
               <div className="flex justify-between items-center mb-4 ">
                 <h2 className="font-extrabold uppercase text-2xl tracking-wide">CHECKLIST</h2>
 
-                <button
-                  onClick={saveChecklists}
-                  disabled={saving === "checklists"}
-                  className={`px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 ${
-                    saving === "checklists" ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
-                >
-                  {saving === "checklists" ? "Saving…" : "Save Checklists"}
-                </button>
+               
               </div>
 <div className="w-full overflow-x-auto">
               <div className="grid gap-4 ">
@@ -1907,6 +1920,16 @@ const saveConsignment = async () => {
               >
                 Add Checklist
               </button>
+<div className="text-right">
+               <button
+                  onClick={saveChecklists}
+                  disabled={saving === "checklists"}
+                  className={`px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 ${
+                    saving === "checklists" ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {saving === "checklists" ? "Saving…" : "Save Checklists"}
+                </button></div>
             </section>
 
             {/* MENU UPLOAD px-10 pt-6 pb-6*/}
@@ -1961,16 +1984,20 @@ const saveConsignment = async () => {
             <div className="fixed bottom-0  z-[9999] bg-[#F7E79E] border-t border-yellow-600 shadow-md w-full px-4"  >
               <div className="max-w-screen-2xl mx-auto  flex flex-wrap  items-center justify-start gap-x-8 gap-y-1 px-4 py-2 text-sm font-semibold">
                  
-               <div className="flex gap-1 items-center">
-                <span className="text-white">Countdown</span>
+               <div className="flex gap-3 items-center">
+                <span className="text-black uppercase text-lg">Countdown</span>
                 <span className="text-red-600">{workingDaysLeft}</span>
                 </div>
                  <div className="flex gap-1 items-center">
                 <span className="text-red-600">Working days</span>
                 </div>
                 
-                <div className="flex gap-1 items-center">
-                <span className="text-white">Confirmations</span>
+                <div className="flex gap-3 items-center">
+                <span className="text-black text-lg uppercase">Confirmations</span>
+
+                               
+                <span className="text-red-600 font-bold">{totals.grandTotal}</span>
+                
                 </div>
                 
                 <div className="flex gap-1 items-center">
@@ -1993,10 +2020,7 @@ const saveConsignment = async () => {
                 <span className="text-red-600">{totals.media}</span>
                 </div>
                 
-                <div className="flex gap-1 items-center">
-                <span className="text-black font-bold">Total</span>
-                <span className="text-red-600 font-bold">{totals.grandTotal}</span>
-                </div>
+               
               </div>
             </div>
 
