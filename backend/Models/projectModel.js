@@ -1565,7 +1565,8 @@ calculateProgress: async (projectId) => {
       'client',
       'stark',
       'hotels',
-      'checklists'    
+      'checklists',
+      'consignment',    
     ];
     const cleanId = parseInt(String(projectId).replace(/[^0-9]/g, ''), 10);
   if (isNaN(cleanId)) throw new Error(`Invalid project ID: ${projectId}`);
