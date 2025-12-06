@@ -7,16 +7,18 @@ require('dotenv').config();
 const app = express();
 // Prefer WEB_PORT if defined, else fall back to PORT, else 5000
 const PORT = process.env.WEB_PORT || process.env.PORT || 5000;
-//const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'https://pme-stark-tvm1.vercel.app/' || 'http://localhost:3000';
+//const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN ||'http://localhost:5173','https://pme-stark-tvm1.vercel.app', 'https://pme-stark-tvm1.vercel.app/' || 'http://localhost:3000';
 const UPLOAD_DIR = process.env.UPLOAD_DIR || 'uploads';
 
 const allowedOrigins = process.env.CLIENT_ORIGIN 
-  ? process.env.CLIENT_ORIGIN.split(',') 
-  : ["https://pme-stark-tvm1.vercel.app",  
-"http://localhost:3000"];
+? process.env.CLIENT_ORIGIN.split(',').map(o => o.trim())
+      : ["http://localhost:3000","https://*pme-stark-tvm1.vercel.app"];
 
-//console.log('CORS Configuration:');
-//console.log('CLIENT_ORIGIN:', allowedOrigins);
+ // ? process.env.CLIENT_ORIGIN.split(',') 
+// : ['http://localhost:3000',  'http://localhost:5000'];
+ 
+console.log('CORS Configuration:');
+console.log('CLIENT_ORIGIN:', allowedOrigins);
 //console.log('Request from origin:', req.headers.origin);
 //'https://pme-stark-tvm1.vercel.app', 'https://*.pme-stark-tvm1.vercel.app',   
    //   'https://pme-stark-tvm1-m1cp5x1vi-prasads-projects-89fbad0f.vercel.app',
@@ -38,8 +40,12 @@ app.use(cors({
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "ngrok-skip-browser-warning"   // <-- IMPORTANT FIX
+  ],
 }));
  //console.log(`server.jst`);
 app.use(bodyParser.json());
