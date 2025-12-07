@@ -170,19 +170,19 @@ const [selectedYear, setSelectedYear] = useState("all");
           <div className="w-251 bg-[#7FB200] text-white p-5 rounded-lg flex-shrink-0 h-screen sticky top-0">
             <nav className="flex flex-col space-y-2 text-sm font-medium text-white pt-5 pl-1 pr-5">
               
-              <a className='hover:font-bold hover:text-white  text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#associate">ASSOCIATES</a>
-              <a className='hover:font-bold hover:text-white text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#venue">VENUES</a>                    
-              <a className='hover:font-bold hover:text-white text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#database">DATABASE</a>
-               <a className='hover:font-bold hover:text-white text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#rsvp">RSVP</a>   
-               <a className='hover:font-bold hover:text-white text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#rsvp">HOTEL AV SETUP</a>              
-              <a className='hover:font-bold hover:text-white text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#hotel">AV SUPPLIER</a>
-              <a className='hover:font-bold hover:text-white text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#embassy">EMBASSY/CONSULATE</a>
-              <a className='hover:font-bold hover:text-white text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#client">CLIENT</a>
-              <a className='hover:font-bold hover:text-white text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#stark">STARK</a>
-              <a className='hover:font-bold hover:text-white text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#consignment">consignment</a>
-              <a className='hover:font-bold hover:text-white text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#checklist">CHECKLIST</a>
-              <a className='hidden hover:font-bold hover:text-white text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#menu">MENU</a>
-              <a className='hover:font-bold hover:text-white text-xl text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#remark">REMARK</a>
+              <a className='hover:font-bold hover:text-white  text-lg text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#associate">ASSOCIATES</a>
+              <a className='hover:font-bold hover:text-white text-lg text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#venue">VENUES</a>                    
+              <a className='hover:font-bold hover:text-white text-lg text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#database">DATABASE</a>
+               <a className='hover:font-bold hover:text-white text-lg text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#rsvp">RSVP</a>   
+               <a className='hover:font-bold hover:text-white text-lg text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#rsvp">HOTEL AV SETUP</a>              
+              <a className='hover:font-bold hover:text-white text-lg text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#hotel">AV SUPPLIER</a>
+              <a className='hover:font-bold hover:text-white text-lg text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#embassy">EMBASSY/CONSULATE</a>
+              <a className='hover:font-bold hover:text-white text-lg text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#client">CLIENT</a>
+              <a className='hover:font-bold hover:text-white text-lg text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#stark">STARK</a>
+              <a className='hover:font-bold hover:text-white text-lg text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#consignment">consignment</a>
+              <a className='hover:font-bold hover:text-white text-lg text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#checklist">CHECKLIST</a>
+              <a className='hidden hover:font-bold hover:text-white text-lg text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#menu">MENU</a>
+              <a className='hover:font-bold hover:text-white text-lg text-left font-bold uppercase tracking-wide pt-5 pl-5' href="#remark">REMARK</a>
                
             </nav>
             <div className='p-5'></div>
@@ -482,7 +482,7 @@ const [selectedYear, setSelectedYear] = useState("all");
        <div>Backdrop</div>
     <div className="text-center">Screen</div>
     <div className="text-center">Mic</div>
-    <div className="text-center">Type</div>
+    <div className="text-center">Stage</div>
     <div className="text-center">Projector </div>
     <div className="text-center">Podium</div>
     </div>

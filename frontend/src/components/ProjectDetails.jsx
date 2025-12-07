@@ -41,7 +41,7 @@ const ProjectDetails = () => {
   { trade_name: 'Others', travel_operator: '', travel_agent: '', travel_counsellor: '', media_influencers: '' },
 ];
   const [tradeDatabase, setTradeDatabase] = useState(defaultTrades);
-      const [rsvp, setRsvp] = useState([]);
+   const [rsvp, setRsvp] = useState([]);
    const [invitationFile, setInvitationFile] = useState(null);
   const [mainInvites, setMainInvites] = useState([]);
   const [saveDate, setSaveDate] = useState({
@@ -1213,13 +1213,19 @@ const saveConsignment = async () => {
 
                 
 
- <div className="mb-3">
+ <div className="flex items-center justify-center gap-4 pb-5">
     <label className="block text-sm font-medium">Save The Date Invite Design:</label>
-    <input
+     <label className="cursor-pointer inline-block px-3 py-2 bg-gray-200 rounded-md shadow-sm hover:bg-gray-300">
+    Choose File<input
       type="file"
-      onChange={(e) => setSaveTheDateImage(e.target.files[0])}
-      className="form-input"
+      onChange={(e) => {
+        const file = e.target.files[0];
+        setSaveTheDateImage(file);
+        setInvitationFile(file);  
+      }}
+      className="hidden"
     />
+    </label>
 
     {invitationFile && (
       <div className="flex items-center gap-3 mt-2">
@@ -1277,13 +1283,18 @@ const saveConsignment = async () => {
                   </div>
 
                    {/* IMAGE UPLOAD */}
-  <div className="mb-3">
+  <div className="mb-3 flex items-center justify-center gap-4">
     <label className="block text-sm font-medium">Main Invite design:</label>
-    <input
+    <label className="cursor-pointer inline-block px-3 py-2 bg-gray-200 rounded-md shadow-sm hover:bg-gray-300">
+    Choose File<input
       type="file"
-      onChange={(e) => setMainInviteImage(e.target.files[0])}
-      className="form-input"
+      onChange={(e) => {
+        const file2 = e.target.files[0];
+        setMainInviteImage(file2)
+      }}
+      className="hidden"
     />
+    </label>
 
     {mainInviteImage && (
       <div className="flex items-center gap-3 mt-2">
@@ -1467,18 +1478,20 @@ const saveConsignment = async () => {
               {/* RIGHT: UPLOADS */}
               <div className="space-y-4">
 
-                {/* BACKDROP IMAGE */}
-                <div>
-                  <label className="block mb-1 font-medium">Backdrop Image</label>
+                {/* BACKDROP IMAGE mb-3 flex items-center justify-center gap-4 */}
+                <div className="grid grid-cols-[150px_100px_auto] items-center gap-6 mb-4"> 
+                  <label className="block mb-1 font-medium text-left">Backdrop Image</label>
+                  <label className="cursor-pointer px-3 py-2 bg-gray-200 rounded-md shadow-sm hover:bg-gray-300">
+                    Choose file
                   <input
                     type="file"
                     accept=".jpg,.jpeg,.png"
                     onChange={(e) =>
                       setAvSetup({ ...avSetup, backdrop_image: e.target.files[0] })
                     }
-                    className="form-input"
+                    className="hidden"
                   />
-
+                  </label>
                   {avSetup.backdrop_image && (
                     <img
                       src={
@@ -1491,17 +1504,19 @@ const saveConsignment = async () => {
                   )}
                 </div>
 
-                {/* SCREEN IMAGE */}
-                <div>
-                  <label className="block mb-1 font-medium">Screen Image</label>
+                {/* SCREEN IMAGE mb-3 flex items-center justify-center gap-4*/}
+                <div className="grid grid-cols-[150px_100px_auto] items-center gap-6 mb-4">
+                  <label className="block mb-1 font-medium text-left">Screen Image</label>
+                   <label className="cursor-pointer px-3 py-2 bg-gray-200 rounded-md shadow-sm hover:bg-gray-300">
+                    Choose file
                   <input
                     type="file"
                     accept=".jpg,.jpeg,.png"
                     onChange={(e) =>
                       setAvSetup({ ...avSetup, screen_image: e.target.files[0] })
                     }
-                    className="form-input"
-                  />
+                    className="hidden"
+                  /></label>
 
                   {avSetup.screen_image && (
                     <img
@@ -1515,17 +1530,19 @@ const saveConsignment = async () => {
                   )}
                 </div>
 
-                {/* STAGE IMAGE */}
-                <div>
-                  <label className="block mb-1 font-medium">Stage Image</label>
+                {/* STAGE IMAGE mb-3 flex items-center justify-center gap-4*/}
+                <div className="grid grid-cols-[150px_100px_auto] items-center gap-6 mb-4">
+                  <label className="block mb-1 font-medium text-left">Stage Image</label>
+                   <label className="cursor-pointer px-3 py-2 bg-gray-200 rounded-md shadow-sm hover:bg-gray-300">
+                    Choose file
                   <input
                     type="file"
                     accept=".jpg,.jpeg,.png"
                     onChange={(e) =>
                       setAvSetup({ ...avSetup, stage_image: e.target.files[0] })
                     }
-                    className="form-input"
-                  />
+                    className="hidden"
+                  /></label>
 
                   {avSetup.stage_image && (
                     <img
