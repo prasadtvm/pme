@@ -234,10 +234,10 @@ const saveAVSetup = async () => {
         formData.append("stage_image", avSetup.stage_image);
 
       await projectSectionsAPI.updateAVSetup(id, formData);
-      showMessage('AV setup saved successfully!');
+      showMessage('Hotel AV setup saved successfully!');
     } catch (e) {
       console.error(e);
-      alert('Failed to save AV setup');
+      alert('Failed to save Hotel AV setup');
     } finally {
       setSaving('');
     }
@@ -527,7 +527,15 @@ const saveConsignment = async () => {
     flex-shrink-0 bg-[#7FB200] text-white p-6 md:sticky md:top-[165px] md:h-[calc(100vh-165px)] overflow-y-auto`}
   style={{ zIndex: 50, minHeight: "100vh", fontWeight: 700, fontSize: "15.5px", top: 0 }}
 >
-
+{/* ⭐ TOP-RIGHT COLLAPSE BUTTON ⭐ */}
+  <div className="absolute top-4 right-4">
+    <button
+      onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+      className="text-white text-2xl font-bold hover:opacity-80"
+    >
+      {sidebarCollapsed ? "+" : "-"}
+    </button>
+  </div>
           {/*<aside className=" hidden md:flex
               w-[291px]
               flex-shrink-0
@@ -598,15 +606,7 @@ const saveConsignment = async () => {
     )}
   </button>
 </div>
-{/* COLLAPSE BUTTON SECTION - Add padding consistency */}
-    <div className={`w-full ${sidebarCollapsed ? 'px-[8px]' : 'pr-4 pl-[15px]'}`}>
-            <button
-  onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-  className="mt-4 text-white text-xl font-bold hover:opacity-90"
->
-  {sidebarCollapsed ? "[+]" : "[-]"}
-</button>
-</div>
+
 </div>
 <div className="mt-auto w-full flex flex-col">
   <div className={`w-full ${sidebarCollapsed ? 'px-2' : 'pr-4 pl-[15px]'} ${!sidebarCollapsed ? 'mt-4' : ''}`}>
@@ -625,15 +625,7 @@ const saveConsignment = async () => {
     </button>
   </div>
 
-  {/* Collapse toggle */}
-  <div className={`w-full ${sidebarCollapsed ? 'px-2' : 'pr-4 pl-[15px]'}`}>
-    <button
-      onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-      className="mt-4 text-white text-xl font-bold hover:opacity-90"
-    >
-      {sidebarCollapsed ? "[+]" : "[-]"}
-    </button>
-  </div>
+  
 </div>
 
 
@@ -1565,7 +1557,7 @@ const saveConsignment = async () => {
                   saving === "av" ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >
-              {saving === "av" ? "Saving..." : "Save AV Setup"}
+              {saving === "av" ? "Saving..." : "Save Hotel AV Setup"}
                           </button>
              </div>
             </section>
@@ -2001,13 +1993,22 @@ const saveConsignment = async () => {
             <div className="fixed bottom-0  z-[9999] bg-[#F7E79E] border-t border-yellow-600 shadow-md w-full px-4"  >
               <div className="max-w-screen-2xl mx-auto  flex flex-wrap  items-center justify-start gap-x-8 gap-y-1 px-4 py-2 text-sm font-semibold">
                  
-               <div className="flex gap-3 items-center">
-                <span className="text-black uppercase text-lg">Countdown</span>
-                <span className="text-red-600">{workingDaysLeft}</span>
-                </div>
-                 <div className="flex gap-1 items-center">
-                <span className="text-red-600">Working days</span>
-                </div>
+              
+
+                <div className="flex items-center gap-2">
+  <span className="uppercase text-black text-lg tracking-wide">Countdown</span>
+
+  {/* BIG COUNT NUMBER */}
+  <span className="text-red-600 font-extrabold text-2xl leading-none">
+    {workingDaysLeft}
+  </span>
+
+  {/* Tight, close-to-number label */}
+  <span className="text-red-600 text-sm font-semibold leading-none -ml-1">
+    Working days
+  </span>
+</div>
+               
                 
                 <div className="flex gap-3 items-center">
                 <span className="text-black text-lg uppercase">Confirmations</span>

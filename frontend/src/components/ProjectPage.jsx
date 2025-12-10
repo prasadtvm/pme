@@ -9,6 +9,17 @@ const ProjectPage = () => {
   const [loading, setLoading] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
 
+  const [showEditModal, setShowEditModal] = useState(false);
+const [editProject, setEditProject] = useState({
+  id: "",
+  name: "",
+  project_handiled_by: "",
+  event_date: "",
+  image_file: ""
+});
+const [editImageFile, setEditImageFile] = useState(null);
+
+
   // ⭐ ADDED
   const [searchTerm, setSearchTerm] = useState("");
   const [yearFilter, setYearFilter] = useState("");
@@ -259,6 +270,121 @@ console.log('propje page',JSON.stringify(formData));
             </div>
           </div>
         )}
+      {/* EDIT PROJECT MODAL (Existing logic remains) */}
+        {showEditModal && (
+  <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="modal-content bg-white p-6 rounded-lg shadow-xl max-w-lg w-full relative">
+
+      {/* Close Button */}
+      <button
+        className="absolute top-2 right-3 text-gray-500 text-2xl hover:text-black"
+        onClick={() => setShowEditModal(false)}
+      >
+        ×
+      </button>
+
+      <h2 className="text-2xl font-semibold mb-4">Edit Project</h2>
+
+      {/* Project Name */}
+      <div className="mb-3">
+        <label className="block text-sm font-medium">Project Name</label>
+        <input
+          type="text"
+          value={editProject.name}
+          onChange={(e) =>
+            setEditProject({ ...editProject, name: e.target.value })
+          }
+          className="border p-2 rounded w-full"
+        />
+      </div>
+
+      {/* Project Handled By */}
+      <div className="mb-3">
+        <label className="block text-sm font-medium">Handled By</label>
+        <input
+          type="text"
+          value={editProject.project_handiled_by}
+          onChange={(e) =>
+            setEditProject({ ...editProject, project_handiled_by: e.target.value })
+          }
+          className="border p-2 rounded w-full"
+        />
+      </div>
+
+      {/* Event Date */}
+      <div className="mb-3">
+        <label className="block text-sm font-medium">Event Date</label>
+        <input
+          type="date"
+          value={editProject.event_date?.slice(0, 10) || ""}
+          onChange={(e) =>
+            setEditProject({ ...editProject, event_date: e.target.value })
+          }
+          className="border p-2 rounded w-full"
+        />
+      </div>
+
+      {/* Image Upload + Preview */}
+      <div className="mb-3">
+        <label className="block text-sm font-medium">Project Image</label>
+
+        <label className="cursor-pointer inline-block px-3 py-2 bg-gray-200 rounded-md shadow-sm hover:bg-gray-300 mt-1">
+          Choose File
+          <input
+            type="file"
+            className="hidden"
+            accept="image/*"
+            onChange={(e) => setEditImageFile(e.target.files[0])}
+          />
+        </label>
+
+        <div className="mt-3">
+          <img
+            src={
+              editImageFile
+                ? URL.createObjectURL(editImageFile)
+                : editProject.image_file || ""
+            }
+            alt="Preview"
+            className="w-32 h-20 object-cover rounded border"
+          />
+        </div>
+      </div>
+
+      {/* Save Button */}
+      <div className="text-right mt-4">
+        <button
+          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+          onClick={async () => {
+            try {
+              const formData = new FormData();
+              formData.append("name", editProject.name);
+              formData.append("event_date", editProject.event_date);
+              formData.append("project_handiled_by", editProject.project_handiled_by);
+
+              if (editImageFile) {
+                formData.append("image_file", editImageFile);
+              }
+
+              await projectAPI.updateRoadshowInfo(editProject.id, formData);
+
+              alert("Project updated!");
+              setShowEditModal(false);
+              fetchProjects(); // refresh list
+            } catch (err) {
+              console.error(err);
+              alert("Update failed");
+            }
+          }}
+        >
+          Update
+        </button>
+      </div>
+
+    </div>
+  </div>
+        )}
+
 
         {/* PROJECT LIST */}
         {loading ? (
@@ -266,6 +392,8 @@ console.log('propje page',JSON.stringify(formData));
         ) : (
           // projects-grid uses Tailwind CSS grid classes for the card layout
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+
             {filteredProjects.length > 0 ? (
               filteredProjects.map((project) => (
                 <div
@@ -273,6 +401,17 @@ console.log('propje page',JSON.stringify(formData));
                   onClick={() => handleProjectClick(project.id)}
                   className="project-card border rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
                 >
+
+                  <button
+  className="absolute top-2 right-2 text-gray-700 hover:text-black text-2xl font-bold z-20 p-1"
+  onClick={(e) => {
+    e.stopPropagation();       // prevent card click
+    setEditProject(project);   // load project info
+    setShowEditModal(true);    // open modal
+  }}
+>
+  ⋮
+</button>
                   <div className="p-4">
                     <div className="project-header">
                       <h3 className="project-name text-lg font-semibold truncate mb-1">{project.name}</h3>
@@ -290,6 +429,9 @@ console.log('propje page',JSON.stringify(formData));
                   </div>
 
                   <div className="project-image-container">
+
+                    
+
                     {/* Simplified Image display logic */}
                     <div className="w-full h-48 flex items-center justify-center bg-gray-100 text-gray-500 text-sm">
                         {project.image_file ? (
