@@ -1059,7 +1059,7 @@ const saveConsignment = async () => {
                 </div>
                 <div className="w-full overflow-x-auto">
                   <div className="min-w-[900px]">
-                <div className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(5,1fr)_auto] gap-3 items-center mb-3 p-3 bg-gray-100 rounded font-semibold]">
+                <div className="grid grid-cols-1 md:grid-cols-[1.5fr_repeat(5,1fr)_auto] gap-3 items-center mb-3 p-3 bg-gray-100 rounded font-semibold text-sm]">
                   <div>Category</div>
                   <div className="text-center">Tour Operator</div>
                   <div className="text-center">Travel Agent</div>
@@ -1986,25 +1986,25 @@ const saveConsignment = async () => {
               
 
                 <div className="flex items-center gap-2">
-  <span className="uppercase text-black text-lg tracking-wide">Countdown</span>
+  <span className="uppercase text-black text-lg tracking-wide align-baseline">Countdown</span>
 
   {/* BIG COUNT NUMBER */}
-  <span className="text-red-600 font-extrabold text-2xl leading-none">
+  <span className="text-red-600 font-extrabold text-2xl leading-none align-baseline">
     {workingDaysLeft}
   </span>
 
   {/* Tight, close-to-number label */}
-  <span className="text-red-600 text-sm font-semibold leading-none -ml-1">
+  <span className="text-red-600 text-sm font-semibold leading-none align-baseline">
     Working days
   </span>
 </div>
                
                 
                 <div className="flex gap-3 items-center">
-                <span className="text-black text-lg uppercase">Confirmations</span>
+                <span className="text-black text-lg uppercase align-baseline">Confirmations</span>
 
                                
-                <span className="text-red-600 font-extrabold">{totals.grandTotal}</span>
+                <span className="text-red-600 font-extrabold text-2xl align-baseline">{totals.grandTotal}</span>
                 
                 </div>
                 
