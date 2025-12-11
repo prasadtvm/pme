@@ -1790,7 +1790,7 @@ const saveConsignment = async () => {
 
   {/* Header */}
   <div className="flex justify-between items-center mb-5">
-    <h2 className="text-xl font-semibold text-slate-800">Consignment (Consignment Tracking)</h2>
+    <h2 className="font-extrabold uppercase text-2xl tracking-wide">Consignment (Consignment Tracking)</h2>
 
    
   </div>
