@@ -449,8 +449,8 @@ console.log('propje page',JSON.stringify(formData));
                   </div>
                   
                   <div className="project-meta p-4 text-sm text-gray-600 border-t">
-                    <div className="mb-1">Event Date: **{project.event_date || "—"}**</div>
-                    <div>Handled By: **{project.project_handiled_by || "—"}**</div> {/* ⭐ NEW */}
+                    <div className="mb-1">Event Date: {project.event_date || "—"}</div>
+                    <div>Handled By: {project.project_handiled_by || "—"}</div> {/* ⭐ NEW */}
                   </div>
 
                 </div>
