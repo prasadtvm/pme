@@ -86,6 +86,26 @@ const [selectedYear, setSelectedYear] = useState("all");
   if (loading) return <div className="loading-container">Loading...</div>;
 
   const hasUnapprovedRemark = remarks.some(r => r.isapproved === false);
+  // FILTER PROJECTS
+const filteredProjects = projects.filter((p) => {
+  if (searchText && !p.name.toLowerCase().includes(searchText.toLowerCase())) {
+    return false;
+  }
+
+  if (selectedYear !== "all") {
+    const projectYear = new Date(p.event_date).getFullYear().toString();
+    if (projectYear !== selectedYear) return false;
+  }
+
+  return true;
+});
+
+// CLEAR SELECTED PROJECT IF NO RESULTS
+if (filteredProjects.length === 0 && selectedProject) {
+  setSelectedProject(null);
+  setDetails({});
+  setRemarks([]);
+}
 
   return (
     <div className="w-full min-h-screen bg-white">
@@ -97,9 +117,15 @@ const [selectedYear, setSelectedYear] = useState("all");
                     <img src={logo} alt="STARK" className="h-full object-contain" />{/* mt-[10px]*/}
                   </div>
         <div className='text-center'>
-          <h2 className="text-2xl font-bold">Welcome, {user.name || 'Viewer'}</h2>
-          <p className="text-gray-600">View and review project details</p>
-        </div>
+          <h2 className="hidden text-2xl font-bold">Welcome, {user.name || 'Viewer'}</h2>
+          <p className="hidden text-gray-600">View and review project details</p></div>
+           <button
+              onClick={handleLogout}
+              className="danger-button bg-red-600 text-white font-semibold py-2 px-4 rounded hover:bg-red-700 transition-colors"
+            >
+              Logout
+            </button>
+        
 
        
       </header>
@@ -132,34 +158,63 @@ const [selectedYear, setSelectedYear] = useState("all");
   </select>
 
 </div>
+{/* NO PROJECTS EXIST */}
+  {projects.length === 0 && (
+    <div className="text-gray-500 text-lg font-medium mt-5">
+      No projects exist.
+    </div>
+  )}
 
-        <div className="flex flex-wrap gap-3">
-          {projects.filter((p) => {
-    // TEXT SEARCH FILTER
-    if (searchText && !p.name.toLowerCase().includes(searchText.toLowerCase())) {
-      return false;
-    }
+  {/* NO RESULTS AFTER FILTER */}
+  {projects.length > 0 && filteredProjects.length === 0 && (
+    <div className="text-gray-500 text-lg font-medium mt-5">
+      No matching projects found.
+    </div>
+  )}
+     
+       <div className="projects-grid">
+  {filteredProjects.map((p) => (
+    <div
+      key={p.id}
+      onClick={() => handleSelectProject(p.id)}
+      className={`project-card cursor-pointer ${
+        selectedProject?.id === p.id ? "ring-4 ring-blue-500" : ""
+      }`}
+    >
+      {/* IMAGE */}
+      <div className="project-image-container">
+        <img
+          src={p.image_file || "/placeholder.png"}
+          alt="project"
+          className="w-full h-full object-cover"
+        />
+      </div>
 
-    // YEAR FILTER
-    if (selectedYear !== "all") {
-      const projectYear = new Date(p.event_date).getFullYear().toString();
-      if (projectYear !== selectedYear) return false;
-    }
+      {/* NAME */}
+      <h3 className="project-name mt-3">{p.name}</h3>
 
-    return true;
-  }) 
-          .map((p) => (
-            <button
-              key={p.id}
-              onClick={() => handleSelectProject(p.id)}
-              className={`px-4 py-2 rounded border ${
-                selectedProject?.id === p.id ? 'bg-blue-600 text-white' : 'bg-gray-100'
-              }`}
-            >
-              {p.name} 
-            </button>
-          ))}
-        </div>
+      {/* PROJECT HANDLED BY */}
+      <p className="project-meta mt-1">
+        <span className="font-semibold">Handled by:</span>{" "}
+        {p.project_handiled_by || "—"}
+      </p>
+
+      {/* EVENT DATE */}
+      <p className="project-meta">
+        <span className="font-semibold">Event:</span>{" "}
+        {p.event_date
+          ? new Date(p.event_date).toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })
+          : "—"}
+      </p>
+    </div>
+  ))}
+</div>
+
+
       </section>
 
       {/* PROJECT DETAILS */}
@@ -187,12 +242,7 @@ const [selectedYear, setSelectedYear] = useState("all");
             </nav>
             <div className='p-5'></div>
             <div className="pl-[15px]">
-                <button
-              onClick={handleLogout}
-              className="mt-auto bg-red-600 hover:bg-red-700 py-2 w-full rounded text-white font-semibold"
-            >
-              Logout
-            </button>
+               
             </div>
           </div>
 
