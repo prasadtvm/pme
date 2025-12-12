@@ -140,7 +140,7 @@ const Login = () => {
     <div className="login-container">
       <form onSubmit={handleLogin} className="login-form">
         <h2 className="login-title">
-          PME System Login
+          PM System Login
         </h2>
         
         {error && (

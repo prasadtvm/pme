@@ -688,7 +688,7 @@ if (filteredProjects.length === 0 && selectedProject) {
 </div>
 
 {/* consignment Section */}
-          <div id="consignment">
+        <div id="consignment">
   <h3 className="text-lg font-semibold mb-3 text-left">CONSIGNMENT</h3>
 
   {details.consignment?.length > 0 ? (
@@ -705,7 +705,7 @@ if (filteredProjects.length === 0 && selectedProject) {
   ) : (
     <p className="text-gray-500">No Consignment data</p>
   )}
-</div>
+       </div>
 
 
      {/* checklist Section */}
@@ -776,7 +776,7 @@ if (filteredProjects.length === 0 && selectedProject) {
           ) : (
             <p className="text-gray-500">No remarks yet.</p>
           )}
-          </div>
+    </div>
 {/* Giving Remarks  */}
             <div className="mt-5">
               <h3 className="text-lg font-semibold mb-3 ">Remarks</h3>
@@ -787,13 +787,11 @@ if (filteredProjects.length === 0 && selectedProject) {
                 className="w-full border p-3 rounded"
                 rows={4}
               />
-
+{/*${                {hasUnapprovedRemark}  hasUnapprovedRemark ?*/}
               <button
                 onClick={handleSaveRemark}
-                disabled={hasUnapprovedRemark}
-                className={`mt-3 px-5 py-2 rounded text-white ${
-                  hasUnapprovedRemark ? "bg-gray-400" : "bg-green-600"
-                }`}
+                disabled={false}
+                className="mt-3 px-5 py-2 rounded text-white bg-green-600"                
               >
                 Save Remarks
               </button>
