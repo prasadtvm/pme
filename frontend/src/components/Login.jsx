@@ -276,7 +276,7 @@ const Login = () => {
                 />
               </div>
 
-              <button type="submit" className="primary-button w-full">
+              <button type="submit" className="hidden primary-button w-full">
                 Register
               </button>
             </form>

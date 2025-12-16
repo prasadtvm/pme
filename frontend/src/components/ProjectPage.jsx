@@ -12,7 +12,7 @@ const ProjectPage = () => {
   const [showEditModal, setShowEditModal] = useState(false);
 const [editProject, setEditProject] = useState({
   id: "",
-  name: "",
+  roadshow_name: "",
   project_handiled_by: "",
   event_date: "",
   image_file: ""
@@ -290,9 +290,9 @@ console.log('propje page',JSON.stringify(formData));
         <label className="block text-sm font-medium">Project Name</label>
         <input
           type="text"
-          value={editProject.name}
+          value={editProject.roadshow_name}
           onChange={(e) =>
-            setEditProject({ ...editProject, name: e.target.value })
+            setEditProject({ ...editProject, roadshow_name: e.target.value })
           }
           className="border p-2 rounded w-full"
         />
@@ -358,14 +358,16 @@ console.log('propje page',JSON.stringify(formData));
           onClick={async () => {
             try {
               const formData = new FormData();
-              formData.append("name", editProject.name);
+              formData.append("roadshow_name", editProject.roadshow_name);
               formData.append("event_date", editProject.event_date);
               formData.append("project_handiled_by", editProject.project_handiled_by);
 
               if (editImageFile) {
                 formData.append("image_file", editImageFile);
               }
-
+            for (let [key, value] of formData.entries()) {
+              console.log(key, value);
+            }
               await projectAPI.updateRoadshowInfo(editProject.id, formData);
 
               alert("Project updated!");
@@ -403,13 +405,13 @@ console.log('propje page',JSON.stringify(formData));
                 >
 
                   <button
-  className="absolute top-2 right-2 text-gray-700 hover:text-black text-2xl font-bold z-20 p-1"
-  onClick={(e) => {
-    e.stopPropagation();       // prevent card click
-    setEditProject(project);   // load project info
-    setShowEditModal(true);    // open modal
-  }}
->
+                className="absolute top-2 right-2 text-gray-700 hover:text-black text-2xl font-bold z-20 p-1"
+                onClick={(e) => {
+                  e.stopPropagation();       // prevent card click
+                  setEditProject(project);   // load project info
+                  setShowEditModal(true);    // open modal
+                }}
+              >
   ⋮
 </button>
                   <div className="p-4">
@@ -450,7 +452,7 @@ console.log('propje page',JSON.stringify(formData));
                   
                   <div className="project-meta p-4 text-sm text-gray-600 border-t">
                     <div className="mb-1">Event Date: {project.event_date || "—"}</div>
-                    <div>Handled By: {project.project_handiled_by || "—"}</div> {/* ⭐ NEW */}
+                    <div>Handiled By: {project.project_handiled_by || "—"}</div> {/* ⭐ NEW */}
                   </div>
 
                 </div>

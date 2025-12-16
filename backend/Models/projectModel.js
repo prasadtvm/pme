@@ -992,13 +992,13 @@ console.log('pronmodel',projectId,JSON.stringify( roadshowData), userId);
               budget = $3,project_handiled_by=$4,
              updated_at = CURRENT_TIMESTAMP 
          WHERE project_id = $5 RETURNING *`,
-        [roadshow_name,  event_date,  budget, project_handiled_by, projectId]
+        [roadshow_name, event_date, budget, project_handiled_by, projectId]
       );  
      // console.log("✅ Updated project_details:", result.rows[0]);
      // console.log("🟣 Updating projects table...");
             await pool.query(
           `UPDATE projects 
-          SET name = $1,
+          SET "name" = $1,
               event_date = $2,
                image_file = COALESCE($3, image_file),
               updated_at = CURRENT_TIMESTAMP
@@ -1010,7 +1010,7 @@ console.log('pronmodel',projectId,JSON.stringify( roadshowData), userId);
     } else {
       // Insert new
       const result = await pool.query(
-        `INSERT INTO project_details (project_id, roadshow_name,   event_date, budget,project_handiled_by) 
+        `INSERT INTO project_details (project_id, roadshow_name, event_date, budget,project_handiled_by) 
          VALUES ($1, $2, $3, $4, $5) RETURNING *`,
         [projectId, roadshow_name,   event_date,  budget, project_handiled_by]
       );
@@ -1018,7 +1018,7 @@ console.log('pronmodel',projectId,JSON.stringify( roadshowData), userId);
       // ✅ Also update project table for consistency
       await pool.query(
         `UPDATE projects 
-         SET name = $1,
+         SET "name" = $1,
              event_date = $2,
              image_file = COALESCE($3, image_file),
              updated_at = CURRENT_TIMESTAMP

@@ -77,10 +77,12 @@ export const projectAPI = {
   getRemarks: (project) => api.get(`/projects/remarks/${project}`),
   resolveRemark: (id) =>  api.put(`/projects/remarks/${id}/resolve`), 
   getProgress: (id) => api.get(`/projects/${id}/progress`),   
-   updateRoadshowInfo: (id, formData) =>
-  api.put(`/projects/${id}/roadshow`, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  })  
+  updateRoadshowInfo: (id, formData) =>
+  api.put(`/projects/${id}/roadshow`, formData)
+  // updateRoadshowInfo: (id, formData) =>
+  //api.put(`/projects/${id}/roadshow`, formData, {
+   // headers: { "Content-Type": "multipart/form-data" },
+  //})  
   
 };
 const token = localStorage.getItem("token");

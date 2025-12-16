@@ -219,7 +219,7 @@ console.log('projectcontroller getprojectdetails');
       
       const { id } = req.params;
       const userId = req.user.id;
-
+console.log("🟢 Received prj cont roadshow update:", req.roadshow_name ,req.event_date,req.budget,req.project_handiled_by,req.file);
       // ✅ Extract values safely
     const roadshow_name = req.body.roadshow_name || null;
     const event_date = req.body.event_date || null;
