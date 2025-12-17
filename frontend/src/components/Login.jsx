@@ -189,7 +189,7 @@ const Login = () => {
           <button
             type="button"
             onClick={() => setShowRegister(true)}
-            className="text-blue-600 hover:underline"
+            className="hidden text-blue-600 hover:underline"
           >
             Register
           </button>
